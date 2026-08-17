@@ -1,0 +1,352 @@
+openapi: 3.1.0
+info:
+  title: storage
+  version: "1.0.0"
+  description: >
+    Governed storage capability contract for Phase 7 document module baseline.
+    Endpoints issue scoped, time-bounded upload/download capabilities and expose
+    metadata reads. Raw internal storage passthrough is out of scope.
+paths:
+  /v1/storage/upload-capabilities:
+    post:
+      summary: Issue a scoped upload capability for one governed object key.
+      description: >
+        Side-effect operation. Idempotency-Key is required. Capability issuance
+        must be scoped to requesting tenant and owner context; cross-tenant object
+        access is forbidden and must fail deterministically.
+      operationId: createUploadCapability
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadCapabilityRequest"
+      responses:
+        "201":
+          description: Upload capability issued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapabilityEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/storage/download-capabilities:
+    post:
+      summary: Issue a scoped download capability for one governed object key.
+      description: >
+        Side-effect operation. Idempotency-Key is required. Capability issuance
+        must be scoped to requesting tenant and owner context; capabilities must
+        not grant wildcard access to object namespaces.
+      operationId: createDownloadCapability
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DownloadCapabilityRequest"
+      responses:
+        "201":
+          description: Download capability issued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapabilityEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/storage/objects/{object_key}/metadata:
+    get:
+      summary: Read metadata for one governed object key.
+      description: >
+        Read-only metadata retrieval path. Requesting identity must be authorized
+        for the same tenant/owner scope as the target object.
+      operationId: getStorageObjectMetadata
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/ObjectKeyPath"
+      responses:
+        "200":
+          description: Object metadata found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObjectMetadataEnvelope"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+components:
+  parameters:
+    AuthorizationHeader:
+      in: header
+      name: Authorization
+      required: true
+      schema:
+        type: string
+      description: Bearer token in "<uuid>:<role>" format.
+    IdempotencyKeyHeader:
+      in: header
+      name: Idempotency-Key
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+      description: >
+        Stable key for deterministic replay/conflict handling on capability issuance.
+    CorrelationIdHeader:
+      in: header
+      name: X-Correlation-ID
+      required: false
+      schema:
+        type: string
+      description: Optional caller-provided correlation identifier.
+    ObjectKeyPath:
+      in: path
+      name: object_key
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 512
+      description: URL-encoded deterministic object key.
+  responses:
+    ErrorResponse:
+      description: Deterministic structured error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+  schemas:
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+      properties:
+        error_code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+        trace_id:
+          type:
+            - string
+            - "null"
+          pattern: "^[a-f0-9]{64}$"
+        correlation_id:
+          type:
+            - string
+            - "null"
+          pattern: "^[a-f0-9]{64}$"
+    UploadCapabilityRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - tenant_id
+        - owner_user_id
+        - object_key
+        - content_type
+        - expected_size_bytes
+        - checksum_sha256
+      properties:
+        tenant_id:
+          type: string
+          minLength: 1
+          maxLength: 120
+        owner_user_id:
+          type: string
+          format: uuid
+        object_key:
+          type: string
+          minLength: 1
+          maxLength: 512
+        content_type:
+          type: string
+          minLength: 1
+          maxLength: 127
+        expected_size_bytes:
+          type: integer
+          minimum: 1
+        checksum_sha256:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        document_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+    DownloadCapabilityRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - tenant_id
+        - owner_user_id
+        - object_key
+      properties:
+        tenant_id:
+          type: string
+          minLength: 1
+          maxLength: 120
+        owner_user_id:
+          type: string
+          format: uuid
+        object_key:
+          type: string
+          minLength: 1
+          maxLength: 512
+        document_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+    Capability:
+      type: object
+      additionalProperties: false
+      required:
+        - capability_id
+        - object_key
+        - expires_at
+        - method
+        - headers
+      properties:
+        capability_id:
+          type: string
+          format: uuid
+        object_key:
+          type: string
+          minLength: 1
+          maxLength: 512
+        expires_at:
+          type: string
+          format: date-time
+        method:
+          type: string
+          enum:
+            - PUT
+            - GET
+        url:
+          type: string
+          format: uri
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+    CapabilityEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - capability
+      properties:
+        status:
+          type: string
+          enum:
+            - capability_issued
+            - capability_replayed
+        capability:
+          $ref: "#/components/schemas/Capability"
+        trace_id:
+          type:
+            - string
+            - "null"
+          pattern: "^[a-f0-9]{64}$"
+        correlation_id:
+          type:
+            - string
+            - "null"
+          pattern: "^[a-f0-9]{64}$"
+    ObjectMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        - object_key
+        - tenant_id
+        - owner_user_id
+        - content_type
+        - size_bytes
+        - checksum_sha256
+        - created_at
+      properties:
+        object_key:
+          type: string
+          minLength: 1
+          maxLength: 512
+        tenant_id:
+          type: string
+          minLength: 1
+          maxLength: 120
+        owner_user_id:
+          type: string
+          format: uuid
+        content_type:
+          type: string
+          minLength: 1
+          maxLength: 127
+        size_bytes:
+          type: integer
+          minimum: 0
+        checksum_sha256:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        created_at:
+          type: string
+          format: date-time
+        document_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+    ObjectMetadataEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - metadata
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        metadata:
+          $ref: "#/components/schemas/ObjectMetadata"
+        trace_id:
+          type:
+            - string
+            - "null"
+          pattern: "^[a-f0-9]{64}$"
+        correlation_id:
+          type:
+            - string
+            - "null"
+          pattern: "^[a-f0-9]{64}$"

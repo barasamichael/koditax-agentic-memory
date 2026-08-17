@@ -1,0 +1,203 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+node_modules/
+# Compiled extensions
+*.so
+*.pyd
+*.dll
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env
+.env.*
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Poetry / Pipenv
+poetry.lock
+Pipfile.lock
+
+# =========================
+# Testing & Coverage
+# =========================
+.pytest_cache/
+.pytest_run/
+.pytest_tmp/
+.tmp/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# Hypothesis
+.hypothesis/
+
+# Mypy / static typing
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ruff / Flake8 / Linters
+.ruff_cache/
+.flake8
+.pyre/
+.pytype/
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+*.out
+*.err
+
+# Uvicorn / Gunicorn
+gunicorn.log
+uvicorn.log
+
+# =========================
+# Environment & Secrets
+# =========================
+.env.local
+.env.dev
+.env.staging
+.env.prod
+*.key
+*.pem
+*.crt
+*.p12
+secrets/
+credentials.json
+service_account.json
+
+# =========================
+# Database
+# =========================
+*.sqlite3
+*.db
+*.db-journal
+
+# Alembic versioning cache
+alembic.ini
+migrations/versions/*.pyc
+
+# =========================
+# Docker
+# =========================
+*.pid
+docker-compose.override.yml
+.docker/
+
+# =========================
+# Kubernetes
+# =========================
+*.kubeconfig
+
+# =========================
+# Terraform
+# =========================
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
+
+# =========================
+# IDEs
+# =========================
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+*.iml
+
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+# =========================
+# OS
+# =========================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# =========================
+# ML / Document AI Artifacts
+# =========================
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.h5
+*.joblib
+*.pickle
+*.pkl
+model_weights/
+checkpoints/
+mlruns/
+
+# Extracted temporary document files
+tmp/
+temp/
+uploads/
+extracted_text/
+ocr_cache/
+
+# =========================
+# Eval artifacts
+# =========================
+eval/results/
+eval/tmp/
+eval/output/
+
+# =========================
+# Misc
+# =========================
+*.bak
+*.swp
+*.swo
+*~
+
+# Local agent metadata
+.claude/
+
+.document-ai-storage/

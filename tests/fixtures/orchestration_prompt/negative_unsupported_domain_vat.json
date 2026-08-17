@@ -1,0 +1,19 @@
+{
+  "fixture_id": "negative_unsupported_domain_vat",
+  "flow": "decide",
+  "request_payload": {
+    "tenant_id": "pilot_tenant_alpha",
+    "conversation_id": "conv-orch-neg-vat-001",
+    "channel": "chat",
+    "prompt": {
+      "text": "Compute VAT filing output for Q3 and submit to regulator.",
+      "format": "plain_text"
+    }
+  },
+  "expected_error": {
+    "status_code": 200,
+    "error_code": "unsupported_prompt_scope",
+    "reason": "unsupported_domain",
+    "reason_code": "unsupported_domain"
+  }
+}

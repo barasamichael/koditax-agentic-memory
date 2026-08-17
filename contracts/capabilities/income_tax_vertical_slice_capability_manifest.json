@@ -1,0 +1,50 @@
+{
+  "manifest_version": "1.0.0",
+  "capability_scope": "income_tax_vertical_slice",
+  "generated_at": "2026-03-20T00:00:00+03:00",
+  "supported_lanes": [
+    {
+      "supported_lane_id": "resident_employment_income_2021_01_01",
+      "historical_version_id": "KIT-VER-20210101-A",
+      "tax_year": 2021,
+      "status": "supported",
+      "notes": "Governed resident employment lane in 2021 historical window."
+    },
+    {
+      "supported_lane_id": "non_resident_employment_income_2021_01_01",
+      "historical_version_id": "KIT-VER-20210101-A",
+      "tax_year": 2021,
+      "status": "supported",
+      "notes": "Governed non-resident employment lane in 2021 historical window."
+    },
+    {
+      "supported_lane_id": "resident_employment_income_2023_07_01",
+      "historical_version_id": "KIT-VER-20230701-A",
+      "tax_year": 2023,
+      "status": "supported",
+      "notes": "Governed resident employment lane in 2023 current supported window."
+    },
+    {
+      "supported_lane_id": "non_resident_employment_income_2023_07_01",
+      "historical_version_id": "KIT-VER-20230701-A",
+      "tax_year": 2023,
+      "status": "supported",
+      "notes": "Governed non-resident employment lane in 2023 current supported window."
+    },
+    {
+      "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+      "historical_version_id": "KIT-VER-20230701-A",
+      "tax_year": 2023,
+      "status": "supported",
+      "notes": "Governed mixed-income lane (resident employment plus qualifying interest)."
+    }
+  ],
+  "unsupported_domains": [
+    "vat",
+    "withholding_tax_generalized",
+    "paye_generalized",
+    "health_contribution",
+    "business_income_generalized",
+    "rental_income_generalized"
+  ]
+}

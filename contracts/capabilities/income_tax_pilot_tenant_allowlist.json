@@ -1,0 +1,58 @@
+{
+  "allowlist_version": "1.0.0",
+  "capability_scope": "income_tax_vertical_slice",
+  "generated_at": "2026-03-26T00:00:00+03:00",
+  "tenants": [
+    {
+      "tenant_id": "pilot_tenant_alpha",
+      "status": "enabled",
+      "allowed_lanes": [
+        "*"
+      ],
+      "allowed_actions": [
+        "*"
+      ],
+      "orchestration_rollout": {
+        "rollout_state": "general_availability",
+        "enabled_features": [
+          "*"
+        ]
+      },
+      "notes": "Primary approved pilot tenant for supported income-tax scope."
+    },
+    {
+      "tenant_id": "pilot_tenant_limited",
+      "status": "enabled",
+      "allowed_lanes": [
+        "resident_employment_income_2023_07_01"
+      ],
+      "allowed_actions": [
+        "read_only_review"
+      ],
+      "orchestration_rollout": {
+        "rollout_state": "canary",
+        "enabled_features": [
+          "*"
+        ]
+      },
+      "notes": "Tenant with restricted lane and action permissions for pilot safety checks."
+    },
+    {
+      "tenant_id": "pilot_tenant_disabled",
+      "status": "disabled",
+      "allowed_lanes": [
+        "*"
+      ],
+      "allowed_actions": [
+        "*"
+      ],
+      "orchestration_rollout": {
+        "rollout_state": "blocked",
+        "enabled_features": [
+          "*"
+        ]
+      },
+      "notes": "Tenant explicitly disabled for runtime pilot execution."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "fixture_id": "knowledge_lookup_unsupported_scope_rejected",
+  "prompt_payload": {
+    "tenant_id": "pilot_tenant_alpha",
+    "conversation_id": "conv-knowledge-route-002",
+    "channel": "chat",
+    "prompt": {
+      "text": "lookup statutory authority for zero-rated supplies in vat effective 2024-12-27.",
+      "format": "plain_text"
+    }
+  },
+  "expected_error": {
+    "status_code": 400,
+    "error_code": "unsupported_prompt_scope",
+    "reason": "unsupported_domain",
+    "reason_code": "unsupported_domain"
+  }
+}

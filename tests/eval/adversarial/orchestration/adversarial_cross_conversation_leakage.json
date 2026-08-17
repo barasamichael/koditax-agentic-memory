@@ -1,0 +1,25 @@
+{
+  "case_id": "adversarial_cross_conversation_leakage",
+  "flow": "followup_decide_only",
+  "seed_prompt_text": "compute income tax for resident employment lane in tax year 2021 under KIT-VER-20210101-A.",
+  "followup_prompt_text": "what about 2023?",
+  "seed_conversation_id": "conv-adversarial-cross-conversation-seed",
+  "followup_conversation_id": "conv-adversarial-cross-conversation-other",
+  "expected": {
+    "http_status": 500,
+    "top_level_status": null,
+    "decision_status": null,
+    "gate_status": null,
+    "plan_mode": null,
+    "route_id": null,
+    "target_service": null,
+    "execution_status": null,
+    "response_status": null,
+    "answer_mode": null,
+    "has_citations": false,
+    "clarification_reason_code": null,
+    "error_code": "turn_resolution_validation_failed",
+    "reason_code": "turn_resolution_stale_clarification_metadata",
+    "step_services": []
+  }
+}

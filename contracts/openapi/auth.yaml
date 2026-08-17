@@ -1,0 +1,1421 @@
+openapi: 3.1.0
+info:
+  title: auth
+  version: "1.0.0"
+  description: >
+    Canonical authentication and identity OpenAPI baseline refreshed through
+    Phase 15 release closure. This contract defines the currently supported
+    registration, login/session, OTP, OAuth, password-reset, phone-change,
+    and account-deletion endpoints only.
+paths:
+  /v1/auth/register:
+    post:
+      summary: Register a user account with deterministic validation semantics.
+      operationId: registerAuthUser
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Registration request accepted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/password-reset/initiate:
+    post:
+      summary: Initiate deterministic password setup/reset challenge without user enumeration.
+      description: >
+        Replay-sensitive operation. Idempotency-Key is required for deterministic
+        initiation replay/conflict handling.
+      operationId: initiatePasswordReset
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordResetInitiateRequest"
+      responses:
+        "201":
+          description: Password reset challenge issued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PasswordResetInitiateResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/password-reset/confirm:
+    post:
+      summary: Confirm deterministic password setup/reset challenge and update credential.
+      operationId: confirmPasswordReset
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordResetConfirmRequest"
+      responses:
+        "200":
+          description: Password updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PasswordResetConfirmResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/login:
+    post:
+      summary: Authenticate user credentials and issue bounded session/token context.
+      description: >
+        Mandatory two-step login flow. Valid credentials return a
+        `pending_step_up` response until a valid `login_step_up` OTP proof is
+        provided with matching challenge/user context.
+      operationId: loginAuthUser
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login completed.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/LoginResponse"
+                  - $ref: "#/components/schemas/LoginPendingStepUpResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/refresh:
+    post:
+      summary: Rotate refresh context and issue deterministic updated session tokens.
+      operationId: refreshAuthSession
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+      responses:
+        "200":
+          description: Refresh completed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/logout:
+    post:
+      summary: Revoke one or more active sessions for the authenticated user.
+      operationId: logoutAuthSession
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LogoutRequest"
+      responses:
+        "200":
+          description: Logout completed with deterministic revocation outcome.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogoutResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/otp/challenges:
+    post:
+      summary: Create OTP challenge for governed purpose using SMS or email channel.
+      description: >
+        Replay-sensitive operation. Idempotency-Key is required to guarantee
+        deterministic challenge replay/conflict semantics for the same request context.
+      operationId: createOtpChallenge
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeaderOptional"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OtpChallengeRequest"
+      responses:
+        "201":
+          description: OTP challenge created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpChallengeResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/otp/verify:
+    post:
+      summary: Verify OTP challenge and produce deterministic verification outcome.
+      operationId: verifyOtpChallenge
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeaderOptional"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OtpVerifyRequest"
+      responses:
+        "200":
+          description: OTP verification completed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpVerifyResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/sessions/{session_id}:
+    get:
+      summary: Retrieve deterministic session/auth context view by session ID.
+      operationId: getAuthSession
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/SessionIdPath"
+      responses:
+        "200":
+          description: Session found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionEnvelope"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/roles/change:
+    post:
+      summary: Apply deterministic governed role change for one target user account.
+      operationId: changeAuthUserRole
+      parameters:
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleChangeRequest"
+      responses:
+        "200":
+          description: Role change completed with deterministic governance checks.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleChangeResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/oauth/{provider}/start:
+    post:
+      summary: Start OAuth/OIDC authorization-code flow for supported provider.
+      operationId: startOAuthFlow
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/ProviderPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OAuthStartRequest"
+      responses:
+        "200":
+          description: OAuth start request accepted with deterministic redirect contract.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthStartResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/oauth/{provider}/callback:
+    get:
+      summary: Complete OAuth/OIDC callback protocol checks for governed provider flow.
+      operationId: completeOAuthCallback
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/ProviderPath"
+        - in: query
+          name: code
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: state
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        "200":
+          description: OAuth callback protocol checks completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthCallbackResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/account-deletion/requests:
+    post:
+      summary: Create account deletion request with compliance-aware deterministic checks.
+      description: >
+        Replay-sensitive operation. Idempotency-Key is required for deterministic
+        request replay/conflict handling. Request does not execute deletion directly.
+      operationId: createAccountDeletionRequest
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountDeletionRequestCreateRequest"
+      responses:
+        "201":
+          description: Deletion request created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountDeletionRequestResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/account-deletion/confirm:
+    post:
+      summary: Confirm account deletion request after re-authentication and OTP step-up.
+      description: >
+        High-risk action gate. Confirmation requires valid re-auth proof and OTP
+        verification bound to account-deletion context. Missing or invalid step-up
+        proof must fail deterministically.
+      operationId: confirmAccountDeletionRequest
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountDeletionConfirmRequest"
+      responses:
+        "200":
+          description: Deletion request confirmed and cooldown state reported.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountDeletionConfirmResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/account-deletion/cancel:
+    post:
+      summary: Cancel active account deletion request within cooldown window.
+      operationId: cancelAccountDeletionRequest
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountDeletionCancelRequest"
+      responses:
+        "200":
+          description: Deletion request cancelled.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountDeletionCancelResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/account-deletion/execute:
+    post:
+      summary: Execute confirmed account deletion request after cooldown completion.
+      operationId: executeAccountDeletionRequest
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountDeletionExecuteRequest"
+      responses:
+        "200":
+          description: Deletion request executed with deterministic security closure.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountDeletionExecuteResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/phone-change/requests:
+    post:
+      summary: Create deterministic phone-number change request with step-up challenge.
+      operationId: createPhoneChangeRequest
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PhoneChangeRequestCreateRequest"
+      responses:
+        "201":
+          description: Phone-number change request created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PhoneChangeRequestResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/auth/phone-change/confirm:
+    post:
+      summary: Confirm deterministic phone-number change using bound OTP step-up proof.
+      operationId: confirmPhoneChangeRequest
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PhoneChangeConfirmRequest"
+      responses:
+        "200":
+          description: Phone-number change confirmed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PhoneChangeConfirmResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+components:
+  parameters:
+    AuthContextHeader:
+      in: header
+      name: X-Auth-Context
+      required: true
+      schema:
+        type: string
+        minLength: 2
+      description: Trusted auth-context envelope for deterministic RBAC evaluation.
+    AuthorizationHeader:
+      in: header
+      name: Authorization
+      required: true
+      schema:
+        type: string
+      description: Bearer credential in trusted gateway-authenticated format.
+    AuthorizationHeaderOptional:
+      in: header
+      name: Authorization
+      required: false
+      schema:
+        type: string
+      description: Optional bearer credential when challenge/verification context allows.
+    IdempotencyKeyHeader:
+      in: header
+      name: Idempotency-Key
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+      description: >
+        Stable key for deterministic replay/conflict behavior on side-effect,
+        replay-sensitive endpoints.
+    CorrelationIdHeader:
+      in: header
+      name: X-Correlation-ID
+      required: false
+      schema:
+        type: string
+      description: Optional caller-provided correlation identifier.
+    SessionIdPath:
+      in: path
+      name: session_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Auth session identifier.
+    ProviderPath:
+      in: path
+      name: provider
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: OAuth/OIDC provider identifier configured by governance.
+  responses:
+    ErrorResponse:
+      description: Deterministic structured error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+  schemas:
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+      properties:
+        error_code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+        trace_id:
+          type: string
+          minLength: 1
+        correlation_id:
+          type: string
+          minLength: 1
+        details:
+          type: object
+          additionalProperties: true
+    Traceability:
+      type: object
+      additionalProperties: false
+      required:
+        - trace_id
+      properties:
+        trace_id:
+          type: string
+          minLength: 1
+        correlation_id:
+          type: string
+          minLength: 1
+    DelegationContext:
+      type: object
+      additionalProperties: false
+      required:
+        - is_delegated
+      properties:
+        is_delegated:
+          type: boolean
+        principal_user_id:
+          type: string
+          format: uuid
+        delegate_user_id:
+          type: string
+          format: uuid
+        delegation_id:
+          type: string
+          format: uuid
+        granted_at:
+          type: string
+          format: date-time
+        revoked_at:
+          type: string
+          format: date-time
+    SessionContext:
+      type: object
+      additionalProperties: false
+      required:
+        - user_id
+        - tenant_id
+        - role
+        - session_id
+        - delegation_context
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          description: >
+            Single-tenant baseline supported via deterministic policy value
+            (for example default_tenant) until schema expansion.
+        role:
+          type: string
+          enum:
+            - IndividualTaxpayer
+            - TaxAgent
+            - Accountant
+            - Administrator
+        session_id:
+          type: string
+          format: uuid
+        delegation_context:
+          $ref: "#/components/schemas/DelegationContext"
+    RegisterRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+        - phone_number
+        - kra_pin
+        - password
+        - role
+      properties:
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+          minLength: 10
+          maxLength: 13
+          pattern: "^(\\+254|254|0)[17][0-9]{8}$"
+          description: >
+            Kenyan mobile number accepted in +254, 254, or 0-prefixed form.
+            Runtime normalizes accepted values to canonical `+254...`.
+        kra_pin:
+          type: string
+          pattern: "^[A-Z][0-9]{9}[A-Z]$"
+        password:
+          type: string
+          minLength: 12
+        role:
+          type: string
+          enum:
+            - IndividualTaxpayer
+            - TaxAgent
+            - Accountant
+            - Administrator
+    RegisterResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - user_id
+        - registration_status
+        - created_at
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        registration_status:
+          type: string
+          enum: [pending_verification]
+        created_at:
+          type: string
+          format: date-time
+    PasswordResetInitiateRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - purpose
+        - channel
+      properties:
+        purpose:
+          type: string
+          enum: [password_reset, password_setup]
+        channel:
+          type: string
+          enum: [email, sms]
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+          minLength: 5
+          maxLength: 32
+    PasswordResetInitiateResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - challenge_id
+        - expires_at
+      properties:
+        status:
+          type: string
+          enum: [challenge_issued]
+        challenge_id:
+          type: string
+          format: uuid
+        expires_at:
+          type: string
+          format: date-time
+    PasswordResetConfirmRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - challenge_id
+        - reset_code
+        - new_password
+      properties:
+        challenge_id:
+          type: string
+          format: uuid
+        reset_code:
+          type: string
+          minLength: 4
+          maxLength: 12
+        new_password:
+          type: string
+          minLength: 12
+    PasswordResetConfirmResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - updated_at
+      properties:
+        status:
+          type: string
+          enum: [password_updated]
+        updated_at:
+          type: string
+          format: date-time
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - login_id
+        - password
+      properties:
+        login_id:
+          type: string
+          minLength: 8
+          maxLength: 16
+          pattern: "^(\\+254|254|0)[17][0-9]{8}$"
+          description: >
+            Kenyan phone-number-only login identifier. Local and numeric international
+            forms are normalized to canonical E.164 `+254...` at runtime.
+        password:
+          type: string
+          minLength: 1
+        device_fingerprint:
+          type: string
+        step_up_challenge_id:
+          type: string
+          format: uuid
+          description: Challenge ID from a prior `pending_step_up` login response.
+        step_up_otp_code:
+          type: string
+          minLength: 4
+          maxLength: 12
+          description: OTP code bound to `step_up_challenge_id` for `login_step_up`.
+    LoginPendingStepUpResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - login_status
+        - status
+        - step_up_required
+        - step_up_purpose
+        - step_up_channel
+        - step_up_challenge_id
+        - step_up_expires_at
+      properties:
+        login_status:
+          type: string
+          enum: [pending_step_up]
+        status:
+          type: string
+          enum: [pending_step_up]
+        step_up_required:
+          type: boolean
+          enum: [true]
+        step_up_purpose:
+          type: string
+          enum: [login_step_up]
+        step_up_channel:
+          type: string
+          enum: [sms]
+        step_up_challenge_id:
+          type: string
+          format: uuid
+        step_up_expires_at:
+          type: string
+          format: date-time
+    LoginResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - access_token
+        - refresh_token
+        - expires_at
+        - session
+      properties:
+        status:
+          type: string
+          enum: [authenticated]
+        access_token:
+          type: string
+          minLength: 1
+        refresh_token:
+          type: string
+          minLength: 1
+        expires_at:
+          type: string
+          format: date-time
+        session:
+          $ref: "#/components/schemas/SessionContext"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    RefreshRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+    RefreshResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - access_token
+        - refresh_token
+        - expires_at
+        - session
+      properties:
+        status:
+          type: string
+          enum: [refreshed]
+        access_token:
+          type: string
+          minLength: 1
+        refresh_token:
+          type: string
+          minLength: 1
+        expires_at:
+          type: string
+          format: date-time
+        session:
+          $ref: "#/components/schemas/SessionContext"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    LogoutRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - revoke_scope
+      properties:
+        revoke_scope:
+          type: string
+          enum: [single_session, all_sessions]
+        target_session_id:
+          type: string
+          format: uuid
+    LogoutResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - revoke_scope
+        - revoked_session_count
+        - traceability
+      properties:
+        status:
+          type: string
+          enum: [revoked]
+        revoke_scope:
+          type: string
+          enum: [single_session, all_sessions]
+        revoked_session_count:
+          type: integer
+          minimum: 0
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    OtpChallengeRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - purpose
+        - channel
+      properties:
+        purpose:
+          type: string
+          enum: [registration_verify, login_step_up, recovery, account_deletion_confirm, phone_change_confirm]
+        channel:
+          type: string
+          enum: [sms, email]
+        phone_number:
+          type: string
+          minLength: 5
+          maxLength: 32
+        email:
+          type: string
+          format: email
+        fallback_channel:
+          type: string
+          enum: [email]
+    OtpChallengeResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - challenge_id
+        - expires_at
+      properties:
+        status:
+          type: string
+          enum: [challenge_issued]
+        challenge_id:
+          type: string
+          format: uuid
+        expires_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    OtpVerifyRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - challenge_id
+        - otp_code
+      properties:
+        challenge_id:
+          type: string
+          format: uuid
+        otp_code:
+          type: string
+          minLength: 4
+          maxLength: 12
+    OtpVerifyResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - verification_status
+      properties:
+        status:
+          type: string
+          enum: [verified]
+        verification_status:
+          type: string
+          enum: [verified]
+    SessionEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - session
+      properties:
+        status:
+          type: string
+          enum: [active, warning, invalidated, expired]
+        session:
+          $ref: "#/components/schemas/SessionContext"
+        issued_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        inactivity_expires_at:
+          type: string
+          format: date-time
+        absolute_expires_at:
+          type: string
+          format: date-time
+        last_activity_at:
+          type: string
+          format: date-time
+        warning_window_started_at:
+          type: string
+          format: date-time
+        extension_allowed:
+          type: boolean
+        is_invalidated:
+          type: boolean
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    RoleChangeRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - target_user_id
+        - new_role
+      properties:
+        target_user_id:
+          type: string
+          format: uuid
+        new_role:
+          type: string
+          enum:
+            - IndividualTaxpayer
+            - TaxAgent
+            - Accountant
+            - Administrator
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 500
+    RoleChangeResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - target_user_id
+        - previous_role
+        - new_role
+        - changed_by_user_id
+        - changed_at
+        - traceability
+      properties:
+        status:
+          type: string
+          enum: [role_updated]
+        target_user_id:
+          type: string
+          format: uuid
+        previous_role:
+          type: string
+          enum:
+            - IndividualTaxpayer
+            - TaxAgent
+            - Accountant
+            - Administrator
+        new_role:
+          type: string
+          enum:
+            - IndividualTaxpayer
+            - TaxAgent
+            - Accountant
+            - Administrator
+        changed_by_user_id:
+          type: string
+          format: uuid
+        changed_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    OAuthStartRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - redirect_uri
+      properties:
+        redirect_uri:
+          type: string
+          format: uri
+        state_hint:
+          type: string
+    OAuthStartResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - provider
+        - authorization_url
+        - state
+        - nonce
+        - expires_at
+        - traceability
+      properties:
+        status:
+          type: string
+          enum: [redirect_required]
+        provider:
+          type: string
+          minLength: 1
+        authorization_url:
+          type: string
+          format: uri
+        state:
+          type: string
+          minLength: 1
+        nonce:
+          type: string
+          minLength: 1
+        expires_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    OAuthCallbackResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - provider
+        - callback_status
+        - linked_user_id
+        - linked_tenant_id
+        - link_status
+        - traceability
+      properties:
+        status:
+          type: string
+          enum: [protocol_validated]
+        provider:
+          type: string
+          minLength: 1
+        callback_status:
+          type: string
+          enum: [protocol_validated]
+        oauth_subject:
+          type: string
+          minLength: 1
+        linked_user_id:
+          type: string
+          format: uuid
+        linked_tenant_id:
+          type: string
+          minLength: 1
+        link_status:
+          type: string
+          enum: [linked_existing, linked_new]
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    AccountDeletionRequestCreateRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - request_reason
+      properties:
+        request_reason:
+          type: string
+          minLength: 1
+          maxLength: 1000
+    AccountDeletionRequestResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - request_id
+        - deletion_state
+        - requested_at
+        - blockers
+      properties:
+        status:
+          type: string
+          enum: [accepted]
+        request_id:
+          type: string
+          format: uuid
+        deletion_state:
+          type: string
+          enum: [requested, blocked]
+        requested_at:
+          type: string
+          format: date-time
+        blockers:
+          type: array
+          items:
+            type: string
+            enum:
+              - deletion_blocked_compliance_lock
+              - deletion_blocked_legal_hold
+              - deletion_blocked_active_obligation
+              - deletion_blocked_retention_constraint
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    AccountDeletionConfirmRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - request_id
+        - reauth_proof
+        - otp_verification_id
+      properties:
+        request_id:
+          type: string
+          format: uuid
+        reauth_proof:
+          type: string
+          minLength: 1
+          description: Opaque proof reference from recent re-authentication.
+        otp_verification_id:
+          type: string
+          format: uuid
+          description: Opaque proof reference from OTP verify flow.
+    AccountDeletionConfirmResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - request_id
+        - deletion_state
+      properties:
+        status:
+          type: string
+          enum: [confirmed]
+        request_id:
+          type: string
+          format: uuid
+        deletion_state:
+          type: string
+          enum: [confirmed, cooldown_active]
+        cooldown_expires_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    AccountDeletionCancelRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - request_id
+      properties:
+        request_id:
+          type: string
+          format: uuid
+    AccountDeletionCancelResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - request_id
+        - deletion_state
+      properties:
+        status:
+          type: string
+          enum: [cancelled]
+        request_id:
+          type: string
+          format: uuid
+        deletion_state:
+          type: string
+          enum: [cancelled]
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    AccountDeletionExecuteRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - request_id
+      properties:
+        request_id:
+          type: string
+          format: uuid
+    AccountDeletionExecuteResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - request_id
+        - deletion_state
+        - execution_outcome
+        - executed_at
+        - revoked_session_count
+      properties:
+        status:
+          type: string
+          enum: [executed]
+        request_id:
+          type: string
+          format: uuid
+        deletion_state:
+          type: string
+          enum: [executed]
+        execution_outcome:
+          type: string
+          enum: [tombstoned]
+        executed_at:
+          type: string
+          format: date-time
+        revoked_session_count:
+          type: integer
+          minimum: 0
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    PhoneChangeRequestCreateRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - new_phone_number
+        - current_password
+      properties:
+        new_phone_number:
+          type: string
+          minLength: 10
+          maxLength: 13
+          pattern: "^(\\+254|254|0)[17][0-9]{8}$"
+          description: >
+            Kenyan phone-number target for account phone-change workflow.
+            Runtime normalizes accepted local/international forms to `+254...`.
+        current_password:
+          type: string
+          minLength: 1
+          description: Re-authentication secret required to initiate phone change.
+    PhoneChangeRequestResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - request_id
+        - phone_change_state
+        - step_up_challenge_id
+        - step_up_expires_at
+      properties:
+        status:
+          type: string
+          enum: [pending_confirmation]
+        request_id:
+          type: string
+          format: uuid
+        phone_change_state:
+          type: string
+          enum: [pending_confirmation]
+        step_up_challenge_id:
+          type: string
+          format: uuid
+        step_up_expires_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    PhoneChangeConfirmRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - request_id
+        - step_up_challenge_id
+        - step_up_otp_code
+      properties:
+        request_id:
+          type: string
+          format: uuid
+        step_up_challenge_id:
+          type: string
+          format: uuid
+        step_up_otp_code:
+          type: string
+          minLength: 4
+          maxLength: 12
+    PhoneChangeConfirmResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - request_id
+        - phone_change_state
+        - updated_phone_number
+        - updated_at
+      properties:
+        status:
+          type: string
+          enum: [phone_updated]
+        request_id:
+          type: string
+          format: uuid
+        phone_change_state:
+          type: string
+          enum: [confirmed]
+        updated_phone_number:
+          type: string
+          pattern: "^\\+254[17][0-9]{8}$"
+        updated_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"

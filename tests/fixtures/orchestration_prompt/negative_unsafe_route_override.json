@@ -1,0 +1,28 @@
+{
+  "fixture_id": "negative_unsafe_route_override",
+  "flow": "execute_with_decision",
+  "request_payload": {
+    "tenant_id": "pilot_tenant_alpha",
+    "conversation_id": "conv-orch-neg-unsafe-route-001",
+    "channel": "chat",
+    "prompt": {
+      "text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+      "format": "plain_text"
+    },
+    "user_id": "user_orch_e2e_alpha",
+    "idempotency_key": "idem-orch-neg-unsafe-route-001",
+    "intent_class": "compute_income_tax",
+    "tax_domain_hint": "income_tax",
+    "selected_route": {
+      "route_id": "income_tax_form_generation_route_v1",
+      "target_service": "forms",
+      "target_operation": "generate_income_tax_form_artifact"
+    }
+  },
+  "expected_error": {
+    "status_code": 403,
+    "error_code": "unsafe_action_path",
+    "reason": "unsafe_route_override",
+    "reason_code": "unsafe_route_override"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "expected_error": {
+    "reason": "unsupported_prompt_scope",
+    "message": "Prompt scope is not supported by governed income-tax pilot capability.",
+    "details": {
+      "reason": "unsupported_domain",
+      "error_code": "unsupported_prompt_scope",
+      "message": "Prompt scope is not supported by governed income-tax pilot capability.",
+      "rejected_context": {
+        "supported_lane_id": null,
+        "historical_version_id": null,
+        "tax_year": null,
+        "tax_domain": "vat",
+        "prompt_class": "income_tax_prompt_flow"
+      },
+      "correlation_id": "39679538ad7ae384fbf578c9b85bc8e3b9c3d6bd34450a39a4c15de3b803d123",
+      "trace_id": "46cbee795763b19ceabd77d07172217f8d571e5f8e22f49f82ec2ae649b8febf"
+    }
+  },
+  "fixture_id": "income_tax_prompt_flow_unsupported_scope_case_001",
+  "fixture_version": 1,
+  "request": {
+    "prompt_text": "Compute VAT filing output for Q3 and submit to regulator."
+  }
+}

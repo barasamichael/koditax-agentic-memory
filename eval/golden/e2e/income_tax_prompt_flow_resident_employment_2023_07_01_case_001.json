@@ -1,0 +1,61 @@
+{
+  "expected_output": {
+    "status": "draft_ready",
+    "message": "Draft income-tax outcome is ready for review. Confirm to continue, reject to stop, or revise input.",
+    "prompt_id": "7abc400bd604a3a5bf5055c09756ae469a410bb9f617a9114ddb4293d7690b26",
+    "prompt_text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+    "draft_context": {
+      "tax_type": "income_tax",
+      "supported_lane_id": "resident_employment_income_2023_07_01",
+      "historical_version_id": "KIT-VER-20230701-A",
+      "tax_year": 2023
+    },
+    "review_summary": {
+      "chargeable_income_kes": "960000.00",
+      "gross_tax_kes": "225400.00",
+      "total_reliefs_kes": "28800.00",
+      "net_income_tax_due_kes": "196600.00",
+      "refund_due_kes": "0.00"
+    },
+    "artifacts": {
+      "form_artifact_id": "4f8cf5714d4f07f1c45de67e0ef0353852521b6ff8179642f8f8759a879e35ce",
+      "form_version_id": "ITX-FORM-20230701-RES-EMP-V1",
+      "report_id": "c603561516109dc350387fd23e67cc9f14badbbe51220a3b536f4fa74e55caea",
+      "report_version_id": "ITX-RPT-20230701-RES-EMP-V1",
+      "submission_preview_payload_id": "bf5cf80aa2345aa3f22ce028f7fb2531f08f930ad53a0b6dfe099ad589dd51a2",
+      "submission_preview_payload_version": "income_tax_submission_payload_v1"
+    },
+    "lineage": {
+      "computation_id": "7f4f2f16-e845-5ce2-91f7-73cd244874a7",
+      "input_hash": "b00256cab7e0c763133ed0ea44fc85e5260ed4c0eb76c6dc64d3b69218d0f32b",
+      "rule_version": "v1",
+      "finalized_audit_event_id": "36ea5bfb-8bce-547d-ab10-46ddb21027f1",
+      "form_audit_evidence_id": "d906f40f726ef701c6061505d5dabf7c1f7c5d61c62a779d71b87a5621195663",
+      "report_audit_evidence_id": "1e352e4a968ac483e93b810df069937f55f55b8f7dca06c3b2114b48eaf87446",
+      "payload_audit_evidence_id": "fb47f6eb4f0da161001e16e7f6833d9e6adfa4f33a453383d42226b49d9150b4"
+    },
+    "next_allowed_actions": [
+      "confirm",
+      "reject",
+      "revise_input"
+    ],
+    "correlation_id": "7abc400bd604a3a5bf5055c09756ae469a410bb9f617a9114ddb4293d7690b26",
+    "trace_id": "6d972266127b7cb55201a82c9e528efbc20791ed80dc8ea79b988776300a9ada",
+    "trace_context": {
+      "correlation_id": "7abc400bd604a3a5bf5055c09756ae469a410bb9f617a9114ddb4293d7690b26",
+      "trace_id": "6d972266127b7cb55201a82c9e528efbc20791ed80dc8ea79b988776300a9ada"
+    },
+    "document_evidence_refs": {
+      "document_id": "eec6de20-b9ee-5302-871a-1f79ec6bb7b1",
+      "extraction_id": "26210a6b-2c38-598c-a613-91deebb11c18",
+      "projection_ref_id": "a82ba65ab62b8623fafcdbee4ba770158b4674ee91f56dae8c543fd34330f151",
+      "conflict_report_ref_id": null,
+      "conflict_policy_decision_ref_id": null
+    }
+  },
+  "fixture_id": "income_tax_prompt_flow_resident_employment_2023_07_01_case_001",
+  "fixture_version": 1,
+  "request": {
+    "prompt_text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A."
+  }
+}

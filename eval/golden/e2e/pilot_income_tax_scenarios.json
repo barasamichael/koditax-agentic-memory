@@ -1,0 +1,336 @@
+{
+  "pack_version": 1,
+  "capability_scope": "income_tax_vertical_slice",
+  "generated_at": "2026-03-27T00:00:00+03:00",
+  "scenarios": [
+    {
+      "scenario_id": "pilot_scenario_resident_2021_happy",
+      "scenario_type": "happy_path_supported_lane",
+      "description": "Resident employment historical lane succeeds end-to-end.",
+      "input": {
+        "prompt_text": "Compute income tax for resident employment lane in tax year 2021 under KIT-VER-20210101-A.",
+        "tenant_id": "pilot_tenant_alpha"
+      },
+      "expected": {
+        "outcome_status": "success",
+        "supported_lane_id": "resident_employment_income_2021_01_01",
+        "required_audit_event_types": [
+          "intent_parsed",
+          "plan_generated",
+          "plan_validated"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_non_resident_2021_happy",
+      "scenario_type": "happy_path_supported_lane",
+      "description": "Non-resident employment historical lane succeeds end-to-end.",
+      "input": {
+        "prompt_text": "Compute income tax for non-resident employment lane in tax year 2021 under KIT-VER-20210101-A.",
+        "tenant_id": "pilot_tenant_alpha"
+      },
+      "expected": {
+        "outcome_status": "success",
+        "supported_lane_id": "non_resident_employment_income_2021_01_01",
+        "required_audit_event_types": [
+          "intent_parsed",
+          "plan_generated",
+          "plan_validated"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_resident_2023_happy",
+      "scenario_type": "happy_path_supported_lane",
+      "description": "Resident employment current lane succeeds end-to-end.",
+      "input": {
+        "prompt_text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+        "tenant_id": "pilot_tenant_alpha"
+      },
+      "expected": {
+        "outcome_status": "success",
+        "supported_lane_id": "resident_employment_income_2023_07_01",
+        "required_audit_event_types": [
+          "intent_parsed",
+          "plan_generated",
+          "plan_validated"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_non_resident_2023_happy",
+      "scenario_type": "happy_path_supported_lane",
+      "description": "Non-resident employment current lane succeeds end-to-end.",
+      "input": {
+        "prompt_text": "Compute income tax for non-resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+        "tenant_id": "pilot_tenant_alpha"
+      },
+      "expected": {
+        "outcome_status": "success",
+        "supported_lane_id": "non_resident_employment_income_2023_07_01",
+        "required_audit_event_types": [
+          "intent_parsed",
+          "plan_generated",
+          "plan_validated"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_mixed_2023_happy",
+      "scenario_type": "happy_path_supported_lane",
+      "description": "Mixed resident employment plus qualifying interest lane succeeds end-to-end.",
+      "input": {
+        "prompt_text": "Compute income tax for resident employment plus qualifying interest lane in tax year 2023 under KIT-VER-20230701-A.",
+        "tenant_id": "pilot_tenant_alpha"
+      },
+      "expected": {
+        "outcome_status": "success",
+        "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+        "required_audit_event_types": [
+          "intent_parsed",
+          "plan_generated",
+          "plan_validated"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_unsupported_domain_rejected",
+      "scenario_type": "unsupported_domain_rejection",
+      "description": "Unsupported domain prompt is rejected by capability gate contract.",
+      "input": {
+        "prompt_text": "Compute VAT filing output for Q3 and submit to regulator.",
+        "tenant_id": "pilot_tenant_alpha"
+      },
+      "expected": {
+        "outcome_status": "rejected",
+        "expected_reason_code": "unsupported_domain",
+        "required_audit_event_types": [
+          "intent_parsed",
+          "plan_generated"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_tenant_not_allowlisted_rejected",
+      "scenario_type": "tenant_guard_rejection",
+      "description": "Unallowlisted tenant is blocked before governed execution.",
+      "input": {
+        "prompt_text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+        "tenant_id": "pilot_tenant_unknown"
+      },
+      "expected": {
+        "outcome_status": "rejected",
+        "expected_reason_code": "tenant_not_allowlisted",
+        "required_audit_event_types": [
+          "pilot_tenant_guard_decision"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_kill_switch_action_rejected",
+      "scenario_type": "kill_switch_rejection",
+      "description": "Action kill-switch blocks low-risk submission action before execution.",
+      "input": {
+        "prompt_text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+        "tenant_id": "pilot_tenant_alpha",
+        "action": {
+          "action_type": "submission_execute",
+          "risk_class": "low",
+          "confirmation_decision": "confirm"
+        },
+        "safety_controls": {
+          "action_kill_switches": [
+            "action:submission_execute"
+          ]
+        }
+      },
+      "expected": {
+        "outcome_status": "rejected",
+        "expected_reason_code": "action_kill_switch_active",
+        "required_audit_event_types": [
+          "policy_decision",
+          "safety_control_decision"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_confirmed_low_risk_action_allowed",
+      "scenario_type": "confirmed_low_risk_action",
+      "description": "Confirmed low-risk submission action reaches adapter boundary deterministically.",
+      "input": {
+        "prompt_text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+        "tenant_id": "pilot_tenant_alpha",
+        "action": {
+          "action_type": "submission_execute",
+          "risk_class": "low",
+          "confirmation_decision": "confirm"
+        }
+      },
+      "expected": {
+        "outcome_status": "success",
+        "expected_reason_code": "submission_action_mock_pending",
+        "expected_action_status": "allowed",
+        "required_audit_event_types": [
+          "policy_decision",
+          "action_execution_requested",
+          "action_execution_result_mapped"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_high_risk_step_up_required_pending",
+      "scenario_type": "high_risk_step_up_required",
+      "description": "Confirmed high-risk action returns step-up required pending state.",
+      "input": {
+        "prompt_text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+        "tenant_id": "pilot_tenant_alpha",
+        "action": {
+          "action_type": "submission_execute",
+          "risk_class": "high",
+          "confirmation_decision": "confirm"
+        }
+      },
+      "expected": {
+        "outcome_status": "pending",
+        "expected_reason_code": "step_up_auth_required",
+        "required_audit_event_types": [
+          "policy_decision",
+          "step_up_challenge_issued"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_high_risk_step_up_failed_rejected",
+      "scenario_type": "step_up_failed_rejection",
+      "description": "Invalid step-up proof rejects high-risk action deterministically.",
+      "input": {
+        "prompt_text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+        "tenant_id": "pilot_tenant_alpha",
+        "action": {
+          "action_type": "submission_execute",
+          "risk_class": "high",
+          "confirmation_decision": "confirm"
+        },
+        "step_up": {
+          "proof_code": "000000",
+          "verified_at": "2026-03-20T00:02:00+03:00",
+          "authorized_at": "2026-03-20T00:03:00+03:00"
+        }
+      },
+      "expected": {
+        "outcome_status": "rejected",
+        "expected_reason_code": "step_up_proof_missing",
+        "required_audit_event_types": [
+          "policy_decision",
+          "step_up_challenge_issued",
+          "step_up_verification_result"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_high_risk_step_up_expired_rejected",
+      "scenario_type": "step_up_expired_rejection",
+      "description": "Expired bound step-up proof rejects high-risk action deterministically.",
+      "input": {
+        "prompt_text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+        "tenant_id": "pilot_tenant_alpha",
+        "action": {
+          "action_type": "submission_execute",
+          "risk_class": "high",
+          "confirmation_decision": "confirm"
+        },
+        "step_up": {
+          "proof_code": "246810",
+          "verified_at": "2026-03-20T00:02:00+03:00",
+          "authorized_at": "2026-03-20T00:06:30+03:00"
+        }
+      },
+      "expected": {
+        "outcome_status": "rejected",
+        "expected_reason_code": "step_up_proof_expired",
+        "required_audit_event_types": [
+          "policy_decision",
+          "step_up_challenge_issued",
+          "step_up_verification_result"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    },
+    {
+      "scenario_id": "pilot_scenario_submission_replay_no_duplicate",
+      "scenario_type": "idempotent_replay_no_duplicate",
+      "description": "Repeated identical submission action replays deterministic envelope without duplication.",
+      "input": {
+        "prompt_text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+        "tenant_id": "pilot_tenant_alpha",
+        "action": {
+          "action_type": "submission_execute",
+          "risk_class": "low",
+          "confirmation_decision": "confirm"
+        }
+      },
+      "expected": {
+        "outcome_status": "success",
+        "expected_reason_code": "submission_action_mock_pending",
+        "expected_action_status": "allowed",
+        "replay_identical": true,
+        "required_audit_event_types": [
+          "policy_decision",
+          "action_execution_requested",
+          "action_execution_result_mapped"
+        ],
+        "required_trace_fields": [
+          "trace_id",
+          "correlation_id"
+        ]
+      }
+    }
+  ]
+}

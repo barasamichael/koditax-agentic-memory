@@ -1,0 +1,1760 @@
+openapi: 3.1.0
+info:
+  title: orchestration
+  version: "0.1.0"
+  description: >
+    Deterministic orchestration runtime boundary for tax-domain-aware prompt execution planning.
+    The implemented prompt execution path supports governed income-tax and
+    health_contribution routing, plus governed knowledge lookup and timeline routing for
+    supported authority and legal-reference prompts. The prompt-execution layer
+    also supports governed multi-step execution plus additive OpenAI-backed
+    user-facing answer synthesis from already-governed execution outputs across
+    compute, knowledge, forms, reports, and document extraction lanes, plus
+    bounded same-conversation follow-up resolution from prior governed
+    execution context. Conversation continuity and response synthesis can be
+    disabled by rollout or orchestration safety controls without disabling the
+    underlying structured execution envelope. Release-gate, rollout-manifest,
+    and post-deploy verification behavior remain internal helper surfaces in
+    this slice rather than separate public orchestration endpoints.
+paths:
+  /healthz:
+    get:
+      summary: Orchestration service health check.
+      operationId: orchestrationHealthz
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+      responses:
+        "200":
+          description: Service is healthy.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceStatusResponse"
+  /readyz:
+    get:
+      summary: Orchestration service readiness check.
+      operationId: orchestrationReadyz
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+      responses:
+        "200":
+          description: Service is ready and returns additive rollout-surface metadata for internal-safe runtime inspection.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceStatusResponse"
+  /v1/orchestration/income-tax/execute:
+    post:
+      summary: Build deterministic orchestration execution plan for the implemented income-tax prompt path.
+      operationId: executeIncomeTaxOrchestration
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrchestrationExecuteRequest"
+      responses:
+        "200":
+          description: Execution plan generated and validated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrchestrationExecuteResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/orchestration/prompt/ingest:
+    post:
+      summary: Ingest deterministic chat prompt envelope at orchestration boundary.
+      operationId: ingestOrchestrationPrompt
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PromptIngestionRequest"
+      responses:
+        "200":
+          description: Prompt accepted for downstream orchestration lifecycle.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PromptIngestionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/orchestration/prompt/decide:
+    post:
+      summary: Resolve deterministic intent/gate/route decision for prompt ingress and bounded same-conversation follow-up reuse.
+      operationId: decideOrchestrationPromptRoute
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PromptIngestionRequest"
+      responses:
+        "200":
+          description: Prompt decision pipeline resolved to deterministic governed route selection or clarification-required follow-up outcome, including continuity-disabled or policy-blocked follow-up clarification paths.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PromptDecisionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/orchestration/prompt/execute:
+    post:
+      summary: Execute deterministic governed route-selected adapter dispatch with bounded same-conversation follow-up continuity and canonical fallback when synthesis is disabled or blocked.
+      operationId: executeOrchestrationPromptRoute
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PromptExecutionRequest"
+      responses:
+        "200":
+          description: Selected route dispatched through deterministic adapter boundary.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PromptExecutionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "502":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/orchestration/prompt/execute/stream:
+    post:
+      summary: Execute a governed prompt and relay synthesis events.
+      operationId: executeOrchestrationPromptStream
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PromptExecutionRequest"
+      responses:
+        "200":
+          description: Server-sent execution events ending with the execution envelope.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/orchestration/conversations:
+    get:
+      summary: List browser-visible conversations from persisted orchestration state.
+      operationId: listOrchestrationConversations
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      responses:
+        "200":
+          description: Conversation history hydration payload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationHistoryListResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/orchestration/conversations/{conversation_id}:
+    patch:
+      summary: Rename one scoped conversation-state history set.
+      operationId: renameOrchestrationConversation
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: conversation_id
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConversationRenameRequest"
+      responses:
+        "200":
+          description: Conversation-state records renamed or already using the requested title.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationRenameResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+    delete:
+      summary: Delete one scoped conversation-state history set.
+      operationId: deleteOrchestrationConversation
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: conversation_id
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        "200":
+          description: Conversation-state records deleted or already absent.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationDeleteResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/orchestration/conversations/bulk-delete:
+    post:
+      summary: Delete multiple scoped conversation-state history sets.
+      operationId: bulkDeleteOrchestrationConversations
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkConversationDeleteRequest"
+      responses:
+        "200":
+          description: Conversation-state records deleted or already absent for the selected conversations.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BulkConversationDeleteResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+components:
+  parameters:
+    CorrelationIdHeader:
+      in: header
+      name: X-Correlation-ID
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    TraceIdHeader:
+      in: header
+      name: X-Trace-ID
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    AuthContextHeader:
+      in: header
+      name: X-Auth-Context
+      required: true
+      schema:
+        type: string
+  responses:
+    ErrorResponse:
+      description: Canonical deterministic error envelope.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - detail
+            properties:
+              detail:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  schemas:
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+        - reason_code
+        - correlation_id
+        - trace_id
+      properties:
+        error_code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+        reason_code:
+          type: string
+          minLength: 1
+        correlation_id:
+          type: string
+          minLength: 1
+        trace_id:
+          type: string
+        response_synthesis_enabled:
+          type:
+            - boolean
+            - "null"
+        conversation_continuity_enabled:
+          type:
+            - boolean
+            - "null"
+        release_gate_surface:
+          type:
+            - string
+            - "null"
+          minLength: 1
+        context:
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: "null"
+    ServiceStatusResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - service
+        - version
+        - correlation_id
+        - trace_id
+      properties:
+        status:
+          type: string
+          enum: [ok, ready]
+        service:
+          type: string
+        version:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+    OrchestrationExecuteRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - prompt_text
+      properties:
+        prompt_text:
+          type: string
+          minLength: 1
+        tenant_id:
+          type: string
+          minLength: 1
+    OrchestrationResult:
+      type: object
+      additionalProperties: false
+      required:
+        - intent_class
+        - supported_lane_id
+        - historical_version_id
+        - tax_year
+        - plan_id
+        - plan_status
+        - validation_status
+      properties:
+        intent_class:
+          type: string
+        supported_lane_id:
+          type: string
+        historical_version_id:
+          type: string
+        tax_year:
+          type: integer
+        plan_id:
+          type: string
+        plan_status:
+          type: string
+        validation_status:
+          type: string
+    OrchestrationExecuteResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - service
+        - correlation_id
+        - trace_id
+        - result
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/OrchestrationResult"
+    PromptPayload:
+      type: object
+      additionalProperties: false
+      required:
+        - text
+        - format
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 4000
+        format:
+          type: string
+          enum: [plain_text]
+    PromptIngestionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - tenant_id
+        - conversation_id
+        - channel
+        - prompt
+      properties:
+        tenant_id:
+          type: string
+          minLength: 1
+          maxLength: 128
+        conversation_id:
+          type: string
+          minLength: 1
+          maxLength: 128
+        channel:
+          type: string
+          enum: [chat]
+        prompt:
+          $ref: "#/components/schemas/PromptPayload"
+    PromptIngestionResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - service
+        - correlation_id
+        - trace_id
+        - ingestion_id
+        - tenant_id
+        - conversation_id
+        - channel
+        - prompt_format
+        - prompt_checksum
+      properties:
+        status:
+          type: string
+          enum: [accepted]
+        service:
+          type: string
+        correlation_id:
+          type: string
+          minLength: 1
+        trace_id:
+          type: string
+          minLength: 1
+        ingestion_id:
+          type: string
+          minLength: 64
+          maxLength: 64
+        tenant_id:
+          type: string
+          minLength: 1
+          maxLength: 128
+        conversation_id:
+          type: string
+          minLength: 1
+          maxLength: 128
+        channel:
+          type: string
+          enum: [chat]
+        prompt_format:
+          type: string
+          enum: [plain_text]
+        prompt_checksum:
+          type: string
+          minLength: 64
+          maxLength: 64
+    OrchestrationRouteSelection:
+      type: object
+      additionalProperties: false
+      required:
+        - route_id
+        - target_service
+        - target_operation
+      properties:
+        route_id:
+          type: string
+          minLength: 1
+        target_service:
+          type: string
+          minLength: 1
+        target_operation:
+          type: string
+          minLength: 1
+    OrchestrationPlanStep:
+      type: object
+      additionalProperties: false
+      required:
+        - step_id
+        - route_id
+        - target_service
+        - target_operation
+        - step_status
+        - depends_on
+      properties:
+        step_id:
+          type: string
+          minLength: 1
+        route_id:
+          type: string
+          minLength: 1
+        target_service:
+          type: string
+          minLength: 1
+        target_operation:
+          type: string
+          minLength: 1
+        step_status:
+          type: string
+          minLength: 1
+        depends_on:
+          type: array
+          items:
+            type: string
+        step_purpose:
+          oneOf:
+            - type: string
+              minLength: 1
+            - type: "null"
+    OrchestrationExecutionPlan:
+      type: object
+      additionalProperties: false
+      required:
+        - plan_id
+        - plan_version
+        - plan_status
+        - planning_mode
+        - execution_ready
+        - steps
+      properties:
+        plan_id:
+          type: string
+          minLength: 1
+        plan_version:
+          type: string
+          minLength: 1
+        plan_status:
+          type: string
+          minLength: 1
+        planning_mode:
+          type: string
+          enum: [single_step, multi_step, clarification_required]
+        execution_ready:
+          type: boolean
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrchestrationPlanStep"
+    OrchestrationStepExecutionResult:
+      type: object
+      additionalProperties: false
+      required:
+        - step_id
+        - route_id
+        - target_service
+        - target_operation
+        - step_status
+        - depends_on
+        - execution_id
+        - mapped_result
+        - adapter_response
+        - error
+      properties:
+        step_id:
+          type: string
+          minLength: 1
+        route_id:
+          type: string
+          minLength: 1
+        target_service:
+          type: string
+          minLength: 1
+        target_operation:
+          type: string
+          minLength: 1
+        step_status:
+          type: string
+          enum: [planned, running, resolved, blocked, rejected]
+        depends_on:
+          type: array
+          items:
+            type: string
+        step_purpose:
+          oneOf:
+            - type: string
+              minLength: 1
+            - type: "null"
+        execution_id:
+          type: [string, "null"]
+        mapped_result:
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: "null"
+        adapter_response:
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: "null"
+        error:
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: "null"
+    OrchestrationStepExecutionSummary:
+      type: object
+      additionalProperties: false
+      required:
+        - total_steps
+        - resolved_steps
+        - blocked_steps
+        - rejected_steps
+        - pending_steps
+        - accepted_steps
+      properties:
+        total_steps:
+          type: integer
+          minimum: 0
+        resolved_steps:
+          type: integer
+          minimum: 0
+        blocked_steps:
+          type: integer
+          minimum: 0
+        rejected_steps:
+          type: integer
+          minimum: 0
+        pending_steps:
+          type: integer
+          minimum: 0
+        accepted_steps:
+          type: integer
+          minimum: 0
+    PromptClarificationRequirement:
+      type: object
+      additionalProperties: false
+      required:
+        - reason_code
+        - message
+        - required_context_fields
+        - candidate_service_families
+      properties:
+        reason_code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        required_context_fields:
+          type: array
+          items:
+            type: string
+        candidate_service_families:
+          type: array
+          items:
+            type: string
+    PromptDecisionResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - service
+        - correlation_id
+        - trace_id
+        - decision_id
+        - prompt_checksum
+        - intent_class
+        - tax_domain_hint
+        - gate_status
+        - plan
+      properties:
+        status:
+          type: string
+          enum: [resolved, clarification_required]
+        service:
+          type: string
+        correlation_id:
+          type: string
+          minLength: 1
+        trace_id:
+          type: string
+          minLength: 1
+        decision_id:
+          type: string
+          minLength: 64
+          maxLength: 64
+        prompt_checksum:
+          type: string
+          minLength: 64
+          maxLength: 64
+        intent_class:
+          type: string
+          minLength: 1
+        tax_domain_hint:
+          type: string
+          minLength: 1
+        supported_lane_id:
+          type: [string, "null"]
+          minLength: 1
+        historical_version_id:
+          type: [string, "null"]
+          minLength: 1
+        regime_identifier:
+          type: [string, "null"]
+          minLength: 1
+        gate_status:
+          type: string
+          enum: [allowed, plan_only, clarification_required]
+        selected_route:
+          oneOf:
+            - $ref: "#/components/schemas/OrchestrationRouteSelection"
+            - type: "null"
+        plan:
+          $ref: "#/components/schemas/OrchestrationExecutionPlan"
+        clarification:
+          oneOf:
+            - $ref: "#/components/schemas/PromptClarificationRequirement"
+            - type: "null"
+    PromptExecutionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - tenant_id
+        - conversation_id
+        - channel
+        - prompt
+        - idempotency_key
+        - intent_class
+        - tax_domain_hint
+        - decision_id
+        - selected_route
+      properties:
+        tenant_id:
+          type: string
+          minLength: 1
+          maxLength: 128
+        conversation_id:
+          type: string
+          minLength: 1
+          maxLength: 128
+        channel:
+          type: string
+          enum: [chat]
+        prompt:
+          $ref: "#/components/schemas/PromptPayload"
+        idempotency_key:
+          type: string
+          minLength: 1
+          maxLength: 128
+        intent_class:
+          type: string
+          minLength: 1
+          maxLength: 128
+        tax_domain_hint:
+          type: string
+          minLength: 1
+          maxLength: 128
+        decision_id:
+          type: string
+          minLength: 64
+          maxLength: 64
+        selected_route:
+          oneOf:
+            - $ref: "#/components/schemas/OrchestrationRouteSelection"
+            - type: "null"
+        action_context:
+          $ref: "#/components/schemas/OrchestrationActionSafetyContext"
+    OrchestrationActionSafetyContext:
+      type: object
+      additionalProperties: false
+      required:
+        - risk_class
+        - confirmation_state
+        - step_up_proof_state
+      properties:
+        risk_class:
+          type: string
+          enum: [low, high]
+        confirmation_state:
+          type: string
+          enum: [confirmed, pending, unknown]
+        step_up_proof_state:
+          type: string
+          enum: [bound, unbound, not_required]
+    GovernedValidationIssue:
+      type: object
+      additionalProperties: false
+      required:
+        - severity
+        - code
+        - message
+        - field
+      properties:
+        severity:
+          type: string
+          enum: [ERROR, WARNING, INFO]
+        code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        field:
+          oneOf:
+            - type: string
+            - type: "null"
+    GovernedValidationRuleResult:
+      type: object
+      additionalProperties: false
+      required:
+        - rule_code
+        - outcome
+        - severity
+        - message
+        - field
+        - linked_issue_codes
+      properties:
+        rule_code:
+          type: string
+          minLength: 1
+        outcome:
+          type: string
+          enum: [passed, failed, not_applicable]
+        severity:
+          type: string
+          enum: [ERROR, WARNING, INFO]
+        message:
+          type: string
+          minLength: 1
+        field:
+          oneOf:
+            - type: string
+            - type: "null"
+        linked_issue_codes:
+          type: array
+          items:
+            type: string
+    GovernedValidationSummary:
+      type: object
+      additionalProperties: false
+      required:
+        - error_count
+        - warning_count
+        - info_count
+        - total_issues
+      properties:
+        error_count:
+          type: integer
+        warning_count:
+          type: integer
+        info_count:
+          type: integer
+        total_issues:
+          type: integer
+    GovernedValidationEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - workflow
+        - tax_domain
+        - validation_status
+        - summary
+        - issues
+        - rule_results
+      properties:
+        workflow:
+          type: string
+          minLength: 1
+        tax_domain:
+          type: string
+          enum: [income_tax, health_contribution]
+        validation_status:
+          type: string
+          enum: [accepted, rejected]
+        summary:
+          $ref: "#/components/schemas/GovernedValidationSummary"
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/GovernedValidationIssue"
+        rule_results:
+          type: array
+          items:
+            $ref: "#/components/schemas/GovernedValidationRuleResult"
+    PromptExecutionResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - service
+        - correlation_id
+        - trace_id
+        - execution_id
+        - decision_id
+        - prompt_checksum
+        - plan
+        - selected_route
+        - execution_status
+        - mapped_result
+        - response
+        - final_outcome
+      properties:
+        status:
+          type: string
+          enum: [executed]
+        service:
+          type: string
+        correlation_id:
+          type: string
+          minLength: 1
+        trace_id:
+          type: string
+          minLength: 1
+        execution_id:
+          type: string
+          minLength: 64
+          maxLength: 64
+        decision_id:
+          type: string
+          minLength: 64
+          maxLength: 64
+        prompt_checksum:
+          type: string
+          minLength: 64
+          maxLength: 64
+        tax_domain_hint:
+          type: string
+          minLength: 1
+        supported_lane_id:
+          type: [string, "null"]
+          minLength: 1
+        historical_version_id:
+          type: [string, "null"]
+          minLength: 1
+        regime_identifier:
+          type: [string, "null"]
+          minLength: 1
+        plan:
+          $ref: "#/components/schemas/OrchestrationExecutionPlan"
+        grounding_status:
+          type: [string, "null"]
+          enum: [grounded, not_applicable, null]
+        grounded_evidence:
+          oneOf:
+            - type: array
+              items:
+                $ref: "#/components/schemas/GroundedKnowledgeEvidence"
+            - type: "null"
+        explanation_status:
+          type: [string, "null"]
+          enum: [grounded, not_applicable, null]
+        explanation_items:
+          oneOf:
+            - type: array
+              items:
+                $ref: "#/components/schemas/GroundedExplanationItem"
+            - type: "null"
+        citations:
+          oneOf:
+            - type: array
+              items:
+                $ref: "#/components/schemas/GroundedExplanationCitation"
+            - type: "null"
+        source_references:
+          type: array
+          items:
+            $ref: "#/components/schemas/UnifiedAnswerSourceReference"
+        authority_summary:
+          oneOf:
+            - $ref: "#/components/schemas/GroundedAuthoritySummary"
+            - type: "null"
+        temporal_applicability:
+          oneOf:
+            - $ref: "#/components/schemas/GroundedTemporalApplicability"
+            - type: "null"
+        selected_route:
+          oneOf:
+            - $ref: "#/components/schemas/OrchestrationRouteSelection"
+            - type: "null"
+        step_results:
+          oneOf:
+            - type: array
+              items:
+                $ref: "#/components/schemas/OrchestrationStepExecutionResult"
+            - type: "null"
+        step_summary:
+          oneOf:
+            - $ref: "#/components/schemas/OrchestrationStepExecutionSummary"
+            - type: "null"
+        execution_status:
+          type: string
+          enum: [resolved]
+        mapped_result:
+          type: object
+          additionalProperties: true
+        adapter_response:
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: "null"
+        validation:
+          oneOf:
+            - $ref: "#/components/schemas/GovernedValidationEnvelope"
+            - type: "null"
+        response:
+          $ref: "#/components/schemas/UnifiedAnswerResponse"
+        final_outcome:
+          $ref: "#/components/schemas/OrchestrationFinalOutcomeEnvelope"
+        errors:
+          oneOf:
+            - type: array
+              items:
+                $ref: "#/components/schemas/ErrorEnvelope"
+            - type: "null"
+    ConversationDeleteResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - service
+        - correlation_id
+        - trace_id
+        - conversation_id
+        - deleted_count
+      properties:
+        status:
+          type: string
+          enum: [deleted]
+        service:
+          type: string
+        correlation_id:
+          type: string
+          minLength: 1
+        trace_id:
+          type: string
+          minLength: 1
+        conversation_id:
+          type: string
+          minLength: 1
+        deleted_count:
+          type: integer
+          minimum: 0
+    ConversationRenameRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - conversation_title
+      properties:
+        conversation_title:
+          type: string
+          minLength: 1
+          maxLength: 80
+    ConversationRenameResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - service
+        - correlation_id
+        - trace_id
+        - conversation_id
+        - conversation_title
+        - updated_count
+      properties:
+        status:
+          type: string
+          enum: [renamed]
+        service:
+          type: string
+        correlation_id:
+          type: string
+          minLength: 1
+        trace_id:
+          type: string
+          minLength: 1
+        conversation_id:
+          type: string
+          minLength: 1
+        conversation_title:
+          type: string
+          minLength: 1
+        updated_count:
+          type: integer
+          minimum: 0
+    ConversationHistoryMessage:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - role
+        - content
+        - timestamp
+        - type
+      properties:
+        id:
+          type: string
+          minLength: 1
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        timestamp:
+          type: string
+          minLength: 1
+        type:
+          type: string
+          enum: [text, action_approval, outcome, error]
+        metadata:
+          type: object
+          additionalProperties: true
+          nullable: true
+    ConversationHistoryConversation:
+      type: object
+      additionalProperties: false
+      required:
+        - conversation_id
+        - title
+        - created_at
+        - updated_at
+        - status
+        - messages
+      properties:
+        conversation_id:
+          type: string
+          minLength: 1
+        title:
+          type: string
+          minLength: 1
+        created_at:
+          type: string
+          minLength: 1
+        updated_at:
+          type: string
+          minLength: 1
+        status:
+          type: string
+          enum: [draft, active, attention]
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConversationHistoryMessage"
+    ConversationHistoryListResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - service
+        - correlation_id
+        - trace_id
+        - conversations
+      properties:
+        status:
+          type: string
+          enum: [listed]
+        service:
+          type: string
+        correlation_id:
+          type: string
+          minLength: 1
+        trace_id:
+          type: string
+          minLength: 1
+        conversations:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConversationHistoryConversation"
+    BulkConversationDeleteRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - conversation_ids
+      properties:
+        conversation_ids:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+            maxLength: 128
+    BulkConversationDeleteResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - service
+        - correlation_id
+        - trace_id
+        - requested_conversation_ids
+        - deleted_conversation_ids
+        - deleted_count
+      properties:
+        status:
+          type: string
+          enum: [deleted]
+        service:
+          type: string
+        correlation_id:
+          type: string
+          minLength: 1
+        trace_id:
+          type: string
+          minLength: 1
+        requested_conversation_ids:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        deleted_conversation_ids:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        deleted_count:
+          type: integer
+          minimum: 0
+    UnifiedAnswerCitation:
+      type: object
+      additionalProperties: false
+      required:
+        - citation_index
+        - source_id
+        - source_version_id
+        - anchor_id
+        - title
+        - url
+        - authority_level
+        - temporal_applicability
+      properties:
+        citation_index:
+          type: integer
+          minimum: 1
+        source_id:
+          type: string
+        source_version_id:
+          type: string
+        anchor_id:
+          type: string
+        title:
+          type: string
+        url:
+          type: string
+        authority_level:
+          type: string
+        temporal_applicability:
+          type: string
+    UnifiedAnswerSourceLocation:
+      type: object
+      additionalProperties: false
+      required:
+        - location_kind
+        - location_label
+        - location_status
+      properties:
+        location_kind:
+          type: string
+          enum: [page, slide, sheet, line, section, cell, image, unknown]
+        location_label:
+          type: string
+        location_status:
+          type: string
+          enum: [exact, approximate, partial, unavailable]
+        page_number:
+          type: [integer, "null"]
+          minimum: 1
+        slide_number:
+          type: [integer, "null"]
+          minimum: 1
+        sheet_name:
+          type: [string, "null"]
+        line_start:
+          type: [integer, "null"]
+          minimum: 1
+        line_end:
+          type: [integer, "null"]
+          minimum: 1
+        cell_reference:
+          type: [string, "null"]
+        section_name:
+          type: [string, "null"]
+    UnifiedAnswerSourceReference:
+      type: object
+      additionalProperties: false
+      required:
+        - document_id
+        - document_label
+        - document_status
+        - source_location
+        - openable
+      properties:
+        document_id:
+          type: string
+        document_label:
+          type: string
+        document_status:
+          type: string
+          enum: [available, partial, unavailable]
+        source_location:
+          $ref: "#/components/schemas/UnifiedAnswerSourceLocation"
+        openable:
+          type: boolean
+        accessibility_label:
+          type: [string, "null"]
+    UnifiedAnswerResponse:
+      type: object
+      additionalProperties: false
+      description: >
+        Additive user-facing answer section. `status=generated` means governed
+        synthesis completed successfully. `status=failed` is the canonical
+        degraded-safe fallback for disabled, blocked, or failed synthesis while
+        preserving the structured execution envelope.
+      required:
+        - status
+        - answer_text
+        - answer_mode
+        - citations
+        - assumptions
+        - warnings
+        - integrity_signals
+      properties:
+        status:
+          type: string
+          enum: [generated, failed]
+        answer_text:
+          oneOf:
+            - type: string
+              minLength: 1
+            - type: "null"
+        answer_mode:
+          type: string
+          enum:
+            - compute_execution
+            - grounded_knowledge
+            - compute_plus_grounding
+            - forms_execution
+            - reports_execution
+            - document_extraction
+            - unsupported
+        citations:
+          type: array
+          items:
+            $ref: "#/components/schemas/UnifiedAnswerCitation"
+        source_references:
+          type: array
+          items:
+            $ref: "#/components/schemas/UnifiedAnswerSourceReference"
+        assumptions:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+          description: >
+            Canonical synthesis warnings, including rollout-disabled or
+            policy-blocked fallback disclosures when the answer is not
+            generated.
+        integrity_signals:
+          $ref: "#/components/schemas/ResponseIntegritySignals"
+    ContradictionFinding:
+      type: object
+      additionalProperties: false
+      required:
+        - claim_topic
+        - source_a_id
+        - source_a_value
+        - source_b_id
+        - source_b_value
+      properties:
+        claim_topic:
+          type: string
+        source_a_id:
+          type: string
+        source_a_value:
+          type: string
+        source_b_id:
+          type: string
+        source_b_value:
+          type: string
+    FactMismatch:
+      type: object
+      additionalProperties: false
+      required:
+        - field
+        - prior_value
+        - prior_execution_id
+        - current_value
+      properties:
+        field:
+          type: string
+        prior_value: {}
+        prior_execution_id:
+          type: string
+        current_value: {}
+    ResponseIntegritySignals:
+      type: object
+      additionalProperties: false
+      required:
+        - verification_is_verified
+        - verification_confidence
+        - unsupported_claims
+        - contradictions_found
+        - grounding_contradictions
+        - unverified_or_contradicting_user_facts
+        - synthesis_tool_iterations_used
+        - confidence_flag
+      properties:
+        verification_is_verified:
+          type: boolean
+          default: true
+        verification_confidence:
+          type: number
+          default: 1.0
+        unsupported_claims:
+          type: array
+          items:
+            type: string
+          default: []
+        contradictions_found:
+          type: array
+          items:
+            type: string
+          default: []
+        grounding_contradictions:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContradictionFinding"
+          default: []
+        unverified_or_contradicting_user_facts:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/FactMismatch"
+              - type: string
+          default: []
+        synthesis_tool_iterations_used:
+          type: integer
+          default: 0
+        confidence_flag:
+          type: string
+          enum: [high, medium, low]
+          default: high
+    OrchestrationFinalOutcomeTrace:
+      type: object
+      additionalProperties: false
+      required:
+        - trace_id
+        - correlation_id
+        - lineage_refs
+      properties:
+        trace_id:
+          type: string
+          minLength: 1
+        correlation_id:
+          type: string
+          minLength: 1
+        lineage_refs:
+          type: object
+          additionalProperties: true
+    GroundedKnowledgeEvidence:
+      type: object
+      additionalProperties: false
+      required:
+        - source_id
+        - source_version_id
+        - anchor_id
+        - title
+        - url
+        - source_type
+        - authority_level
+        - tax_domain
+        - effective_from
+        - effective_to
+        - tax_year
+        - publication_state
+        - source_version_form
+        - canonical_source_ref
+        - knowledge_route_mode
+        - timeline_position
+        - grounding_status
+      properties:
+        source_id:
+          type: string
+        source_version_id:
+          type: string
+        anchor_id:
+          type: string
+        title:
+          type: string
+        url:
+          type: string
+        source_type:
+          type: string
+        authority_level:
+          type: string
+        tax_domain:
+          type: string
+        effective_from:
+          type: string
+        effective_to:
+          oneOf:
+            - type: string
+            - type: "null"
+        tax_year:
+          oneOf:
+            - type: integer
+            - type: "null"
+        publication_state:
+          type: string
+        source_version_form:
+          type: string
+        canonical_source_ref:
+          type: string
+        knowledge_route_mode:
+          type: string
+          enum: [search, retrieve, timeline_search]
+        timeline_position:
+          oneOf:
+            - type: integer
+              minimum: 1
+            - type: "null"
+        grounding_status:
+          type: string
+          enum: [grounded]
+    GroundedExplanationItem:
+      type: object
+      additionalProperties: false
+      required:
+        - explanation_text
+        - source_id
+        - source_version_id
+        - anchor_id
+        - authority_level
+        - source_type
+        - temporal_applicability
+      properties:
+        explanation_text:
+          type: string
+        source_id:
+          type: string
+        source_version_id:
+          type: string
+        anchor_id:
+          type: string
+        authority_level:
+          type: string
+        source_type:
+          type: string
+        temporal_applicability:
+          type: string
+    GroundedExplanationCitation:
+      type: object
+      additionalProperties: false
+      required:
+        - citation_index
+        - source_id
+        - source_version_id
+        - anchor_id
+        - title
+        - url
+        - source_type
+        - authority_level
+        - tax_domain
+        - temporal_applicability
+        - effective_from
+        - effective_to
+        - tax_year
+      properties:
+        citation_index:
+          type: integer
+        source_id:
+          type: string
+        source_version_id:
+          type: string
+        anchor_id:
+          type: string
+        title:
+          type: string
+        url:
+          type: string
+        source_type:
+          type: string
+        authority_level:
+          type: string
+        tax_domain:
+          type: string
+        temporal_applicability:
+          type: string
+        effective_from:
+          type: string
+        effective_to:
+          oneOf:
+            - type: string
+            - type: "null"
+        tax_year:
+          oneOf:
+            - type: integer
+            - type: "null"
+    GroundedAuthoritySummary:
+      type: object
+      additionalProperties: false
+      required:
+        - highest_authority_level
+        - source_types
+        - citation_count
+      properties:
+        highest_authority_level:
+          type: string
+        source_types:
+          type: array
+          items:
+            type: string
+        citation_count:
+          type: integer
+          minimum: 0
+    GroundedTemporalApplicability:
+      type: object
+      additionalProperties: false
+      required:
+        - scope
+        - effective_from
+        - effective_to
+        - tax_year
+        - disclosure_text
+      properties:
+        scope:
+          type: string
+          enum: [current-effective, historical-effective, tax-year-scoped, timeline-multi-period]
+        effective_from:
+          type: string
+        effective_to:
+          oneOf:
+            - type: string
+            - type: "null"
+        tax_year:
+          oneOf:
+            - type: integer
+            - type: "null"
+        disclosure_text:
+          type: string
+    OrchestrationFinalOutcomeAudit:
+      type: object
+      additionalProperties: false
+      required:
+        - event_count
+        - event_ids
+        - event_types
+        - latest_event_id_by_type
+      properties:
+        event_count:
+          type: integer
+          minimum: 0
+        event_ids:
+          type: array
+          items:
+            type: string
+        event_types:
+          type: array
+          items:
+            type: string
+        latest_event_id_by_type:
+          type: object
+          additionalProperties:
+            type: string
+    OrchestrationFinalOutcomeEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - outcome_status
+        - message
+        - trace
+        - audit
+        - result
+      properties:
+        outcome_status:
+          type: string
+          enum: [success, rejected, error, pending]
+        message:
+          type: string
+          minLength: 1
+        trace:
+          $ref: "#/components/schemas/OrchestrationFinalOutcomeTrace"
+        audit:
+          $ref: "#/components/schemas/OrchestrationFinalOutcomeAudit"
+        result:
+          type: object
+          additionalProperties: true

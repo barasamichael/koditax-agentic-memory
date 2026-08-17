@@ -1,0 +1,19 @@
+{
+  "fixture_id": "negative_off_topic_weather",
+  "flow": "decide",
+  "request_payload": {
+    "tenant_id": "pilot_tenant_alpha",
+    "conversation_id": "conv-orch-neg-off-topic-001",
+    "channel": "chat",
+    "prompt": {
+      "text": "Tell me the weather in Nairobi tomorrow.",
+      "format": "plain_text"
+    }
+  },
+  "expected_error": {
+    "status_code": 400,
+    "error_code": "off_topic_prompt",
+    "reason": "off_topic_prompt",
+    "reason_code": "off_topic_prompt"
+  }
+}

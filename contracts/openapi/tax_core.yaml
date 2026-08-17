@@ -1,0 +1,635 @@
+openapi: 3.1.0
+info:
+  title: tax_core
+  version: "1.0.0"
+paths:
+  /computations/execute:
+    post:
+      summary: Execute a deterministic computation request.
+      operationId: executeComputation
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token in "<uuid>:<role>" format.
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+          description: Stable idempotency key for deterministic materialization.
+        - in: header
+          name: X-Correlation-ID
+          required: false
+          schema:
+            type: string
+          description: Optional caller-provided correlation identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComputationExecutionRequest"
+      responses:
+        "200":
+          description: Deterministic computation execution result with persisted record IDs.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MaterializedComputationExecutionResult"
+        "400":
+          description: Invalid computation request payload or rule binding.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Missing or invalid Authorization header.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Idempotency key reuse conflict for different logical input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Materialization failure while persisting deterministic records.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /computations/replay:
+    post:
+      summary: Replay persisted computation deterministically and verify stored result.
+      operationId: replayComputation
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token in "<uuid>:<role>" format.
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+          description: Stable idempotency key for deterministic replay verification.
+        - in: header
+          name: X-Correlation-ID
+          required: false
+          schema:
+            type: string
+          description: Optional caller-provided correlation identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReplayVerificationRequest"
+      responses:
+        "200":
+          description: Replay verification succeeded and matched persisted result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReplayVerificationResult"
+        "400":
+          description: Invalid replay request payload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Missing or invalid Authorization header.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Persisted computation not found for replay.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Replay mismatch against persisted deterministic result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Replay verification failure.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /computations/finalize:
+    post:
+      summary: Finalize one persisted computation with idempotent immutable state.
+      operationId: finalizeComputation
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token in "<uuid>:<role>" format.
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+          description: Stable idempotency key for deterministic finalization call.
+        - in: header
+          name: X-Correlation-ID
+          required: false
+          schema:
+            type: string
+          description: Optional caller-provided correlation identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComputationFinalizationRequest"
+      responses:
+        "200":
+          description: Computation finalized or already finalized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComputationFinalizationResult"
+        "400":
+          description: Invalid finalization request payload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Missing or invalid Authorization header.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Persisted computation not found for finalization.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Finalization failure.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /computations/validate:
+    post:
+      summary: Persist deterministic validation findings for a persisted computation.
+      operationId: validateComputation
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token in "<uuid>:<role>" format.
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+          description: Stable idempotency key for deterministic validation call.
+        - in: header
+          name: X-Correlation-ID
+          required: false
+          schema:
+            type: string
+          description: Optional caller-provided correlation identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComputationValidationRequest"
+      responses:
+        "200":
+          description: Validation findings persisted for the target computation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComputationValidationResult"
+        "400":
+          description: Invalid validation request payload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Missing or invalid Authorization header.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Persisted computation not found for validation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Validation persistence failure.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    ComputationExecutionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - tax_type
+        - regime_type
+        - tax_year
+        - rule_version
+        - input_payload
+      properties:
+        tax_type:
+          type: string
+        regime_type:
+          type: string
+        regime_identifier:
+          type:
+            - string
+            - "null"
+        tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        rule_version:
+          type: string
+          minLength: 1
+        input_payload:
+          type: object
+          additionalProperties: true
+    MaterializedComputationExecutionResult:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - computation_id
+        - computation_result_id
+        - audit_event_id
+        - idempotency_key
+        - correlation_id
+        - tax_type
+        - regime_type
+        - tax_year
+        - rule_version
+        - input_hash
+        - result_payload
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        computation_id:
+          type: string
+          format: uuid
+        computation_result_id:
+          type: string
+          format: uuid
+        audit_event_id:
+          type: string
+          format: uuid
+        idempotency_key:
+          type: string
+          minLength: 1
+          maxLength: 128
+        correlation_id:
+          type: string
+        tax_type:
+          type: string
+        regime_type:
+          type: string
+        tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        rule_version:
+          type: string
+          minLength: 1
+        input_hash:
+          type: string
+          minLength: 64
+          maxLength: 64
+        result_payload:
+          type: object
+          additionalProperties: true
+    ReplayVerificationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - computation_id
+      properties:
+        computation_id:
+          type: string
+          format: uuid
+    ReplayVerificationResult:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - verification_status
+        - computation_id
+        - replay_audit_event_id
+        - correlation_id
+        - idempotency_key
+        - tax_type
+        - regime_type
+        - tax_year
+        - rule_version
+        - input_hash
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        verification_status:
+          type: string
+          enum:
+            - matched
+        computation_id:
+          type: string
+          format: uuid
+        replay_audit_event_id:
+          type: string
+          format: uuid
+        correlation_id:
+          type: string
+        idempotency_key:
+          type: string
+          minLength: 1
+          maxLength: 128
+        tax_type:
+          type: string
+        regime_type:
+          type: string
+        tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        rule_version:
+          type: string
+          minLength: 1
+        input_hash:
+          type: string
+          minLength: 64
+          maxLength: 64
+    ComputationFinalizationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - computation_id
+      properties:
+        computation_id:
+          type: string
+          format: uuid
+    ComputationFinalizationResult:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - finalization_status
+        - computation_id
+        - finalized_at
+        - finalized_audit_event_id
+        - correlation_id
+        - idempotency_key
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        finalization_status:
+          type: string
+          enum:
+            - finalized
+        computation_id:
+          type: string
+          format: uuid
+        finalized_at:
+          type: string
+          format: date-time
+        finalized_audit_event_id:
+          type: string
+          format: uuid
+        correlation_id:
+          type: string
+        idempotency_key:
+          type: string
+          minLength: 1
+          maxLength: 128
+    ValidationFinding:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - severity
+        - message
+        - details
+      properties:
+        code:
+          type: string
+        severity:
+          type: string
+          enum:
+            - info
+            - warning
+            - error
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+    ComputationValidationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - computation_id
+      properties:
+        computation_id:
+          type: string
+          format: uuid
+    ComputationValidationResult:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - validation_id
+        - computation_id
+        - validation_context
+        - correlation_id
+        - idempotency_key
+        - tax_year
+        - rule_version
+        - findings
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        validation_id:
+          type: string
+          format: uuid
+        computation_id:
+          type: string
+          format: uuid
+        validation_context:
+          type: string
+        correlation_id:
+          type: string
+        idempotency_key:
+          type: string
+          minLength: 1
+          maxLength: 128
+        tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        rule_version:
+          type: string
+          minLength: 1
+        findings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationFinding"
+    ComputationLifecycleAuditEvent:
+      type: object
+      additionalProperties: false
+      required:
+        - lifecycle_stage
+        - computation_id
+        - correlation_id
+        - idempotency_key
+        - tax_year
+        - rule_version
+        - input_hash
+        - outcome
+      properties:
+        lifecycle_stage:
+          type: string
+          enum:
+            - execution
+            - validation
+            - finalization
+            - replay
+        computation_id:
+          type: string
+          format: uuid
+        correlation_id:
+          type: string
+        idempotency_key:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        rule_version:
+          type: string
+          minLength: 1
+        input_hash:
+          type: string
+          minLength: 64
+          maxLength: 64
+        outcome:
+          type: string
+          enum:
+            - succeeded
+            - finalized
+            - matched
+            - mismatch
+        tax_type:
+          type: string
+        regime_type:
+          type: string
+        result_sha256:
+          type: string
+          minLength: 64
+          maxLength: 64
+        validation_id:
+          type: string
+          format: uuid
+        validation_context:
+          type: string
+        finding_count:
+          type: integer
+          minimum: 0
+        finding_severities:
+          type: array
+          items:
+            type: string
+            enum:
+              - info
+              - warning
+              - error
+        finalization_status:
+          type: string
+          enum:
+            - finalized
+        verification_outcome:
+          type: string
+          enum:
+            - matched
+            - mismatch
+        mismatch_reason:
+          type: string
+        stored_result_sha256:
+          type: string
+          minLength: 64
+          maxLength: 64
+        replay_result_sha256:
+          type: string
+          minLength: 64
+          maxLength: 64
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - correlation_id
+      properties:
+        error_code:
+          type: string
+        message:
+          type: string
+        correlation_id:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - detail
+      properties:
+        detail:
+          $ref: "#/components/schemas/ErrorEnvelope"

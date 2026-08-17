@@ -1,0 +1,13 @@
+{
+  "supported_lane_id": "resident_employment_income_2023_07_01",
+  "historical_version_id": "KIT-VER-20230701-A",
+  "tax_year": 2023,
+  "computation_id": "c63cd26d-6d34-545a-833f-ca7888856670",
+  "form_id": "f3f640ca-a99f-5126-84e1-c2fd59ea8ce8",
+  "policy_anchor_ids": [
+    "POL-RPT-RES-2023-001"
+  ],
+  "source_anchor_ids": [
+    "SRC-RPT-RES-2023-001"
+  ]
+}

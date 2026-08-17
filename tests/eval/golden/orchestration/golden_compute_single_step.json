@@ -1,0 +1,23 @@
+{
+  "case_id": "golden_compute_single_step",
+  "flow": "execute_single_turn",
+  "prompt_text": "compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+  "response_generator_mode": "plain",
+  "expected": {
+    "http_status": 500,
+    "top_level_status": null,
+    "decision_status": null,
+    "gate_status": null,
+    "plan_mode": null,
+    "route_id": null,
+    "target_service": null,
+    "execution_status": null,
+    "response_status": null,
+    "answer_mode": null,
+    "has_citations": false,
+    "clarification_reason_code": null,
+    "error_code": "turn_resolution_validation_failed",
+    "reason_code": "turn_resolution_stale_clarification_metadata",
+    "step_services": []
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "fixture_id": "knowledge_retrieve_grounded_explanation_success",
+  "prompt_payload": {
+    "tenant_id": "pilot_tenant_alpha",
+    "conversation_id": "conv-knw-orch-001",
+    "channel": "chat",
+    "prompt": {
+      "text": "retrieve grounded knowledge for income tax source KNW-ITA-15-2 anchor income-tax-act-15-2.",
+      "format": "plain_text"
+    }
+  },
+  "execution_context": {
+    "user_id": "user_knw_orch_001",
+    "idempotency_key": "idem-knw-orch-002"
+  },
+  "expected": {
+    "selected_route": {
+      "route_id": "knowledge_retrieve_route_v1",
+      "target_service": "knowledge",
+      "target_operation": "retrieve_knowledge"
+    },
+    "grounding_status": "grounded",
+    "explanation_status": "grounded",
+    "grounded_evidence": [
+      {
+        "source_id": "KNW-ITA-15-2",
+        "source_version_id": "123e4567-e89b-12d3-a456-426614174100",
+        "anchor_id": "income-tax-act-15-2",
+        "title": "Income Tax Act (Cap. 470), Section 15(2)",
+        "url": "https://new.kenyalaw.org/akn/ke/act/1973/16/eng@2024-12-27",
+        "source_type": "tax_law",
+        "authority_level": "statute",
+        "tax_domain": "income_tax",
+        "effective_from": "1974-01-01",
+        "effective_to": null,
+        "tax_year": null,
+        "publication_state": "published",
+        "source_version_form": "point_in_time_consolidation",
+        "grounding_status": "grounded"
+      }
+    ],
+    "explanation_items": [
+      {
+        "explanation_text": "Income Tax Act (Cap. 470), Section 15(2) provides statute-level tax_law authority for income_tax. Temporal applicability: current-effective.",
+        "source_id": "KNW-ITA-15-2",
+        "source_version_id": "123e4567-e89b-12d3-a456-426614174100",
+        "anchor_id": "income-tax-act-15-2",
+        "authority_level": "statute",
+        "source_type": "tax_law",
+        "temporal_applicability": "current-effective"
+      }
+    ],
+    "citations": [
+      {
+        "citation_index": 1,
+        "source_id": "KNW-ITA-15-2",
+        "source_version_id": "123e4567-e89b-12d3-a456-426614174100",
+        "anchor_id": "income-tax-act-15-2",
+        "title": "Income Tax Act (Cap. 470), Section 15(2)",
+        "url": "https://new.kenyalaw.org/akn/ke/act/1973/16/eng@2024-12-27",
+        "source_type": "tax_law",
+        "authority_level": "statute",
+        "tax_domain": "income_tax",
+        "temporal_applicability": "current-effective",
+        "effective_from": "1974-01-01",
+        "effective_to": null,
+        "tax_year": null
+      }
+    ],
+    "authority_summary": {
+      "highest_authority_level": "statute",
+      "source_types": [
+        "tax_law"
+      ],
+      "citation_count": 1
+    },
+    "temporal_applicability": {
+      "scope": "current-effective",
+      "effective_from": "1974-01-01",
+      "effective_to": null,
+      "tax_year": null,
+      "disclosure_text": "Grounded explanation is current-effective from 1974-01-01."
+    }
+  }
+}

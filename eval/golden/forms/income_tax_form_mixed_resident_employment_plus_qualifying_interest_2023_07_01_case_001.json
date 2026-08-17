@@ -1,0 +1,798 @@
+{
+  "expected_output": {
+    "audit_evidence_output": {
+      "artifact_generation": {
+        "action": "artifact_generation",
+        "action_status": "generated",
+        "artifact_id": "2dabb437f3d93ccabf4dca82ddddc6992732c5095d3050a397ded204a7f7fe4b",
+        "audit_evidence_id": "8119a0cf6c4136e4ddb2d2ed78eb089afec3fe8be407a0f6863363ae96bb8bd9",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a11f3946-c2b9-56d8-ad0d-576b710bcce7",
+        "content_sha256": "2c82a38475b34d5f01679449f172606be395667b1ec57b9eb1ab48f8f615e3ec",
+        "finalized_audit_event_id": "1e7b229c-03d2-538b-8825-5db85462e6f8",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20230701-RES-EMP-QINT-V1",
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-401",
+            "ITC-POL-601",
+            "ITC-POL-602",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "MIX-REMP-QINT-20230701-001",
+            "MIX-REMP-QINT-20230701-002",
+            "MIX-REMP-QINT-20230701-003",
+            "MIX-REMP-QINT-20230701-004",
+            "MIX-REMP-QINT-20230701-005",
+            "MIX-REMP-QINT-20230701-006",
+            "MIX-REMP-QINT-20230701-007",
+            "MIX-REMP-QINT-20230701-008",
+            "MIX-REMP-QINT-20230701-009",
+            "MIX-REMP-QINT-20230701-010",
+            "MIX-REMP-QINT-20230701-011",
+            "MIX-REMP-QINT-20230701-012",
+            "REM-20230701-003",
+            "REM-20230701-005",
+            "REM-20230701-010",
+            "REM-20230701-011",
+            "REM-20230701-012"
+          ],
+          "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA",
+            "KRA-PAYE",
+            "KRA-WHT"
+          ]
+        },
+        "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+        "tax_year": 2023,
+        "template_id": "income_tax_return_resident_employment_plus_qualifying_interest_2023_07_01_v1"
+      },
+      "binding": {
+        "action": "binding",
+        "action_status": "bound",
+        "artifact_id": null,
+        "audit_evidence_id": "5701a632d7d29617aac38022e8fdd377a10e91a01336295bd1f36d120079c450",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a11f3946-c2b9-56d8-ad0d-576b710bcce7",
+        "content_sha256": null,
+        "finalized_audit_event_id": "1e7b229c-03d2-538b-8825-5db85462e6f8",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20230701-RES-EMP-QINT-V1",
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-401",
+            "ITC-POL-601",
+            "ITC-POL-602",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "MIX-REMP-QINT-20230701-001",
+            "MIX-REMP-QINT-20230701-002",
+            "MIX-REMP-QINT-20230701-003",
+            "MIX-REMP-QINT-20230701-004",
+            "MIX-REMP-QINT-20230701-005",
+            "MIX-REMP-QINT-20230701-006",
+            "MIX-REMP-QINT-20230701-007",
+            "MIX-REMP-QINT-20230701-008",
+            "MIX-REMP-QINT-20230701-009",
+            "MIX-REMP-QINT-20230701-010",
+            "MIX-REMP-QINT-20230701-011",
+            "MIX-REMP-QINT-20230701-012",
+            "REM-20230701-003",
+            "REM-20230701-005",
+            "REM-20230701-010",
+            "REM-20230701-011",
+            "REM-20230701-012"
+          ],
+          "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA",
+            "KRA-PAYE",
+            "KRA-WHT"
+          ]
+        },
+        "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+        "tax_year": 2023,
+        "template_id": "income_tax_return_resident_employment_plus_qualifying_interest_2023_07_01_v1"
+      },
+      "mapping": {
+        "action": "mapping",
+        "action_status": "mapped",
+        "artifact_id": null,
+        "audit_evidence_id": "92c990443300f0a6180ee54f282253714d1834a93468bd534154a29bb421d740",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a11f3946-c2b9-56d8-ad0d-576b710bcce7",
+        "content_sha256": null,
+        "finalized_audit_event_id": "1e7b229c-03d2-538b-8825-5db85462e6f8",
+        "form_type": "income_tax_return",
+        "form_version": "income_tax_vertical_slice_v1",
+        "form_version_id": null,
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-401",
+            "ITC-POL-601",
+            "ITC-POL-602",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "MIX-REMP-QINT-20230701-001",
+            "MIX-REMP-QINT-20230701-002",
+            "MIX-REMP-QINT-20230701-003",
+            "MIX-REMP-QINT-20230701-004",
+            "MIX-REMP-QINT-20230701-005",
+            "MIX-REMP-QINT-20230701-006",
+            "MIX-REMP-QINT-20230701-007",
+            "MIX-REMP-QINT-20230701-008",
+            "MIX-REMP-QINT-20230701-009",
+            "MIX-REMP-QINT-20230701-010",
+            "MIX-REMP-QINT-20230701-011",
+            "MIX-REMP-QINT-20230701-012",
+            "REM-20230701-003",
+            "REM-20230701-005",
+            "REM-20230701-010",
+            "REM-20230701-011",
+            "REM-20230701-012"
+          ],
+          "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+          "rule_version": "v1",
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA",
+            "KRA-PAYE",
+            "KRA-WHT"
+          ]
+        },
+        "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+        "tax_year": 2023,
+        "template_id": null
+      }
+    },
+    "form_artifact_output": {
+      "artifact_id": "2dabb437f3d93ccabf4dca82ddddc6992732c5095d3050a397ded204a7f7fe4b",
+      "artifact_type": "income_tax_form_artifact",
+      "audit_evidence": {
+        "action": "artifact_generation",
+        "action_status": "generated",
+        "artifact_id": "2dabb437f3d93ccabf4dca82ddddc6992732c5095d3050a397ded204a7f7fe4b",
+        "audit_evidence_id": "8119a0cf6c4136e4ddb2d2ed78eb089afec3fe8be407a0f6863363ae96bb8bd9",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a11f3946-c2b9-56d8-ad0d-576b710bcce7",
+        "content_sha256": "2c82a38475b34d5f01679449f172606be395667b1ec57b9eb1ab48f8f615e3ec",
+        "finalized_audit_event_id": "1e7b229c-03d2-538b-8825-5db85462e6f8",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20230701-RES-EMP-QINT-V1",
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-401",
+            "ITC-POL-601",
+            "ITC-POL-602",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "MIX-REMP-QINT-20230701-001",
+            "MIX-REMP-QINT-20230701-002",
+            "MIX-REMP-QINT-20230701-003",
+            "MIX-REMP-QINT-20230701-004",
+            "MIX-REMP-QINT-20230701-005",
+            "MIX-REMP-QINT-20230701-006",
+            "MIX-REMP-QINT-20230701-007",
+            "MIX-REMP-QINT-20230701-008",
+            "MIX-REMP-QINT-20230701-009",
+            "MIX-REMP-QINT-20230701-010",
+            "MIX-REMP-QINT-20230701-011",
+            "MIX-REMP-QINT-20230701-012",
+            "REM-20230701-003",
+            "REM-20230701-005",
+            "REM-20230701-010",
+            "REM-20230701-011",
+            "REM-20230701-012"
+          ],
+          "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA",
+            "KRA-PAYE",
+            "KRA-WHT"
+          ]
+        },
+        "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+        "tax_year": 2023,
+        "template_id": "income_tax_return_resident_employment_plus_qualifying_interest_2023_07_01_v1"
+      },
+      "computation_id": "a11f3946-c2b9-56d8-ad0d-576b710bcce7",
+      "content_sha256": "2c82a38475b34d5f01679449f172606be395667b1ec57b9eb1ab48f8f615e3ec",
+      "form_type": "income_tax_return",
+      "form_version_id": "ITX-FORM-20230701-RES-EMP-QINT-V1",
+      "generated_content_payload": {
+        "domain_fields": {
+          "deductions_and_exemptions": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "ITC-POL-803",
+              "ITC-POL-804"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "0.00",
+            "status": "computed",
+            "taxable_base_kes": "960000.00"
+          },
+          "employment": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "REM-20230701-005",
+              "REM-20230701-010",
+              "REM-20230701-012"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "225400.00",
+            "status": "computed",
+            "taxable_base_kes": "960000.00"
+          },
+          "investment": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "MIX-REMP-QINT-20230701-004",
+              "MIX-REMP-QINT-20230701-005",
+              "MIX-REMP-QINT-20230701-006",
+              "MIX-REMP-QINT-20230701-010"
+            ],
+            "final_tax_amount_kes": "18000.00",
+            "gross_tax_kes": "18000.00",
+            "status": "computed",
+            "taxable_base_kes": "120000.00"
+          },
+          "reliefs": {
+            "creditable_amount_kes": "28800.00",
+            "decision_refs": [
+              "REM-20230701-003",
+              "REM-20230701-011"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "0.00",
+            "status": "computed",
+            "taxable_base_kes": "0.00"
+          },
+          "withholding": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "ITC-POL-601",
+              "ITC-POL-602",
+              "MIX-REMP-QINT-20230701-010"
+            ],
+            "final_tax_amount_kes": "18000.00",
+            "gross_tax_kes": "0.00",
+            "status": "computed",
+            "taxable_base_kes": "0.00"
+          }
+        },
+        "form_fields": {
+          "chargeable_income_kes": "960000.00",
+          "employment_final_tax_amount_kes": "0.00",
+          "employment_gross_tax_kes": "225400.00",
+          "employment_income_kes": "960000.00",
+          "final_tax_excluded_income_kes": "120000.00",
+          "investment_final_tax_amount_kes": "18000.00",
+          "investment_gross_tax_kes": "18000.00",
+          "investment_income_kes": "120000.00",
+          "net_income_tax_due_kes": "214600.00",
+          "refund_due_kes": "0.00",
+          "total_reliefs_kes": "28800.00"
+        },
+        "header": {
+          "form_type": "income_tax_return",
+          "form_version_id": "ITX-FORM-20230701-RES-EMP-QINT-V1",
+          "historical_version_id": "KIT-VER-20230701-A",
+          "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+          "tax_year": 2023,
+          "template_id": "income_tax_return_resident_employment_plus_qualifying_interest_2023_07_01_v1"
+        },
+        "impact_fields": {
+          "deduction_impacts": [],
+          "exemption_impacts": [],
+          "relief_impacts": [
+            {
+              "claim_reference_id": "claim-personal-relief-001",
+              "impact_amount_kes": "28800.00",
+              "impact_type": "personal_relief",
+              "status": "applied"
+            }
+          ]
+        },
+        "liability_fields": {
+          "advance_tax_credit_kes": "0.00",
+          "assessable_income_kes": "1080000.00",
+          "chargeable_income_kes": "960000.00",
+          "creditable_withholding_kes": "0.00",
+          "final_tax_excluded_income_kes": "120000.00",
+          "gross_tax_kes": "243400.00",
+          "installment_tax_credit_kes": "0.00",
+          "net_income_tax_due_kes": "214600.00",
+          "refund_due_kes": "0.00",
+          "total_reliefs_kes": "28800.00"
+        },
+        "taxpayer": {
+          "classification_outcome": "fully_classified",
+          "resident_status": "resident",
+          "taxpayer_kind": "individual"
+        },
+        "treatment_fields": {
+          "adjacent_regime_flags": [],
+          "withholding_treatments": [
+            {
+              "decision_ref": "MIX-REMP-QINT-20230701-010",
+              "income_reference_id": "payer-interest-001",
+              "treatment": "final_tax"
+            }
+          ]
+        }
+      },
+      "generation_status": "generated",
+      "historical_version_id": "KIT-VER-20230701-A",
+      "lineage": {
+        "applied_policy_ids": [
+          "ITC-POL-201",
+          "ITC-POL-204",
+          "ITC-POL-401",
+          "ITC-POL-601",
+          "ITC-POL-602",
+          "ITC-POL-801",
+          "ITC-POL-803",
+          "ITC-POL-804",
+          "MIX-REMP-QINT-20230701-001",
+          "MIX-REMP-QINT-20230701-002",
+          "MIX-REMP-QINT-20230701-003",
+          "MIX-REMP-QINT-20230701-004",
+          "MIX-REMP-QINT-20230701-005",
+          "MIX-REMP-QINT-20230701-006",
+          "MIX-REMP-QINT-20230701-007",
+          "MIX-REMP-QINT-20230701-008",
+          "MIX-REMP-QINT-20230701-009",
+          "MIX-REMP-QINT-20230701-010",
+          "MIX-REMP-QINT-20230701-011",
+          "MIX-REMP-QINT-20230701-012",
+          "REM-20230701-003",
+          "REM-20230701-005",
+          "REM-20230701-010",
+          "REM-20230701-011",
+          "REM-20230701-012"
+        ],
+        "binding_lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-401",
+            "ITC-POL-601",
+            "ITC-POL-602",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "MIX-REMP-QINT-20230701-001",
+            "MIX-REMP-QINT-20230701-002",
+            "MIX-REMP-QINT-20230701-003",
+            "MIX-REMP-QINT-20230701-004",
+            "MIX-REMP-QINT-20230701-005",
+            "MIX-REMP-QINT-20230701-006",
+            "MIX-REMP-QINT-20230701-007",
+            "MIX-REMP-QINT-20230701-008",
+            "MIX-REMP-QINT-20230701-009",
+            "MIX-REMP-QINT-20230701-010",
+            "MIX-REMP-QINT-20230701-011",
+            "MIX-REMP-QINT-20230701-012",
+            "REM-20230701-003",
+            "REM-20230701-005",
+            "REM-20230701-010",
+            "REM-20230701-011",
+            "REM-20230701-012"
+          ],
+          "computation_id": "a11f3946-c2b9-56d8-ad0d-576b710bcce7",
+          "effective_end": "2023-08-31",
+          "effective_start": "2023-07-01",
+          "finalized_audit_event_id": "1e7b229c-03d2-538b-8825-5db85462e6f8",
+          "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+          "resident_status": "resident",
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA",
+            "KRA-PAYE",
+            "KRA-WHT"
+          ],
+          "taxpayer_kind": "individual"
+        },
+        "finalization_status": "finalized",
+        "finalized_at": "2026-03-19T18:00:00+03:00",
+        "finalized_audit_event_id": "1e7b229c-03d2-538b-8825-5db85462e6f8",
+        "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+        "source_anchor_ids": [
+          "ITA-2023-07-01-A",
+          "AMEND-2023-FA",
+          "KRA-PAYE",
+          "KRA-WHT"
+        ],
+        "validation_focus_domains": [
+          "ITD-CORE-EMPLOYMENT",
+          "ITD-CORE-INVESTMENT",
+          "ITD-CORE-WHT",
+          "ITD-CORE-DEDUCTIONS",
+          "ITD-CORE-RELIEFS"
+        ]
+      },
+      "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+      "tax_year": 2023,
+      "template_id": "income_tax_return_resident_employment_plus_qualifying_interest_2023_07_01_v1"
+    },
+    "form_mapping_output": {
+      "audit_evidence": {
+        "action": "mapping",
+        "action_status": "mapped",
+        "artifact_id": null,
+        "audit_evidence_id": "92c990443300f0a6180ee54f282253714d1834a93468bd534154a29bb421d740",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a11f3946-c2b9-56d8-ad0d-576b710bcce7",
+        "content_sha256": null,
+        "finalized_audit_event_id": "1e7b229c-03d2-538b-8825-5db85462e6f8",
+        "form_type": "income_tax_return",
+        "form_version": "income_tax_vertical_slice_v1",
+        "form_version_id": null,
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-401",
+            "ITC-POL-601",
+            "ITC-POL-602",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "MIX-REMP-QINT-20230701-001",
+            "MIX-REMP-QINT-20230701-002",
+            "MIX-REMP-QINT-20230701-003",
+            "MIX-REMP-QINT-20230701-004",
+            "MIX-REMP-QINT-20230701-005",
+            "MIX-REMP-QINT-20230701-006",
+            "MIX-REMP-QINT-20230701-007",
+            "MIX-REMP-QINT-20230701-008",
+            "MIX-REMP-QINT-20230701-009",
+            "MIX-REMP-QINT-20230701-010",
+            "MIX-REMP-QINT-20230701-011",
+            "MIX-REMP-QINT-20230701-012",
+            "REM-20230701-003",
+            "REM-20230701-005",
+            "REM-20230701-010",
+            "REM-20230701-011",
+            "REM-20230701-012"
+          ],
+          "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+          "rule_version": "v1",
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA",
+            "KRA-PAYE",
+            "KRA-WHT"
+          ]
+        },
+        "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+        "tax_year": 2023,
+        "template_id": null
+      },
+      "computation_identity": {
+        "computation_id": "a11f3946-c2b9-56d8-ad0d-576b710bcce7",
+        "finalization_status": "finalized",
+        "finalized_at": "2026-03-19T18:00:00+03:00",
+        "finalized_audit_event_id": "1e7b229c-03d2-538b-8825-5db85462e6f8",
+        "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+        "regime_type": "income_tax",
+        "rule_version": "v1",
+        "tax_type": "income_tax",
+        "tax_year": 2023
+      },
+      "domain_fields": {
+        "deductions_and_exemptions": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "ITC-POL-803",
+            "ITC-POL-804"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "0.00",
+          "status": "computed",
+          "taxable_base_kes": "960000.00"
+        },
+        "employment": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "REM-20230701-005",
+            "REM-20230701-010",
+            "REM-20230701-012"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "225400.00",
+          "status": "computed",
+          "taxable_base_kes": "960000.00"
+        },
+        "investment": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "MIX-REMP-QINT-20230701-004",
+            "MIX-REMP-QINT-20230701-005",
+            "MIX-REMP-QINT-20230701-006",
+            "MIX-REMP-QINT-20230701-010"
+          ],
+          "final_tax_amount_kes": "18000.00",
+          "gross_tax_kes": "18000.00",
+          "status": "computed",
+          "taxable_base_kes": "120000.00"
+        },
+        "reliefs": {
+          "creditable_amount_kes": "28800.00",
+          "decision_refs": [
+            "REM-20230701-003",
+            "REM-20230701-011"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "0.00",
+          "status": "computed",
+          "taxable_base_kes": "0.00"
+        },
+        "withholding": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "ITC-POL-601",
+            "ITC-POL-602",
+            "MIX-REMP-QINT-20230701-010"
+          ],
+          "final_tax_amount_kes": "18000.00",
+          "gross_tax_kes": "0.00",
+          "status": "computed",
+          "taxable_base_kes": "0.00"
+        }
+      },
+      "form_fields": {
+        "chargeable_income_kes": "960000.00",
+        "employment_final_tax_amount_kes": "0.00",
+        "employment_gross_tax_kes": "225400.00",
+        "employment_income_kes": "960000.00",
+        "final_tax_excluded_income_kes": "120000.00",
+        "investment_final_tax_amount_kes": "18000.00",
+        "investment_gross_tax_kes": "18000.00",
+        "investment_income_kes": "120000.00",
+        "net_income_tax_due_kes": "214600.00",
+        "refund_due_kes": "0.00",
+        "total_reliefs_kes": "28800.00"
+      },
+      "form_type": "income_tax_return",
+      "form_version": "income_tax_vertical_slice_v1",
+      "impact_fields": {
+        "deduction_impacts": [],
+        "exemption_impacts": [],
+        "relief_impacts": [
+          {
+            "claim_reference_id": "claim-personal-relief-001",
+            "impact_amount_kes": "28800.00",
+            "impact_type": "personal_relief",
+            "status": "applied"
+          }
+        ]
+      },
+      "liability_fields": {
+        "advance_tax_credit_kes": "0.00",
+        "assessable_income_kes": "1080000.00",
+        "chargeable_income_kes": "960000.00",
+        "creditable_withholding_kes": "0.00",
+        "final_tax_excluded_income_kes": "120000.00",
+        "gross_tax_kes": "243400.00",
+        "installment_tax_credit_kes": "0.00",
+        "net_income_tax_due_kes": "214600.00",
+        "refund_due_kes": "0.00",
+        "total_reliefs_kes": "28800.00"
+      },
+      "lineage": {
+        "applied_policy_ids": [
+          "ITC-POL-201",
+          "ITC-POL-204",
+          "ITC-POL-401",
+          "ITC-POL-601",
+          "ITC-POL-602",
+          "ITC-POL-801",
+          "ITC-POL-803",
+          "ITC-POL-804",
+          "MIX-REMP-QINT-20230701-001",
+          "MIX-REMP-QINT-20230701-002",
+          "MIX-REMP-QINT-20230701-003",
+          "MIX-REMP-QINT-20230701-004",
+          "MIX-REMP-QINT-20230701-005",
+          "MIX-REMP-QINT-20230701-006",
+          "MIX-REMP-QINT-20230701-007",
+          "MIX-REMP-QINT-20230701-008",
+          "MIX-REMP-QINT-20230701-009",
+          "MIX-REMP-QINT-20230701-010",
+          "MIX-REMP-QINT-20230701-011",
+          "MIX-REMP-QINT-20230701-012",
+          "REM-20230701-003",
+          "REM-20230701-005",
+          "REM-20230701-010",
+          "REM-20230701-011",
+          "REM-20230701-012"
+        ],
+        "computation_status": "complete",
+        "replay_safe": true,
+        "source_anchor_ids": [
+          "ITA-2023-07-01-A",
+          "AMEND-2023-FA",
+          "KRA-PAYE",
+          "KRA-WHT"
+        ],
+        "validation_focus_domains": [
+          "ITD-CORE-EMPLOYMENT",
+          "ITD-CORE-INVESTMENT",
+          "ITD-CORE-WHT",
+          "ITD-CORE-DEDUCTIONS",
+          "ITD-CORE-RELIEFS"
+        ]
+      },
+      "mapping_status": "ok",
+      "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+      "taxpayer": {
+        "classification_outcome": "fully_classified",
+        "resident_status": "resident",
+        "taxpayer_kind": "individual"
+      },
+      "treatment_fields": {
+        "adjacent_regime_flags": [],
+        "withholding_treatments": [
+          {
+            "decision_ref": "MIX-REMP-QINT-20230701-010",
+            "income_reference_id": "payer-interest-001",
+            "treatment": "final_tax"
+          }
+        ]
+      },
+      "unsupported_fields": [],
+      "version_identity": {
+        "effective_end": "2023-08-31",
+        "effective_start": "2023-07-01",
+        "historical_version_id": "KIT-VER-20230701-A",
+        "source_anchor_ids": [
+          "ITA-2023-07-01-A",
+          "AMEND-2023-FA",
+          "KRA-PAYE",
+          "KRA-WHT"
+        ],
+        "version_selection_basis": "specific_event_date"
+      }
+    },
+    "form_version_binding_output": {
+      "audit_evidence": {
+        "action": "binding",
+        "action_status": "bound",
+        "artifact_id": null,
+        "audit_evidence_id": "5701a632d7d29617aac38022e8fdd377a10e91a01336295bd1f36d120079c450",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a11f3946-c2b9-56d8-ad0d-576b710bcce7",
+        "content_sha256": null,
+        "finalized_audit_event_id": "1e7b229c-03d2-538b-8825-5db85462e6f8",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20230701-RES-EMP-QINT-V1",
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-401",
+            "ITC-POL-601",
+            "ITC-POL-602",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "MIX-REMP-QINT-20230701-001",
+            "MIX-REMP-QINT-20230701-002",
+            "MIX-REMP-QINT-20230701-003",
+            "MIX-REMP-QINT-20230701-004",
+            "MIX-REMP-QINT-20230701-005",
+            "MIX-REMP-QINT-20230701-006",
+            "MIX-REMP-QINT-20230701-007",
+            "MIX-REMP-QINT-20230701-008",
+            "MIX-REMP-QINT-20230701-009",
+            "MIX-REMP-QINT-20230701-010",
+            "MIX-REMP-QINT-20230701-011",
+            "MIX-REMP-QINT-20230701-012",
+            "REM-20230701-003",
+            "REM-20230701-005",
+            "REM-20230701-010",
+            "REM-20230701-011",
+            "REM-20230701-012"
+          ],
+          "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA",
+            "KRA-PAYE",
+            "KRA-WHT"
+          ]
+        },
+        "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+        "tax_year": 2023,
+        "template_id": "income_tax_return_resident_employment_plus_qualifying_interest_2023_07_01_v1"
+      },
+      "binding_lineage": {
+        "applied_policy_ids": [
+          "ITC-POL-201",
+          "ITC-POL-204",
+          "ITC-POL-401",
+          "ITC-POL-601",
+          "ITC-POL-602",
+          "ITC-POL-801",
+          "ITC-POL-803",
+          "ITC-POL-804",
+          "MIX-REMP-QINT-20230701-001",
+          "MIX-REMP-QINT-20230701-002",
+          "MIX-REMP-QINT-20230701-003",
+          "MIX-REMP-QINT-20230701-004",
+          "MIX-REMP-QINT-20230701-005",
+          "MIX-REMP-QINT-20230701-006",
+          "MIX-REMP-QINT-20230701-007",
+          "MIX-REMP-QINT-20230701-008",
+          "MIX-REMP-QINT-20230701-009",
+          "MIX-REMP-QINT-20230701-010",
+          "MIX-REMP-QINT-20230701-011",
+          "MIX-REMP-QINT-20230701-012",
+          "REM-20230701-003",
+          "REM-20230701-005",
+          "REM-20230701-010",
+          "REM-20230701-011",
+          "REM-20230701-012"
+        ],
+        "computation_id": "a11f3946-c2b9-56d8-ad0d-576b710bcce7",
+        "effective_end": "2023-08-31",
+        "effective_start": "2023-07-01",
+        "finalized_audit_event_id": "1e7b229c-03d2-538b-8825-5db85462e6f8",
+        "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+        "resident_status": "resident",
+        "source_anchor_ids": [
+          "ITA-2023-07-01-A",
+          "AMEND-2023-FA",
+          "KRA-PAYE",
+          "KRA-WHT"
+        ],
+        "taxpayer_kind": "individual"
+      },
+      "binding_status": "bound",
+      "form_type": "income_tax_return",
+      "form_version_id": "ITX-FORM-20230701-RES-EMP-QINT-V1",
+      "historical_version_id": "KIT-VER-20230701-A",
+      "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+      "tax_year": 2023,
+      "template_id": "income_tax_return_resident_employment_plus_qualifying_interest_2023_07_01_v1"
+    }
+  },
+  "fixture_id": "income_tax_form_mixed_resident_employment_plus_qualifying_interest_2023_07_01_case_001",
+  "fixture_version": 1,
+  "request": {
+    "finalized_at": "2026-03-19T18:00:00+03:00",
+    "tax_core_fixture_file": "income_tax_mixed_resident_employment_plus_qualifying_interest_2023_07_01_case_001.json"
+  }
+}

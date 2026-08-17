@@ -1,0 +1,265 @@
+{
+  "fixture_version": 1,
+  "fixture_id": "income_tax_resident_employment_2021_01_01_case_001",
+  "request": {
+    "tax_type": "income_tax",
+    "regime_type": "income_tax",
+    "regime_identifier": null,
+    "tax_year": 2021,
+    "rule_version": "v1",
+    "input_payload": {
+      "version_context": {
+        "primary_effective_date": "2021-01-01",
+        "version_selection_basis": "specific_event_date",
+        "historical_version_id": "KIT-VER-20210101-A",
+        "source_anchor_ids": [
+          "ITA-2021-01-01-A"
+        ]
+      },
+      "taxpayer_context": {
+        "taxpayer_kind": "individual",
+        "resident_status_assertion": "resident",
+        "residence_reference_period_start": "2021-01-01",
+        "residence_reference_period_end": "2021-12-31"
+      },
+      "income_sections": {
+        "employment": {
+          "employment_items": [
+            {
+              "income_subtype": "cash_emolument",
+              "amount_kes": "10000000.00",
+              "event_date": "2021-03-15",
+              "employer_reference_id": "employer-2021-001"
+            }
+          ]
+        }
+      },
+      "claims": {
+        "relief_claims": [
+          {
+            "relief_type": "personal_relief",
+            "claim_reference_id": "claim-personal-relief-2021-001",
+            "asserted_amount_kes": "28800.00"
+          }
+        ],
+        "deduction_claims": [],
+        "exemption_claims": []
+      },
+      "payment_pathways": {
+        "withholding_events": [],
+        "installment_tax_events": [],
+        "advance_tax_events": []
+      },
+      "traceability_context": {
+        "source_record_ids": [
+          "src-payroll-2021-001"
+        ],
+        "preparation_profile": "manual_structured_entry",
+        "completeness_assertion": "complete",
+        "evidence_reference_ids": []
+      }
+    }
+  },
+  "expected_output": {
+    "status": "ok",
+    "tax_type": "income_tax",
+    "regime_type": "income_tax",
+    "tax_year": 2021,
+    "rule_version": "v1",
+    "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+    "result_payload": {
+      "domain_outcomes": {
+        "adjacent_regime_interactions": {
+          "creditable_amount_kes": null,
+          "decision_refs": [
+            "ITC-POL-902"
+          ],
+          "final_tax_amount_kes": null,
+          "gross_tax_kes": null,
+          "status": "not_applicable",
+          "taxable_base_kes": null
+        },
+        "advance_tax": {
+          "creditable_amount_kes": null,
+          "decision_refs": [
+            "ITC-POL-702"
+          ],
+          "final_tax_amount_kes": null,
+          "gross_tax_kes": null,
+          "status": "not_applicable",
+          "taxable_base_kes": null
+        },
+        "business": {
+          "creditable_amount_kes": null,
+          "decision_refs": [
+            "ITC-POL-301"
+          ],
+          "final_tax_amount_kes": null,
+          "gross_tax_kes": null,
+          "status": "not_applicable",
+          "taxable_base_kes": null
+        },
+        "deductions_and_exemptions": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "ITC-POL-803",
+            "ITC-POL-804"
+          ],
+          "final_tax_amount_kes": null,
+          "gross_tax_kes": null,
+          "status": "computed",
+          "taxable_base_kes": "10000000.00"
+        },
+        "employment": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "HEMP-20210101-004",
+            "HEMP-20210101-008",
+            "HEMP-20210101-012"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "2937400.00",
+          "status": "computed",
+          "taxable_base_kes": "10000000.00"
+        },
+        "installment_tax": {
+          "creditable_amount_kes": null,
+          "decision_refs": [
+            "ITC-POL-701"
+          ],
+          "final_tax_amount_kes": null,
+          "gross_tax_kes": null,
+          "status": "not_applicable",
+          "taxable_base_kes": null
+        },
+        "investment": {
+          "creditable_amount_kes": null,
+          "decision_refs": [
+            "ITC-POL-401"
+          ],
+          "final_tax_amount_kes": null,
+          "gross_tax_kes": null,
+          "status": "not_applicable",
+          "taxable_base_kes": null
+        },
+        "prescribed_rate_resolution": {
+          "creditable_amount_kes": null,
+          "decision_refs": [
+            "HEMP-20210101-011"
+          ],
+          "final_tax_amount_kes": null,
+          "gross_tax_kes": null,
+          "status": "not_applicable",
+          "taxable_base_kes": null
+        },
+        "reliefs": {
+          "creditable_amount_kes": "28800.00",
+          "decision_refs": [
+            "HEMP-20210101-006",
+            "HEMP-20210101-008"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": null,
+          "status": "computed",
+          "taxable_base_kes": null
+        },
+        "rental": {
+          "creditable_amount_kes": null,
+          "decision_refs": [
+            "ITC-POL-501"
+          ],
+          "final_tax_amount_kes": null,
+          "gross_tax_kes": null,
+          "status": "not_applicable",
+          "taxable_base_kes": null
+        },
+        "withholding": {
+          "creditable_amount_kes": null,
+          "decision_refs": [
+            "ITC-POL-601"
+          ],
+          "final_tax_amount_kes": null,
+          "gross_tax_kes": null,
+          "status": "not_applicable",
+          "taxable_base_kes": null
+        }
+      },
+      "impact_summary": {
+        "deduction_impacts": [],
+        "exemption_impacts": [],
+        "relief_impacts": [
+          {
+            "claim_reference_id": "claim-personal-relief-2021-001",
+            "impact_amount_kes": "28800.00",
+            "impact_type": "personal_relief",
+            "status": "applied"
+          }
+        ]
+      },
+      "liability_summary": {
+        "advance_tax_credit_kes": "0.00",
+        "assessable_income_kes": "10000000.00",
+        "chargeable_income_kes": "10000000.00",
+        "creditable_withholding_kes": "0.00",
+        "final_tax_excluded_income_kes": "0.00",
+        "gross_tax_kes": "2937400.00",
+        "installment_tax_credit_kes": "0.00",
+        "net_income_tax_due_kes": "2908600.00",
+        "refund_due_kes": "0.00",
+        "total_reliefs_kes": "28800.00"
+      },
+      "taxpayer_outcome": {
+        "classification_outcome": "fully_classified",
+        "resident_status": "resident",
+        "taxpayer_kind": "individual"
+      },
+      "traceability": {
+        "applied_policy_ids": [
+          "ITC-POL-201",
+          "ITC-POL-203",
+          "ITC-POL-801",
+          "ITC-POL-803",
+          "ITC-POL-804",
+          "HEMP-20210101-002",
+          "HEMP-20210101-004",
+          "HEMP-20210101-006",
+          "HEMP-20210101-008",
+          "HEMP-20210101-010",
+          "HEMP-20210101-011",
+          "HEMP-20210101-012"
+        ],
+        "computation_status": "complete",
+        "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+        "replay_safe": true,
+        "source_anchor_ids": [
+          "ITA-2021-01-01-A",
+          "AMEND-2020-TLA2",
+          "KRA-CHANGE-OF-TAX-RATES-2021"
+        ],
+        "validation_focus_domains": [
+          "ITD-CORE-EMPLOYMENT",
+          "ITD-CORE-DEDUCTIONS",
+          "ITD-CORE-RELIEFS"
+        ]
+      },
+      "treatment_decisions": {
+        "adjacent_regime_flags": [],
+        "withholding_treatments": []
+      },
+      "unsupported_or_unresolved": [],
+      "version_identity": {
+        "effective_end": "2021-06-30",
+        "effective_start": "2021-01-01",
+        "historical_version_id": "KIT-VER-20210101-A",
+        "rule_version": "v1",
+        "source_anchor_ids": [
+          "ITA-2021-01-01-A",
+          "AMEND-2020-TLA2",
+          "KRA-CHANGE-OF-TAX-RATES-2021"
+        ],
+        "tax_year": 2021,
+        "version_selection_basis": "specific_event_date"
+      }
+    }
+  }
+}

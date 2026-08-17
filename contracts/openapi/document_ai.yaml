@@ -1,0 +1,1845 @@
+openapi: 3.1.0
+info:
+  title: document_ai
+  version: "1.0.0"
+  description: >
+    Governed Document Processing and Management Module contract for Phase B production closure.
+    This contract covers upload-session flow, target processing, and document evidence retrieval.
+
+    Supported families: PDFs; Word documents (DOCX, ODT, RTF); spreadsheets
+    (XLSX, ODS, CSV, TSV); presentations (PPTX, ODP); text and structured data
+    (TXT, Markdown, JSON, XML); and PNG, JPEG, WebP, and TIFF images. The
+    platform accepts sources up to 200 MB through direct Cloudflare R2 upload.
+    Source inspection confirms signatures, safe containers, and content before
+    any provider processing; unsafe binaries and archives are rejected.
+
+    Source inspection validates supported document structure before any provider call.
+
+    Storage boundary: production requires PostgreSQL persistence and private Cloudflare R2 object
+    storage; local/in-memory adapters are non-production only. Storage keys are tenant-scoped
+    and enforced at upload completion. Signed download capabilities are HMAC-SHA256 tokens
+    with a 15-minute TTL and are single-use. Reuse is rejected with reason
+    capability_already_consumed.
+
+    Auth and role boundaries: IndividualTaxpayer performs document operations and may request
+    compliance overrides. ComplianceOfficer approves or rejects compliance overrides only.
+    Owner and tenant scoping is enforced on all mutation endpoints except compliance-override
+    approve and reject.
+paths:
+  /v1/documents:
+    get:
+      summary: List canonical document metadata scoped to authenticated owner and tenant.
+      operationId: listDocumentRecords
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentStateQuery"
+        - $ref: "#/components/parameters/UploadedFromQuery"
+        - $ref: "#/components/parameters/UploadedToQuery"
+        - $ref: "#/components/parameters/ComputationIdQuery"
+      responses:
+        "200":
+          description: Scoped documents list found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentListEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/document-bindings:
+    post:
+      summary: Create or replay a durable document-to-conversation or workflow binding.
+      operationId: createDocumentBinding
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentBindingRequest"
+      responses:
+        "201":
+          description: Durable binding created or replayed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentBindingEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+    get:
+      summary: Reload durable bindings for one conversation, turn, or workflow.
+      operationId: listDocumentBindings
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - in: query
+          name: conversation_id
+          required: false
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: turn_id
+          required: false
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: workflow_id
+          required: false
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        "200":
+          description: Authorized bindings in deterministic attachment order.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentBindingListEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/document-evidence/exact-retrievals:
+    post:
+      summary: Retrieve exact active canonical chunks inside the authorized document scope.
+      description: >
+        Performs metadata, lexical, and structural matching over active canonical content.
+        It does not use pgvector and never returns semantic candidates.
+      operationId: retrieveExactDocumentEvidence
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExactRetrievalRequest"
+      responses:
+        "200":
+          description: Active canonical chunks resolved within the authorized scope.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExactRetrievalEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/document-evidence/semantic-retrievals:
+    post:
+      summary: Discover authorized semantic candidates using CockroachDB vector search.
+      description: >
+        OpenAI query embeddings and CockroachDB native vector search discover only active,
+        eligible retrieval chunks. Returned values preserve chunk and source lineage and are
+        not evidence or factual claims.
+      operationId: retrieveSemanticDocumentCandidates
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SemanticRetrievalRequest"
+      responses:
+        "200":
+          description: Authorized semantic discovery candidates; not evidence.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SemanticRetrievalEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/document-evidence/hybrid-retrievals:
+    post:
+      summary: Retrieve deterministically fused hybrid candidates.
+      description: >
+        Combines the semantic candidate boundary with a lexical exact probe on the same
+        query text, deduplicates by retrieval chunk identity, and fuses the two ranked
+        candidate sets deterministically. It preserves branch provenance and raw score
+        semantics instead of collapsing them into one blended retrieval score.
+      operationId: retrieveHybridDocumentCandidates
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SemanticRetrievalRequest"
+      responses:
+        "200":
+          description: Authorized fused candidates; not evidence.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HybridRetrievalEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/upload-sessions:
+    post:
+      summary: Create a deterministic upload session for one document.
+      description: >
+        Side-effect operation. Idempotency-Key is required. Reusing the same
+        Idempotency-Key with the same logical request must return an equivalent
+        response; conflicting reuse must return a deterministic error.
+      operationId: createDocumentUploadSession
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadSessionCreateRequest"
+      responses:
+        "201":
+          description: Upload session created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadSessionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/upload-completion:
+    post:
+      summary: Mark upload completion and bind deterministic upload evidence.
+      description: >
+        Side-effect operation. Idempotency-Key is required and governs replay/conflict
+        behavior for this completion event. When the upload session selected a supported
+        target source-inspection and processing work through the document_ai runtime path.
+      operationId: completeDocumentUpload
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/DocumentIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadCompletionRequest"
+      responses:
+        "200":
+          description: Upload completion registered.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentRecordEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}:
+    get:
+      summary: Retrieve canonical document metadata and lifecycle state.
+      operationId: getDocumentRecord
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+      responses:
+        "200":
+          description: Document metadata found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentRecordEnvelope"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+    patch:
+      summary: Update approved user-facing document metadata with optimistic concurrency.
+      operationId: updateDocumentMetadata
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentMetadataUpdateRequest"
+      responses:
+        "200":
+          description: Metadata updated or safely replayed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentRecordEnvelope"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/download-capabilities:
+    post:
+      summary: Issue short-lived signed download capability for one scoped document.
+      operationId: issueDocumentDownloadCapability
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+      responses:
+        "201":
+          description: Signed download capability issued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignedDownloadCapabilityEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/download-capabilities/validate:
+    post:
+      summary: Validate one signed download capability usage against scoped request context.
+      operationId: validateDocumentDownloadCapability
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignedDownloadCapabilityValidationRequest"
+      responses:
+        "200":
+          description: Signed download capability validated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignedDownloadCapabilityValidationEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/compliance-overrides:
+    post:
+      summary: Request compliance-lock override for a scoped high-risk lifecycle action.
+      operationId: requestDocumentComplianceOverride
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceOverrideRequestPayload"
+      responses:
+        "201":
+          description: Compliance override request created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceOverrideResponseEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/compliance-overrides/{override_id}/approve:
+    post:
+      summary: Approve pending compliance override with independent authorized actor.
+      operationId: approveDocumentComplianceOverride
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+        - $ref: "#/components/parameters/ComplianceOverrideIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceOverrideDecisionPayload"
+      responses:
+        "200":
+          description: Compliance override approved.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceOverrideResponseEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/compliance-overrides/{override_id}/reject:
+    post:
+      summary: Reject pending compliance override with independent authorized actor.
+      operationId: rejectDocumentComplianceOverride
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+        - $ref: "#/components/parameters/ComplianceOverrideIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceOverrideDecisionPayload"
+      responses:
+        "200":
+          description: Compliance override rejected.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceOverrideResponseEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/trash:
+    post:
+      summary: Apply deterministic trash action for one tenant/owner-scoped document.
+      operationId: trashDocumentRecord
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+        - $ref: "#/components/parameters/ComplianceOverrideIdQuery"
+      responses:
+        "200":
+          description: Document transitioned to trash-equivalent lifecycle state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentRecordEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/restore:
+    post:
+      summary: Apply deterministic restore action for one tenant/owner-scoped document.
+      operationId: restoreDocumentRecord
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+        - $ref: "#/components/parameters/ComplianceOverrideIdQuery"
+      responses:
+        "200":
+          description: Document restored when supported by lifecycle model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentRecordEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/purge-eligibility:
+    post:
+      summary: Mark a scoped document as eligible_for_purge with explicit deterministic timestamp.
+      operationId: markDocumentEligibleForPurge
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+        - $ref: "#/components/parameters/ComplianceOverrideIdQuery"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PurgeEligibilityMarkRequest"
+      responses:
+        "200":
+          description: Document transitioned to eligible_for_purge under temporal constraints.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentRecordEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/purge:
+    post:
+      summary: Execute deterministic purge transition for one eligible scoped document.
+      operationId: executeDocumentPurge
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+        - $ref: "#/components/parameters/ComplianceOverrideIdQuery"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PurgeExecutionRequest"
+      responses:
+        "200":
+          description: Document transitioned to purged under lifecycle and temporal constraints.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentRecordEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/documents/{document_id}/purge-dry-run:
+    post:
+      summary: Evaluate deterministic purge safety checks without mutating lifecycle state.
+      operationId: dryRunDocumentPurgeSafety
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TenantIdQuery"
+        - $ref: "#/components/parameters/DocumentIdPath"
+      responses:
+        "200":
+          description: Deterministic purge safety readiness report.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentPurgeSafetyDryRunEnvelope"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+components:
+  parameters:
+    AuthorizationHeader:
+      in: header
+      name: Authorization
+      required: true
+      schema:
+        type: string
+      description: Bearer token in "<uuid>:<role>" format.
+    IdempotencyKeyHeader:
+      in: header
+      name: Idempotency-Key
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+      description: >
+        Stable key for deterministic replay behavior on side-effect operations.
+        Same key + same logical request should replay; same key + different request
+        should conflict.
+    CorrelationIdHeader:
+      in: header
+      name: X-Correlation-ID
+      required: false
+      schema:
+        type: string
+      description: Optional caller-provided correlation identifier.
+    TenantIdQuery:
+      in: query
+      name: tenant_id
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 120
+      description: Required tenant scope identifier for deterministic read-path ownership checks.
+    DocumentStateQuery:
+      in: query
+      name: state
+      required: false
+      schema:
+        type: string
+        enum:
+          - uploaded
+          - processing
+          - validated
+          - eligible_for_purge
+          - purged
+      description: Optional lifecycle-state filter.
+    UploadedFromQuery:
+      in: query
+      name: uploaded_from
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: Optional inclusive lower-bound upload timestamp filter.
+    UploadedToQuery:
+      in: query
+      name: uploaded_to
+      required: false
+      schema:
+        type: string
+        format: date-time
+      description: Optional inclusive upper-bound upload timestamp filter.
+    ComputationIdQuery:
+      in: query
+      name: computation_id
+      required: false
+      schema:
+        type: string
+        minLength: 1
+      description: Optional computation linkage identifier filter.
+    DocumentIdPath:
+      in: path
+      name: document_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    LinkageIdPath:
+      in: path
+      name: linkage_id
+      required: true
+      schema:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+    ComplianceOverrideIdPath:
+      in: path
+      name: override_id
+      required: true
+      schema:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+    ComplianceOverrideIdQuery:
+      in: query
+      name: compliance_override_id
+      required: false
+      schema:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      description: Optional approved compliance-override grant for active lock bypass.
+  responses:
+    ErrorResponse:
+      description: Deterministic structured error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+  schemas:
+    DocumentBindingRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - document_id
+        - binding_role
+      properties:
+        document_id:
+          type: string
+          format: uuid
+        document_version_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        binding_role:
+          type: string
+          enum:
+            - conversation_attachment
+            - current_turn_attachment
+            - existing_library_document
+            - workflow_reference
+        conversation_id:
+          type:
+            - string
+            - "null"
+          minLength: 1
+        turn_id:
+          type:
+            - string
+            - "null"
+          minLength: 1
+        workflow_id:
+          type:
+            - string
+            - "null"
+          minLength: 1
+        attachment_order:
+          type:
+            - integer
+            - "null"
+          minimum: 0
+    DocumentBindingRecord:
+      type: object
+      additionalProperties: false
+      required:
+        - document_binding_id
+        - tenant_id
+        - document_id
+        - binding_role
+        - bound_by_user_id
+        - bound_at
+        - correlation_id
+      properties:
+        document_binding_id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+        document_id:
+          type: string
+          format: uuid
+        document_version_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        resolved_document_version_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        binding_role:
+          type: string
+        conversation_id:
+          type:
+            - string
+            - "null"
+        turn_id:
+          type:
+            - string
+            - "null"
+        workflow_id:
+          type:
+            - string
+            - "null"
+        attachment_order:
+          type:
+            - integer
+            - "null"
+        bound_by_user_id:
+          type: string
+          format: uuid
+        bound_at:
+          type: string
+          format: date-time
+        correlation_id:
+          type: string
+    DocumentBindingEnvelope:
+      type: object
+      additionalProperties: false
+      required: [status, binding]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        binding:
+          $ref: "#/components/schemas/DocumentBindingRecord"
+    DocumentBindingListEnvelope:
+      type: object
+      additionalProperties: false
+      required: [status, bindings]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        bindings:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentBindingRecord"
+    ExactRetrievalRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        document_ids:
+          type: array
+          maxItems: 100
+          items:
+            type: string
+            format: uuid
+        document_version_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        conversation_id:
+          type:
+            - string
+            - "null"
+        turn_id:
+          type:
+            - string
+            - "null"
+        filename:
+          type:
+            - string
+            - "null"
+        display_name:
+          type:
+            - string
+            - "null"
+        identifier:
+          type:
+            - string
+            - "null"
+        amount:
+          type:
+            - string
+            - "null"
+        date:
+          type:
+            - string
+            - "null"
+        full_text:
+          type:
+            - string
+            - "null"
+        canonical_element_types:
+          type: array
+          maxItems: 20
+          items:
+            type: string
+        page_number:
+          type:
+            - integer
+            - "null"
+          minimum: 1
+        sheet_name:
+          type:
+            - string
+            - "null"
+        table_name:
+          type:
+            - string
+            - "null"
+        cell_reference:
+          type:
+            - string
+            - "null"
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+    ExactRetrievalCandidate:
+      type: object
+      additionalProperties: false
+      required:
+        - document_id
+        - document_version_id
+        - retrieval_chunk_id
+        - canonical_representation_id
+        - chunk_key
+        - content_hash_sha256
+        - chunking_policy_version
+        - exact_match_rank
+        - canonical_element_keys
+        - source_lineage
+        - source_location
+        - structural_context
+        - source_filename
+      properties:
+        document_id:
+          type: string
+          format: uuid
+        document_version_id:
+          type: string
+          format: uuid
+        retrieval_chunk_id:
+          type: string
+          format: uuid
+        canonical_representation_id:
+          type: string
+          format: uuid
+        chunk_key:
+          type: string
+        content_hash_sha256:
+          type: string
+        chunking_policy_version:
+          type: string
+        exact_match_rank:
+          type: integer
+        canonical_element_keys:
+          type: array
+          items:
+            type: string
+        source_lineage:
+          type: object
+        source_location:
+          type: object
+        structural_context:
+          type: object
+        display_name:
+          type:
+            - string
+            - "null"
+        source_filename:
+          type: string
+    ExactRetrievalEnvelope:
+      type: object
+      additionalProperties: false
+      required: [status, evidence]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExactRetrievalCandidate"
+    SemanticRetrievalRequest:
+      type: object
+      additionalProperties: false
+      required: [query]
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        document_ids:
+          type: array
+          maxItems: 100
+          items:
+            type: string
+            format: uuid
+        document_version_id:
+          type: [string, "null"]
+          format: uuid
+        conversation_id:
+          type: [string, "null"]
+        turn_id:
+          type: [string, "null"]
+        canonical_element_types:
+          type: array
+          maxItems: 20
+          items:
+            type: string
+        page_number:
+          type: [integer, "null"]
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+    HybridRetrievalRequest:
+      $ref: "#/components/schemas/SemanticRetrievalRequest"
+    HybridRetrievalCandidate:
+      type: object
+      additionalProperties: false
+      required:
+        - retrieval_chunk_id
+        - document_id
+        - document_version_id
+        - canonical_representation_id
+        - chunk_key
+        - content_hash_sha256
+        - chunking_policy_version
+        - canonical_element_keys
+        - source_location
+        - structural_context
+        - source_lineage
+        - source_filename
+        - retrieval_methods
+        - fusion_rank
+        - fusion_score
+      properties:
+        retrieval_chunk_id:
+          type: string
+          format: uuid
+        document_id:
+          type: string
+          format: uuid
+        document_version_id:
+          type: string
+          format: uuid
+        canonical_representation_id:
+          type: string
+          format: uuid
+        chunk_key:
+          type: string
+        content_hash_sha256:
+          type: string
+        chunking_policy_version:
+          type: string
+        canonical_element_keys:
+          type: array
+          items:
+            type: string
+        source_location:
+          type: object
+        structural_context:
+          type: object
+        source_lineage:
+          type: object
+        source_filename:
+          type: string
+        display_name:
+          type:
+            - string
+            - "null"
+        semantic_distance:
+          type:
+            - number
+            - "null"
+        semantic_score:
+          type:
+            - number
+            - "null"
+        exact_match_rank:
+          type:
+            - integer
+            - "null"
+        retrieval_methods:
+          type: array
+          items:
+            type: string
+            enum: [exact, semantic]
+        fusion_rank:
+          type: integer
+        fusion_score:
+          type: number
+    SemanticRetrievalCandidate:
+      type: object
+      additionalProperties: false
+      required:
+        - retrieval_chunk_id
+        - document_id
+        - document_version_id
+        - canonical_representation_id
+        - chunk_key
+        - content_hash_sha256
+        - chunking_policy_version
+        - semantic_distance
+        - semantic_score
+        - canonical_element_keys
+        - source_location
+        - structural_context
+        - source_filename
+      properties:
+        retrieval_chunk_id:
+          type: string
+          format: uuid
+        document_id:
+          type: string
+          format: uuid
+        document_version_id:
+          type: string
+          format: uuid
+        canonical_representation_id:
+          type: string
+          format: uuid
+        chunk_key:
+          type: string
+        content_hash_sha256:
+          type: string
+        chunking_policy_version:
+          type: string
+        semantic_distance:
+          type: number
+        semantic_score:
+          type: number
+        canonical_element_keys:
+          type: array
+          items:
+            type: string
+        source_location:
+          type: object
+        structural_context:
+          type: object
+        source_filename:
+          type: string
+        display_name:
+          type:
+            - string
+            - "null"
+    CanonicalDiscoveryCandidate:
+      $ref: "#/components/schemas/SemanticRetrievalCandidate"
+    SemanticRetrievalEnvelope:
+      type: object
+      additionalProperties: false
+      required: [status, candidates]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        candidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/SemanticRetrievalCandidate"
+    HybridRetrievalEnvelope:
+      type: object
+      additionalProperties: false
+      required: [status, candidates]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        candidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/HybridRetrievalCandidate"
+    Traceability:
+      type: object
+      additionalProperties: false
+      required:
+        - trace_id
+        - correlation_id
+      properties:
+        trace_id:
+          type:
+            - string
+            - "null"
+        correlation_id:
+          type:
+            - string
+            - "null"
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+        - trace_id
+      properties:
+        error_code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+        trace_id:
+          type:
+            - string
+            - "null"
+        correlation_id:
+          type:
+            - string
+            - "null"
+    UploadSessionCreateRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - tenant_id
+        - owner_user_id
+        - file_name
+        - content_type
+        - expected_size_bytes
+        - checksum_sha256
+      properties:
+        tenant_id:
+          type: string
+          minLength: 1
+          maxLength: 120
+        owner_user_id:
+          type: string
+          format: uuid
+        file_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        content_type:
+          type: string
+          enum:
+            - application/pdf
+            - text/plain
+            - text/markdown
+            - text/csv
+            - text/tab-separated-values
+            - application/json
+            - application/xml
+            - application/rtf
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+            - application/vnd.openxmlformats-officedocument.presentationml.presentation
+            - application/vnd.oasis.opendocument.text
+            - application/vnd.oasis.opendocument.spreadsheet
+            - application/vnd.oasis.opendocument.presentation
+            - image/png
+            - image/jpeg
+            - image/webp
+            - image/tiff
+          description: >
+            Declared media type. The backend verifies actual content after the
+            direct upload; a declared type never selects processing by itself.
+        expected_size_bytes:
+          type: integer
+          minimum: 1
+          maximum: 209715200
+        checksum_sha256:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        lane_hint:
+          type:
+            - string
+            - "null"
+    UploadSessionResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - session_id
+        - upload_session_id
+        - session_state
+        - document_id
+        - upload_url
+        - expires_at
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - upload_session_created
+        session_id:
+          type: string
+          format: uuid
+        upload_session_id:
+          type: string
+          format: uuid
+          description: Backward-compatible alias of `session_id`.
+        session_state:
+          type: string
+          enum:
+            - active
+        document_id:
+          type: string
+          format: uuid
+        upload_url:
+          type: string
+          format: uri
+        expires_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    UploadCompletionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - upload_session_id
+        - object_key
+        - checksum_sha256
+        - size_bytes
+        - content_type
+      properties:
+        session_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+          description: Backward-compatible alias of `upload_session_id`.
+        upload_session_id:
+          type: string
+          format: uuid
+        object_key:
+          type: string
+          minLength: 1
+          maxLength: 512
+        checksum_sha256:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        size_bytes:
+          type: integer
+          minimum: 1
+          maximum: 209715200
+        content_type:
+          type: string
+          enum:
+            - application/pdf
+            - text/plain
+            - text/markdown
+            - text/csv
+            - text/tab-separated-values
+            - application/json
+            - application/xml
+            - application/rtf
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+            - application/vnd.openxmlformats-officedocument.presentationml.presentation
+            - application/vnd.oasis.opendocument.text
+            - application/vnd.oasis.opendocument.spreadsheet
+            - application/vnd.oasis.opendocument.presentation
+            - image/png
+            - image/jpeg
+            - image/webp
+            - image/tiff
+          description: >
+            Must match the content_type declared at upload-session creation.
+            Backend inspection confirms it matches the stored source.
+    PurgeEligibilityMarkRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - purge_eligible_at
+      properties:
+        purge_eligible_at:
+          type: string
+          format: date-time
+    PurgeExecutionRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        purged_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+    ComplianceOverrideRequestPayload:
+      type: object
+      additionalProperties: false
+      required:
+        - requested_action
+        - justification
+      properties:
+        requested_action:
+          type: string
+          enum:
+            - trash
+            - restore
+            - mark_eligible_for_purge
+            - execute_purge
+        justification:
+          type: string
+          minLength: 1
+          maxLength: 2000
+    ComplianceOverrideDecisionPayload:
+      type: object
+      additionalProperties: false
+      required:
+        - requested_action
+        - justification
+      properties:
+        requested_action:
+          type: string
+          enum:
+            - trash
+            - restore
+            - mark_eligible_for_purge
+            - execute_purge
+        justification:
+          type: string
+          minLength: 1
+          maxLength: 2000
+    ComplianceOverrideRecord:
+      type: object
+      additionalProperties: false
+      required:
+        - override_id
+        - document_id
+        - requested_action
+        - tenant_id
+        - requested_by_user_id
+        - requested_by_role
+        - justification
+        - status
+        - created_at
+        - expires_at
+      properties:
+        override_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        document_id:
+          type: string
+          format: uuid
+        requested_action:
+          type: string
+          enum:
+            - trash
+            - restore
+            - mark_eligible_for_purge
+            - execute_purge
+        tenant_id:
+          type: string
+        requested_by_user_id:
+          type: string
+          format: uuid
+        requested_by_role:
+          type: string
+        justification:
+          type: string
+        status:
+          type: string
+          enum:
+            - requested
+            - approved
+            - rejected
+            - expired
+            - consumed
+        created_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        approved_by_user_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        approved_by_role:
+          type:
+            - string
+            - "null"
+        approved_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+        rejected_by_user_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        rejected_by_role:
+          type:
+            - string
+            - "null"
+        rejected_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+        consumed_by_user_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        consumed_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+    ComplianceOverrideResponseEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - override
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - compliance_override_requested
+            - compliance_override_approved
+            - compliance_override_rejected
+            - compliance_override_consumed
+        override:
+          $ref: "#/components/schemas/ComplianceOverrideRecord"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    DocumentRecord:
+      type: object
+      additionalProperties: false
+      required:
+        - document_id
+        - state
+        - uploaded_at
+        - computation_id
+      properties:
+        document_id:
+          type: string
+          format: uuid
+        state:
+          type: string
+          enum:
+            - uploaded
+            - active
+            - trashed
+            - purge_pending
+            - processing
+            - validated
+            - eligible_for_purge
+            - purged
+        uploaded_at:
+          type: string
+          format: date-time
+        computation_id:
+          type:
+            - string
+            - "null"
+        purge_eligible_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+        purged_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+        compliance_lock_until:
+          type:
+            - string
+            - "null"
+          format: date-time
+        display_name:
+          type:
+            - string
+            - "null"
+        category:
+          type:
+            - string
+            - "null"
+        tags:
+          type: array
+          items:
+            type: string
+        description:
+          type:
+            - string
+            - "null"
+        revision:
+          type: integer
+          minimum: 0
+    DocumentMetadataUpdateRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - expected_revision
+      properties:
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        category:
+          type: string
+          minLength: 1
+          maxLength: 100
+        tags:
+          type: array
+          maxItems: 32
+          items:
+            type: string
+        description:
+          type: string
+          maxLength: 2000
+        expected_revision:
+          type: integer
+          minimum: 0
+    DocumentRecordEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - document
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        document:
+          $ref: "#/components/schemas/DocumentRecord"
+        processing_operation_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Stable durable processing-operation identity when processing was accepted.
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    SignedDownloadCapability:
+      type: object
+      additionalProperties: false
+      required:
+        - capability_id
+        - document_id
+        - issued_to_user_id
+        - tenant_id
+        - expires_at
+        - allowed_action
+        - capability_token
+        - download_url
+        - method
+        - headers
+      properties:
+        capability_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        document_id:
+          type: string
+          format: uuid
+        issued_to_user_id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+        expires_at:
+          type: string
+          format: date-time
+        allowed_action:
+          type: string
+          enum:
+            - download
+        capability_token:
+          type: string
+          minLength: 1
+        download_url:
+          type: string
+          format: uri
+        method:
+          type: string
+          enum:
+            - GET
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+    SignedDownloadCapabilityEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - capability
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - download_capability_issued
+        capability:
+          $ref: "#/components/schemas/SignedDownloadCapability"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    SignedDownloadCapabilityValidationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - capability_token
+      properties:
+        capability_token:
+          type: string
+          minLength: 1
+    SignedDownloadCapabilityValidationEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - capability_id
+        - document_id
+        - expires_at
+        - allowed_action
+        - validated_at
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - download_capability_valid
+        capability_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        document_id:
+          type: string
+          format: uuid
+        expires_at:
+          type: string
+          format: date-time
+        allowed_action:
+          type: string
+          enum:
+            - download
+        validated_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    DocumentListEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - documents
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentRecord"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    DocumentPurgeSafetyDryRunEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - document_id
+        - dry_run
+        - purge_ready
+        - blockers
+        - evaluated_at
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        document_id:
+          type: string
+          format: uuid
+        dry_run:
+          type: boolean
+          enum:
+            - true
+        purge_ready:
+          type: boolean
+        blockers:
+          type: array
+          items:
+            type: string
+        evaluated_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    EvidenceRequirement:
+      type: object
+      additionalProperties: false
+      required:
+        - requirement_id
+        - schema_version
+        - semantic_meaning
+        - entity_scope
+        - time_scope
+        - unit
+        - multiplicity
+        - completeness
+        - materiality
+        - permitted_derivations
+        - uncertainty_tolerance
+        - confirmation_policy
+      properties:
+        requirement_id:
+          type: string
+        schema_version:
+          type: string
+          enum: ["1.0.0"]
+        semantic_meaning:
+          type: string
+        entity_scope:
+          type: object
+        time_scope:
+          type: object
+        unit:
+          type: object
+        multiplicity:
+          type: object
+        completeness:
+          type: object
+        materiality:
+          type: object
+        permitted_derivations:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        uncertainty_tolerance:
+          type: object
+        confirmation_policy:
+          type: object

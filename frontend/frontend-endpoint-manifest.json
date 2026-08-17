@@ -1,0 +1,135 @@
+{
+  "version": "2026-04-23",
+  "public_frontend_services": {
+    "auth": {
+      "base_url_env": "VITE_AUTH_SERVICE_URL",
+      "fallback_base_url_env": "VITE_API_BASE_URL",
+      "exposure": "public_user",
+      "note": "Approved public identity boundary for normal frontend flows.",
+      "endpoints": [
+        { "method": "POST", "path": "/v1/auth/register", "auth": "none", "idempotency": false, "surface": "P01" },
+        { "method": "POST", "path": "/v1/auth/login", "auth": "none", "idempotency": false, "surface": "P01" },
+        { "method": "POST", "path": "/v1/auth/refresh", "auth": "required", "idempotency": false, "surface": "P06" },
+        { "method": "POST", "path": "/v1/auth/logout", "auth": "required", "idempotency": false, "surface": "P06" },
+        { "method": "GET", "path": "/v1/auth/sessions/{session_id}", "auth": "required", "idempotency": false, "surface": "P06" },
+        { "method": "POST", "path": "/v1/auth/password-reset/initiate", "auth": "none", "idempotency": true, "surface": "P01" },
+        { "method": "POST", "path": "/v1/auth/password-reset/confirm", "auth": "none", "idempotency": false, "surface": "P01" },
+        { "method": "POST", "path": "/v1/auth/otp/challenges", "auth": "contextual", "idempotency": true, "surface": "P01" },
+        { "method": "POST", "path": "/v1/auth/otp/verify", "auth": "contextual", "idempotency": false, "surface": "P01" },
+        { "method": "POST", "path": "/v1/auth/account-deletion/requests", "auth": "required", "idempotency": true, "surface": "P06" },
+        { "method": "POST", "path": "/v1/auth/account-deletion/confirm", "auth": "required", "idempotency": true, "surface": "P06" },
+        { "method": "POST", "path": "/v1/auth/account-deletion/cancel", "auth": "required", "idempotency": true, "surface": "P06" },
+        { "method": "POST", "path": "/v1/auth/account-deletion/execute", "auth": "required", "idempotency": true, "surface": "P06" },
+        { "method": "POST", "path": "/v1/auth/phone-change/requests", "auth": "required", "idempotency": true, "surface": "P06" },
+        { "method": "POST", "path": "/v1/auth/phone-change/confirm", "auth": "required", "idempotency": true, "surface": "P06" },
+        { "method": "POST", "path": "/v1/auth/oauth/{provider}/start", "auth": "none", "idempotency": false, "surface": "P01" },
+        { "method": "GET", "path": "/v1/auth/oauth/{provider}/callback", "auth": "none", "idempotency": false, "surface": "P01" }
+      ]
+    },
+    "orchestration": {
+      "base_url_env": "VITE_ORCHESTRATION_URL",
+      "fallback_base_url_env": "VITE_API_BASE_URL",
+      "exposure": "public_user",
+      "note": "Approved public workflow boundary for chat, governed execution, and grounded responses.",
+      "endpoints": [
+        { "method": "POST", "path": "/v1/orchestration/prompt/ingest", "auth": "none", "idempotency": false, "surface": "P02" },
+        { "method": "POST", "path": "/v1/orchestration/prompt/decide", "auth": "none", "idempotency": false, "surface": "P02" },
+        { "method": "POST", "path": "/v1/orchestration/prompt/execute", "auth": "none", "idempotency": false, "surface": "P02" },
+        { "method": "POST", "path": "/v1/orchestration/income-tax/execute", "auth": "none", "idempotency": false, "surface": "P02" }
+      ]
+    },
+    "document_ai": {
+      "base_url_env": "VITE_DOCUMENTS_URL",
+      "fallback_base_url_env": "VITE_API_BASE_URL",
+      "exposure": "conditional_public",
+      "note": "Expose only when the product includes direct document-management UX.",
+      "endpoints": [
+        { "method": "POST", "path": "/v1/documents/upload-sessions", "auth": "required", "idempotency": true, "surface": "P03" },
+        { "method": "POST", "path": "/v1/documents/{document_id}/upload-completion", "auth": "required", "idempotency": true, "surface": "P03" },
+        { "method": "GET", "path": "/v1/documents", "auth": "required", "idempotency": false, "surface": "P03" },
+        { "method": "GET", "path": "/v1/documents/{document_id}", "auth": "required", "idempotency": false, "surface": "P03" }
+      ]
+    }
+  },
+  "quarantined_internal_services": {
+    "tax_core": {
+      "exposure": "internal_only",
+      "frontend_status": "quarantined",
+      "note": "Internal deterministic computation engine. Not an approved normal browser integration.",
+      "endpoints": [
+        { "method": "POST", "path": "/computations/execute", "auth": "required", "idempotency": true, "surface": "deferred_internal" },
+        { "method": "POST", "path": "/computations/validate", "auth": "required", "idempotency": true, "surface": "deferred_internal" },
+        { "method": "POST", "path": "/computations/finalize", "auth": "required", "idempotency": true, "surface": "deferred_internal" },
+        { "method": "POST", "path": "/computations/replay", "auth": "required", "idempotency": true, "surface": "deferred_internal" }
+      ]
+    },
+    "forms": {
+      "exposure": "internal_only",
+      "frontend_status": "quarantined",
+      "note": "Backend-facing form generation surface. Do not use as a standard user-facing browser API.",
+      "endpoints": [
+        { "method": "POST", "path": "/v1/forms/income-tax/mappings", "auth": "required", "idempotency": true, "surface": "deferred_internal" },
+        { "method": "POST", "path": "/v1/forms/income-tax/version-bindings", "auth": "required", "idempotency": true, "surface": "deferred_internal" },
+        { "method": "POST", "path": "/v1/forms/income-tax/validations", "auth": "required", "idempotency": true, "surface": "deferred_internal" },
+        { "method": "POST", "path": "/v1/forms/income-tax/artifacts", "auth": "required", "idempotency": true, "surface": "deferred_internal" }
+      ]
+    },
+    "reports": {
+      "exposure": "internal_only",
+      "frontend_status": "quarantined",
+      "note": "Backend-facing report generation surface. Not part of standard chat-first frontend flows.",
+      "endpoints": [
+        { "method": "POST", "path": "/v1/reports/income-tax/artifacts", "auth": "required", "idempotency": true, "surface": "deferred_internal" },
+        { "method": "GET", "path": "/v1/reports/income-tax/artifacts/{report_id}/metadata", "auth": "required", "idempotency": false, "surface": "deferred_internal" }
+      ]
+    },
+    "validation": {
+      "exposure": "internal_only",
+      "frontend_status": "blocked_for_normal_use",
+      "note": "Validation is an internal governed service boundary and not a normal frontend integration.",
+      "endpoints": [
+        { "method": "POST", "path": "/validate/return", "auth": "required", "idempotency": true, "surface": "blocked_internal" }
+      ]
+    },
+    "knowledge": {
+      "exposure": "internal_or_admin_only",
+      "frontend_status": "admin_only",
+      "note": "Raw knowledge APIs are not the default end-user chat surface. Standard user chat should go through orchestration, while internal administrators may use governed lifecycle routes.",
+      "endpoints": [
+        { "method": "POST", "path": "/knowledge/search", "auth": "required", "idempotency": false, "surface": "admin_internal" },
+        { "method": "POST", "path": "/knowledge/retrieve", "auth": "required", "idempotency": false, "surface": "admin_internal" },
+        { "method": "GET", "path": "/knowledge/ingestion", "auth": "required", "idempotency": false, "surface": "admin_internal" },
+        { "method": "GET", "path": "/knowledge/ingestion/{ingestion_job_id}", "auth": "required", "idempotency": false, "surface": "admin_internal" },
+        { "method": "POST", "path": "/knowledge/ingestion/{ingestion_job_id}/review", "auth": "required", "idempotency": true, "surface": "admin_internal" },
+        { "method": "POST", "path": "/knowledge/ingestion/{ingestion_job_id}/approve", "auth": "required", "idempotency": true, "surface": "admin_internal" },
+        { "method": "POST", "path": "/knowledge/ingestion/{ingestion_job_id}/reject", "auth": "required", "idempotency": true, "surface": "admin_internal" },
+        { "method": "POST", "path": "/knowledge/ingestion/{ingestion_job_id}/publish", "auth": "required", "idempotency": true, "surface": "admin_internal" },
+        { "method": "POST", "path": "/knowledge/ingestion/bulk/reject", "auth": "required", "idempotency": true, "surface": "admin_internal" },
+        { "method": "POST", "path": "/knowledge/ingestion/bulk/publish", "auth": "required", "idempotency": true, "surface": "admin_internal" },
+        { "method": "GET", "path": "/knowledge/source-versions", "auth": "required", "idempotency": false, "surface": "admin_internal" },
+        { "method": "GET", "path": "/knowledge/source-versions/{source_version_id}", "auth": "required", "idempotency": false, "surface": "admin_internal" },
+        { "method": "POST", "path": "/knowledge/source-versions/{source_version_id}/archive", "auth": "required", "idempotency": true, "surface": "admin_internal" },
+        { "method": "POST", "path": "/knowledge/source-versions/bulk/archive", "auth": "required", "idempotency": true, "surface": "admin_internal" },
+        { "method": "GET", "path": "/knowledge/sources", "auth": "required", "idempotency": false, "surface": "admin_internal" },
+        { "method": "GET", "path": "/knowledge/sources/{source_id}", "auth": "required", "idempotency": false, "surface": "admin_internal" }
+      ]
+    },
+    "storage": {
+      "exposure": "internal_only",
+      "frontend_status": "blocked_for_normal_use",
+      "note": "Storage capability infrastructure is backend-only for standard product flows.",
+      "endpoints": [
+        { "method": "POST", "path": "/v1/storage/upload-capabilities", "auth": "required", "idempotency": true, "surface": "blocked_internal" },
+        { "method": "POST", "path": "/v1/storage/download-capabilities", "auth": "required", "idempotency": true, "surface": "blocked_internal" }
+      ]
+    },
+    "gateway": {
+      "exposure": "future_public_ingress",
+      "frontend_status": "not_primary_yet",
+      "note": "Gateway remains minimal and is not yet the primary unified frontend ingress.",
+      "endpoints": [
+        { "method": "POST", "path": "/tools/ping", "auth": "required", "idempotency": true, "surface": "ops_only" }
+      ]
+    }
+  }
+}

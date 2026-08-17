@@ -1,0 +1,496 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HealthContributionResultPayload",
+  "description": "Governed canonical result payload for deterministic NHIF and SHA/SHIF health-contribution computation in KODI.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version_identity",
+    "contributor_outcome",
+    "domain_outcomes",
+    "contribution_summary",
+    "unsupported_or_unresolved",
+    "traceability"
+  ],
+  "properties": {
+    "version_identity": {
+      "$ref": "#/$defs/VersionIdentity"
+    },
+    "contributor_outcome": {
+      "$ref": "#/$defs/ContributorOutcome"
+    },
+    "domain_outcomes": {
+      "$ref": "#/$defs/DomainOutcomes"
+    },
+    "contribution_summary": {
+      "$ref": "#/$defs/ContributionSummary"
+    },
+    "unsupported_or_unresolved": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/UnsupportedOrUnresolvedItem"
+      }
+    },
+    "traceability": {
+      "$ref": "#/$defs/Traceability"
+    }
+  },
+  "$defs": {
+    "MoneyAmount": {
+      "type": "string",
+      "pattern": "^-?\\d+\\.\\d{2}$"
+    },
+    "NullableMoneyAmount": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^-?\\d+\\.\\d{2}$"
+    },
+    "IsoDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "ReferenceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "DomainId": {
+      "type": "string",
+      "enum": [
+        "HCD-CORE-CONTRIBUTOR-CLASSIFICATION",
+        "HCD-CORE-NHIF-LEGACY",
+        "HCD-CORE-SHI-NONSALARIED",
+        "HCD-CORE-SHI-SALARIED",
+        "HCD-TRANS-CONSOLIDATED-STATE-BINDING",
+        "HCD-TRANS-REGIME-SELECTION",
+        "HCD-TRANS-SHA-STAGED-ACTIVATION",
+        "HCD-XCUT-EXEMPTIONS-SPECIAL-CASES",
+        "HCD-XCUT-MIXED-CONTEXT-PATHS",
+        "HCD-XCUT-OPERATIONAL-INTERACTION",
+        "HCD-XCUT-VALIDATION-EVIDENCE",
+        "HCD-XCUT-VERSION-SELECTION"
+      ]
+    },
+    "VersionSelectionBasis": {
+      "type": "string",
+      "enum": [
+        "payroll_period_end",
+        "registration_effective_date",
+        "payment_due_date",
+        "specific_event_date",
+        "household_income_reference_date"
+      ]
+    },
+    "VersionIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "historical_version_id",
+        "tax_year",
+        "rule_version",
+        "regime_identifier",
+        "effective_start",
+        "effective_end",
+        "version_selection_basis",
+        "governing_change_ids",
+        "source_anchor_ids"
+      ],
+      "properties": {
+        "historical_version_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tax_year": {
+          "type": "integer",
+          "minimum": 1999,
+          "maximum": 2100
+        },
+        "rule_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "regime_identifier": {
+          "type": "string",
+          "enum": [
+            "nhif_legacy",
+            "sha_shif",
+            "transition_boundary",
+            "mixed_context",
+            "undetermined"
+          ]
+        },
+        "effective_start": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "effective_end": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "version_selection_basis": {
+          "$ref": "#/$defs/VersionSelectionBasis"
+        },
+        "governing_change_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "source_anchor_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "ContributorOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contributor_kind",
+        "resolved_domain_path",
+        "regime_family",
+        "classification_outcome"
+      ],
+      "properties": {
+        "contributor_kind": {
+          "type": "string",
+          "enum": [
+            "employee",
+            "self_employed",
+            "household",
+            "mixed_context",
+            "undetermined"
+          ]
+        },
+        "resolved_domain_path": {
+          "type": "string",
+          "enum": [
+            "nhif_legacy",
+            "sha_shif_salaried",
+            "sha_shif_non_salaried",
+            "transition_boundary",
+            "mixed_context",
+            "undetermined"
+          ]
+        },
+        "regime_family": {
+          "type": "string",
+          "enum": [
+            "nhif_legacy",
+            "sha_shif",
+            "transition_boundary",
+            "mixed_context",
+            "undetermined"
+          ]
+        },
+        "classification_outcome": {
+          "type": "string",
+          "enum": [
+            "fully_classified",
+            "partially_classified",
+            "unresolved",
+            "unsupported"
+          ]
+        }
+      }
+    },
+    "DomainOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "decision_refs",
+        "applied_policy_ids",
+        "source_anchor_ids"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "computed",
+            "governed_boundary_only",
+            "not_applicable",
+            "unsupported",
+            "unresolved"
+          ]
+        },
+        "contribution_basis_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "employee_contribution_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "employer_contribution_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "household_contribution_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "total_contribution_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "decision_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "applied_policy_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "source_anchor_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "DomainOutcomes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contributor_classification",
+        "nhif_legacy",
+        "sha_shif_salaried",
+        "sha_shif_non_salaried",
+        "regime_selection",
+        "sha_staged_activation",
+        "consolidated_state_binding",
+        "exemptions_and_special_cases",
+        "mixed_context_paths",
+        "operational_interaction",
+        "validation_evidence",
+        "version_selection"
+      ],
+      "properties": {
+        "contributor_classification": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "nhif_legacy": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "sha_shif_salaried": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "sha_shif_non_salaried": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "regime_selection": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "sha_staged_activation": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "consolidated_state_binding": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "exemptions_and_special_cases": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "mixed_context_paths": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "operational_interaction": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "validation_evidence": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "version_selection": {
+          "$ref": "#/$defs/DomainOutcome"
+        }
+      }
+    },
+    "ContributionSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "regime_family",
+        "coverage_status",
+        "summary_status",
+        "contribution_basis_kes",
+        "employee_contribution_kes",
+        "employer_contribution_kes",
+        "household_contribution_kes",
+        "total_contribution_kes",
+        "currency"
+      ],
+      "properties": {
+        "regime_family": {
+          "type": "string",
+          "enum": [
+            "nhif_legacy",
+            "sha_shif",
+            "transition_boundary",
+            "mixed_context",
+            "undetermined"
+          ]
+        },
+        "coverage_status": {
+          "type": "string",
+          "enum": [
+            "governed_boundary_only",
+            "partially_specified",
+            "implementation_ready"
+          ]
+        },
+        "summary_status": {
+          "type": "string",
+          "enum": [
+            "computed",
+            "partial",
+            "unresolved",
+            "unsupported"
+          ]
+        },
+        "contribution_basis_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "employee_contribution_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "employer_contribution_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "household_contribution_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "total_contribution_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "currency": {
+          "const": "KES"
+        }
+      }
+    },
+    "UnsupportedOrUnresolvedItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domain_id",
+        "reason_code",
+        "decision_ref",
+        "source_anchor_ids",
+        "applied_policy_ids"
+      ],
+      "properties": {
+        "domain_id": {
+          "$ref": "#/$defs/DomainId"
+        },
+        "reason_code": {
+          "type": "string",
+          "enum": [
+            "unsupported_domain",
+            "unresolved_policy",
+            "insufficient_evidence",
+            "governed_boundary_only",
+            "transition_window_requires_split",
+            "mixed_context_requires_separate_path",
+            "operational_interaction_separate",
+            "unsupported_version_window",
+            "unsupported_special_case"
+          ]
+        },
+        "decision_ref": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "source_anchor_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "applied_policy_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "Traceability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_hash",
+        "applied_policy_ids",
+        "source_anchor_ids",
+        "governing_change_ids",
+        "validation_focus_domains",
+        "computation_status",
+        "replay_safe"
+      ],
+      "properties": {
+        "input_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "applied_policy_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "source_anchor_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "governing_change_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "validation_focus_domains": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DomainId"
+          },
+          "uniqueItems": true
+        },
+        "computation_status": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial",
+            "unsupported"
+          ]
+        },
+        "replay_safe": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

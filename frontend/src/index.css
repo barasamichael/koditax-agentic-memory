@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-body text-gray-900 bg-gray-50 antialiased;
+  }
+  * {
+    @apply border-gray-100;
+  }
+}
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+@layer components {
+  /* Markdown response rendering */
+  .markdown-response > *:first-child { @apply mt-0; }
+  .markdown-response > *:last-child  { @apply mb-0; }
+
+  .markdown-response h1,
+  .markdown-response h2,
+  .markdown-response h3 {
+    @apply font-semibold text-gray-900 mt-4 mb-1.5 leading-snug;
+  }
+  .markdown-response h1 { @apply text-base; }
+  .markdown-response h2 { @apply text-sm; }
+  .markdown-response h3 { @apply text-sm text-gray-700; }
+
+  .markdown-response p {
+    @apply mb-3 leading-relaxed text-gray-800;
+  }
+
+  .markdown-response ul,
+  .markdown-response ol {
+    @apply mb-3 pl-5 space-y-1;
+  }
+  .markdown-response ul { @apply list-disc; }
+  .markdown-response ol { @apply list-decimal; }
+  .markdown-response li { @apply leading-relaxed text-gray-800; }
+
+  .markdown-response strong {
+    @apply font-semibold text-gray-900;
+  }
+
+  .markdown-response a {
+    @apply font-medium text-navy-700 underline underline-offset-2 decoration-navy-300
+           hover:text-navy-900 hover:decoration-navy-700 transition-colors;
+  }
+
+  .markdown-response code {
+    @apply rounded bg-gray-100 px-1 py-0.5 font-mono text-xs text-gray-700;
+  }
+
+  .markdown-response blockquote {
+    @apply border-l-2 border-gray-200 pl-3 text-gray-600 italic my-3;
+  }
+
+  .markdown-response hr {
+    @apply my-4 border-gray-100;
+  }
+
+  /* Tables — rendered via remark-gfm */
+  .markdown-response table {
+    @apply my-3 w-full border-collapse text-sm;
+    table-layout: fixed;
+  }
+  .markdown-response th {
+    @apply border border-gray-200 bg-gray-100 px-3 py-1.5 text-left text-xs font-semibold text-gray-700;
+  }
+  .markdown-response td {
+    @apply border border-gray-200 px-3 py-1.5 text-gray-800 align-top;
+  }
+  .markdown-response tr:nth-child(even) td {
+    @apply bg-gray-50;
+  }
+
+  /* Applied during streaming. Suppresses trailing margins on the last
+     incomplete block so the container doesn't grow by a full margin-bottom
+     worth of space before the next token arrives. Also locks table column
+     widths so they don't reflow on every new cell token. */
+  .markdown-streaming {
+    will-change: contents;
+  }
+  .markdown-streaming > *:last-child,
+  .markdown-streaming p:last-child,
+  .markdown-streaming li:last-child {
+    margin-bottom: 0;
+  }
+  .markdown-streaming table {
+    table-layout: fixed;
+    width: 100%;
+  }
+}

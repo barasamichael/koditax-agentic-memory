@@ -1,0 +1,23 @@
+{
+  "case_id": "golden_document_extraction_execution",
+  "flow": "execute_single_turn",
+  "prompt_text": "extract document for income tax filing support.",
+  "response_generator_mode": "plain",
+  "expected": {
+    "http_status": 200,
+    "top_level_status": "executed",
+    "decision_status": null,
+    "gate_status": null,
+    "plan_mode": "single_step",
+    "route_id": "income_tax_form_generation_route_v1",
+    "target_service": "forms",
+    "execution_status": "resolved",
+    "response_status": "generated",
+    "answer_mode": "forms_execution",
+    "has_citations": false,
+    "clarification_reason_code": null,
+    "error_code": null,
+    "reason_code": null,
+    "step_services": []
+  }
+}

@@ -1,0 +1,631 @@
+{
+  "expected_output": {
+    "audit_evidence_output": {
+      "artifact_generation": {
+        "action": "artifact_generation",
+        "action_status": "generated",
+        "artifact_id": "ee74d13ae451fab1bd321ab6e800145421ef5363b7eabe545e285ca1bbeac14c",
+        "audit_evidence_id": "f9b726e3f38ef02fa5e332c741ae045abe9bdf974fe655d1d7ecdc2d5badfe4d",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a6d1214b-bd89-5e4a-a910-b7a0a8c9cb79",
+        "content_sha256": "4313ebe78441242507c0a88c9fbff4312ee9eeb336ee663d85cacf944e682dae",
+        "finalized_audit_event_id": "545a3814-cc29-5c5c-8979-bda43adac4e8",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20210101-RES-EMP-V1",
+        "historical_version_id": "KIT-VER-20210101-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-203",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "HEMP-20210101-002",
+            "HEMP-20210101-004",
+            "HEMP-20210101-006",
+            "HEMP-20210101-008",
+            "HEMP-20210101-010",
+            "HEMP-20210101-011",
+            "HEMP-20210101-012"
+          ],
+          "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2021-01-01-A",
+            "AMEND-2020-TLA2",
+            "KRA-CHANGE-OF-TAX-RATES-2021"
+          ]
+        },
+        "supported_lane_id": "resident_employment_income_2021_01_01",
+        "tax_year": 2021,
+        "template_id": "income_tax_return_resident_employment_2021_01_01_v1"
+      },
+      "binding": {
+        "action": "binding",
+        "action_status": "bound",
+        "artifact_id": null,
+        "audit_evidence_id": "24567377a03c46e5d57014189c294a6118273ce6baa82a729a7cf0621057742a",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a6d1214b-bd89-5e4a-a910-b7a0a8c9cb79",
+        "content_sha256": null,
+        "finalized_audit_event_id": "545a3814-cc29-5c5c-8979-bda43adac4e8",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20210101-RES-EMP-V1",
+        "historical_version_id": "KIT-VER-20210101-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-203",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "HEMP-20210101-002",
+            "HEMP-20210101-004",
+            "HEMP-20210101-006",
+            "HEMP-20210101-008",
+            "HEMP-20210101-010",
+            "HEMP-20210101-011",
+            "HEMP-20210101-012"
+          ],
+          "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2021-01-01-A",
+            "AMEND-2020-TLA2",
+            "KRA-CHANGE-OF-TAX-RATES-2021"
+          ]
+        },
+        "supported_lane_id": "resident_employment_income_2021_01_01",
+        "tax_year": 2021,
+        "template_id": "income_tax_return_resident_employment_2021_01_01_v1"
+      },
+      "mapping": {
+        "action": "mapping",
+        "action_status": "mapped",
+        "artifact_id": null,
+        "audit_evidence_id": "821ac4adf792451138b58e9baaafef959ffb93735620018c73679498ce4cb5c0",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a6d1214b-bd89-5e4a-a910-b7a0a8c9cb79",
+        "content_sha256": null,
+        "finalized_audit_event_id": "545a3814-cc29-5c5c-8979-bda43adac4e8",
+        "form_type": "income_tax_return",
+        "form_version": "income_tax_vertical_slice_v1",
+        "form_version_id": null,
+        "historical_version_id": "KIT-VER-20210101-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-203",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "HEMP-20210101-002",
+            "HEMP-20210101-004",
+            "HEMP-20210101-006",
+            "HEMP-20210101-008",
+            "HEMP-20210101-010",
+            "HEMP-20210101-011",
+            "HEMP-20210101-012"
+          ],
+          "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+          "rule_version": "v1",
+          "source_anchor_ids": [
+            "ITA-2021-01-01-A",
+            "AMEND-2020-TLA2",
+            "KRA-CHANGE-OF-TAX-RATES-2021"
+          ]
+        },
+        "supported_lane_id": "resident_employment_income_2021_01_01",
+        "tax_year": 2021,
+        "template_id": null
+      }
+    },
+    "form_artifact_output": {
+      "artifact_id": "ee74d13ae451fab1bd321ab6e800145421ef5363b7eabe545e285ca1bbeac14c",
+      "artifact_type": "income_tax_form_artifact",
+      "audit_evidence": {
+        "action": "artifact_generation",
+        "action_status": "generated",
+        "artifact_id": "ee74d13ae451fab1bd321ab6e800145421ef5363b7eabe545e285ca1bbeac14c",
+        "audit_evidence_id": "f9b726e3f38ef02fa5e332c741ae045abe9bdf974fe655d1d7ecdc2d5badfe4d",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a6d1214b-bd89-5e4a-a910-b7a0a8c9cb79",
+        "content_sha256": "4313ebe78441242507c0a88c9fbff4312ee9eeb336ee663d85cacf944e682dae",
+        "finalized_audit_event_id": "545a3814-cc29-5c5c-8979-bda43adac4e8",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20210101-RES-EMP-V1",
+        "historical_version_id": "KIT-VER-20210101-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-203",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "HEMP-20210101-002",
+            "HEMP-20210101-004",
+            "HEMP-20210101-006",
+            "HEMP-20210101-008",
+            "HEMP-20210101-010",
+            "HEMP-20210101-011",
+            "HEMP-20210101-012"
+          ],
+          "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2021-01-01-A",
+            "AMEND-2020-TLA2",
+            "KRA-CHANGE-OF-TAX-RATES-2021"
+          ]
+        },
+        "supported_lane_id": "resident_employment_income_2021_01_01",
+        "tax_year": 2021,
+        "template_id": "income_tax_return_resident_employment_2021_01_01_v1"
+      },
+      "computation_id": "a6d1214b-bd89-5e4a-a910-b7a0a8c9cb79",
+      "content_sha256": "4313ebe78441242507c0a88c9fbff4312ee9eeb336ee663d85cacf944e682dae",
+      "form_type": "income_tax_return",
+      "form_version_id": "ITX-FORM-20210101-RES-EMP-V1",
+      "generated_content_payload": {
+        "domain_fields": {
+          "deductions_and_exemptions": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "ITC-POL-803",
+              "ITC-POL-804"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "0.00",
+            "status": "computed",
+            "taxable_base_kes": "10000000.00"
+          },
+          "employment": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "HEMP-20210101-004",
+              "HEMP-20210101-008",
+              "HEMP-20210101-012"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "2937400.00",
+            "status": "computed",
+            "taxable_base_kes": "10000000.00"
+          },
+          "investment": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "ITC-POL-401"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "0.00",
+            "status": "not_applicable",
+            "taxable_base_kes": "0.00"
+          },
+          "reliefs": {
+            "creditable_amount_kes": "28800.00",
+            "decision_refs": [
+              "HEMP-20210101-006",
+              "HEMP-20210101-008"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "0.00",
+            "status": "computed",
+            "taxable_base_kes": "0.00"
+          },
+          "withholding": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "ITC-POL-601"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "0.00",
+            "status": "not_applicable",
+            "taxable_base_kes": "0.00"
+          }
+        },
+        "form_fields": {
+          "chargeable_income_kes": "10000000.00",
+          "employment_final_tax_amount_kes": "0.00",
+          "employment_gross_tax_kes": "2937400.00",
+          "employment_income_kes": "10000000.00",
+          "final_tax_excluded_income_kes": "0.00",
+          "investment_final_tax_amount_kes": "0.00",
+          "investment_gross_tax_kes": "0.00",
+          "investment_income_kes": "0.00",
+          "net_income_tax_due_kes": "2908600.00",
+          "refund_due_kes": "0.00",
+          "total_reliefs_kes": "28800.00"
+        },
+        "header": {
+          "form_type": "income_tax_return",
+          "form_version_id": "ITX-FORM-20210101-RES-EMP-V1",
+          "historical_version_id": "KIT-VER-20210101-A",
+          "supported_lane_id": "resident_employment_income_2021_01_01",
+          "tax_year": 2021,
+          "template_id": "income_tax_return_resident_employment_2021_01_01_v1"
+        },
+        "impact_fields": {
+          "deduction_impacts": [],
+          "exemption_impacts": [],
+          "relief_impacts": [
+            {
+              "claim_reference_id": "claim-personal-relief-2021-001",
+              "impact_amount_kes": "28800.00",
+              "impact_type": "personal_relief",
+              "status": "applied"
+            }
+          ]
+        },
+        "liability_fields": {
+          "advance_tax_credit_kes": "0.00",
+          "assessable_income_kes": "10000000.00",
+          "chargeable_income_kes": "10000000.00",
+          "creditable_withholding_kes": "0.00",
+          "final_tax_excluded_income_kes": "0.00",
+          "gross_tax_kes": "2937400.00",
+          "installment_tax_credit_kes": "0.00",
+          "net_income_tax_due_kes": "2908600.00",
+          "refund_due_kes": "0.00",
+          "total_reliefs_kes": "28800.00"
+        },
+        "taxpayer": {
+          "classification_outcome": "fully_classified",
+          "resident_status": "resident",
+          "taxpayer_kind": "individual"
+        },
+        "treatment_fields": {
+          "adjacent_regime_flags": [],
+          "withholding_treatments": []
+        }
+      },
+      "generation_status": "generated",
+      "historical_version_id": "KIT-VER-20210101-A",
+      "lineage": {
+        "applied_policy_ids": [
+          "ITC-POL-201",
+          "ITC-POL-203",
+          "ITC-POL-801",
+          "ITC-POL-803",
+          "ITC-POL-804",
+          "HEMP-20210101-002",
+          "HEMP-20210101-004",
+          "HEMP-20210101-006",
+          "HEMP-20210101-008",
+          "HEMP-20210101-010",
+          "HEMP-20210101-011",
+          "HEMP-20210101-012"
+        ],
+        "binding_lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-203",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "HEMP-20210101-002",
+            "HEMP-20210101-004",
+            "HEMP-20210101-006",
+            "HEMP-20210101-008",
+            "HEMP-20210101-010",
+            "HEMP-20210101-011",
+            "HEMP-20210101-012"
+          ],
+          "computation_id": "a6d1214b-bd89-5e4a-a910-b7a0a8c9cb79",
+          "effective_end": "2021-06-30",
+          "effective_start": "2021-01-01",
+          "finalized_audit_event_id": "545a3814-cc29-5c5c-8979-bda43adac4e8",
+          "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+          "resident_status": "resident",
+          "source_anchor_ids": [
+            "ITA-2021-01-01-A",
+            "AMEND-2020-TLA2",
+            "KRA-CHANGE-OF-TAX-RATES-2021"
+          ],
+          "taxpayer_kind": "individual"
+        },
+        "finalization_status": "finalized",
+        "finalized_at": "2026-03-19T18:00:00+03:00",
+        "finalized_audit_event_id": "545a3814-cc29-5c5c-8979-bda43adac4e8",
+        "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+        "source_anchor_ids": [
+          "ITA-2021-01-01-A",
+          "AMEND-2020-TLA2",
+          "KRA-CHANGE-OF-TAX-RATES-2021"
+        ],
+        "validation_focus_domains": [
+          "ITD-CORE-EMPLOYMENT",
+          "ITD-CORE-DEDUCTIONS",
+          "ITD-CORE-RELIEFS"
+        ]
+      },
+      "supported_lane_id": "resident_employment_income_2021_01_01",
+      "tax_year": 2021,
+      "template_id": "income_tax_return_resident_employment_2021_01_01_v1"
+    },
+    "form_mapping_output": {
+      "audit_evidence": {
+        "action": "mapping",
+        "action_status": "mapped",
+        "artifact_id": null,
+        "audit_evidence_id": "821ac4adf792451138b58e9baaafef959ffb93735620018c73679498ce4cb5c0",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a6d1214b-bd89-5e4a-a910-b7a0a8c9cb79",
+        "content_sha256": null,
+        "finalized_audit_event_id": "545a3814-cc29-5c5c-8979-bda43adac4e8",
+        "form_type": "income_tax_return",
+        "form_version": "income_tax_vertical_slice_v1",
+        "form_version_id": null,
+        "historical_version_id": "KIT-VER-20210101-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-203",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "HEMP-20210101-002",
+            "HEMP-20210101-004",
+            "HEMP-20210101-006",
+            "HEMP-20210101-008",
+            "HEMP-20210101-010",
+            "HEMP-20210101-011",
+            "HEMP-20210101-012"
+          ],
+          "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+          "rule_version": "v1",
+          "source_anchor_ids": [
+            "ITA-2021-01-01-A",
+            "AMEND-2020-TLA2",
+            "KRA-CHANGE-OF-TAX-RATES-2021"
+          ]
+        },
+        "supported_lane_id": "resident_employment_income_2021_01_01",
+        "tax_year": 2021,
+        "template_id": null
+      },
+      "computation_identity": {
+        "computation_id": "a6d1214b-bd89-5e4a-a910-b7a0a8c9cb79",
+        "finalization_status": "finalized",
+        "finalized_at": "2026-03-19T18:00:00+03:00",
+        "finalized_audit_event_id": "545a3814-cc29-5c5c-8979-bda43adac4e8",
+        "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+        "regime_type": "income_tax",
+        "rule_version": "v1",
+        "tax_type": "income_tax",
+        "tax_year": 2021
+      },
+      "domain_fields": {
+        "deductions_and_exemptions": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "ITC-POL-803",
+            "ITC-POL-804"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "0.00",
+          "status": "computed",
+          "taxable_base_kes": "10000000.00"
+        },
+        "employment": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "HEMP-20210101-004",
+            "HEMP-20210101-008",
+            "HEMP-20210101-012"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "2937400.00",
+          "status": "computed",
+          "taxable_base_kes": "10000000.00"
+        },
+        "investment": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "ITC-POL-401"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "0.00",
+          "status": "not_applicable",
+          "taxable_base_kes": "0.00"
+        },
+        "reliefs": {
+          "creditable_amount_kes": "28800.00",
+          "decision_refs": [
+            "HEMP-20210101-006",
+            "HEMP-20210101-008"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "0.00",
+          "status": "computed",
+          "taxable_base_kes": "0.00"
+        },
+        "withholding": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "ITC-POL-601"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "0.00",
+          "status": "not_applicable",
+          "taxable_base_kes": "0.00"
+        }
+      },
+      "form_fields": {
+        "chargeable_income_kes": "10000000.00",
+        "employment_final_tax_amount_kes": "0.00",
+        "employment_gross_tax_kes": "2937400.00",
+        "employment_income_kes": "10000000.00",
+        "final_tax_excluded_income_kes": "0.00",
+        "investment_final_tax_amount_kes": "0.00",
+        "investment_gross_tax_kes": "0.00",
+        "investment_income_kes": "0.00",
+        "net_income_tax_due_kes": "2908600.00",
+        "refund_due_kes": "0.00",
+        "total_reliefs_kes": "28800.00"
+      },
+      "form_type": "income_tax_return",
+      "form_version": "income_tax_vertical_slice_v1",
+      "impact_fields": {
+        "deduction_impacts": [],
+        "exemption_impacts": [],
+        "relief_impacts": [
+          {
+            "claim_reference_id": "claim-personal-relief-2021-001",
+            "impact_amount_kes": "28800.00",
+            "impact_type": "personal_relief",
+            "status": "applied"
+          }
+        ]
+      },
+      "liability_fields": {
+        "advance_tax_credit_kes": "0.00",
+        "assessable_income_kes": "10000000.00",
+        "chargeable_income_kes": "10000000.00",
+        "creditable_withholding_kes": "0.00",
+        "final_tax_excluded_income_kes": "0.00",
+        "gross_tax_kes": "2937400.00",
+        "installment_tax_credit_kes": "0.00",
+        "net_income_tax_due_kes": "2908600.00",
+        "refund_due_kes": "0.00",
+        "total_reliefs_kes": "28800.00"
+      },
+      "lineage": {
+        "applied_policy_ids": [
+          "ITC-POL-201",
+          "ITC-POL-203",
+          "ITC-POL-801",
+          "ITC-POL-803",
+          "ITC-POL-804",
+          "HEMP-20210101-002",
+          "HEMP-20210101-004",
+          "HEMP-20210101-006",
+          "HEMP-20210101-008",
+          "HEMP-20210101-010",
+          "HEMP-20210101-011",
+          "HEMP-20210101-012"
+        ],
+        "computation_status": "complete",
+        "replay_safe": true,
+        "source_anchor_ids": [
+          "ITA-2021-01-01-A",
+          "AMEND-2020-TLA2",
+          "KRA-CHANGE-OF-TAX-RATES-2021"
+        ],
+        "validation_focus_domains": [
+          "ITD-CORE-EMPLOYMENT",
+          "ITD-CORE-DEDUCTIONS",
+          "ITD-CORE-RELIEFS"
+        ]
+      },
+      "mapping_status": "ok",
+      "supported_lane_id": "resident_employment_income_2021_01_01",
+      "taxpayer": {
+        "classification_outcome": "fully_classified",
+        "resident_status": "resident",
+        "taxpayer_kind": "individual"
+      },
+      "treatment_fields": {
+        "adjacent_regime_flags": [],
+        "withholding_treatments": []
+      },
+      "unsupported_fields": [],
+      "version_identity": {
+        "effective_end": "2021-06-30",
+        "effective_start": "2021-01-01",
+        "historical_version_id": "KIT-VER-20210101-A",
+        "source_anchor_ids": [
+          "ITA-2021-01-01-A",
+          "AMEND-2020-TLA2",
+          "KRA-CHANGE-OF-TAX-RATES-2021"
+        ],
+        "version_selection_basis": "specific_event_date"
+      }
+    },
+    "form_version_binding_output": {
+      "audit_evidence": {
+        "action": "binding",
+        "action_status": "bound",
+        "artifact_id": null,
+        "audit_evidence_id": "24567377a03c46e5d57014189c294a6118273ce6baa82a729a7cf0621057742a",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "a6d1214b-bd89-5e4a-a910-b7a0a8c9cb79",
+        "content_sha256": null,
+        "finalized_audit_event_id": "545a3814-cc29-5c5c-8979-bda43adac4e8",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20210101-RES-EMP-V1",
+        "historical_version_id": "KIT-VER-20210101-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-201",
+            "ITC-POL-203",
+            "ITC-POL-801",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "HEMP-20210101-002",
+            "HEMP-20210101-004",
+            "HEMP-20210101-006",
+            "HEMP-20210101-008",
+            "HEMP-20210101-010",
+            "HEMP-20210101-011",
+            "HEMP-20210101-012"
+          ],
+          "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2021-01-01-A",
+            "AMEND-2020-TLA2",
+            "KRA-CHANGE-OF-TAX-RATES-2021"
+          ]
+        },
+        "supported_lane_id": "resident_employment_income_2021_01_01",
+        "tax_year": 2021,
+        "template_id": "income_tax_return_resident_employment_2021_01_01_v1"
+      },
+      "binding_lineage": {
+        "applied_policy_ids": [
+          "ITC-POL-201",
+          "ITC-POL-203",
+          "ITC-POL-801",
+          "ITC-POL-803",
+          "ITC-POL-804",
+          "HEMP-20210101-002",
+          "HEMP-20210101-004",
+          "HEMP-20210101-006",
+          "HEMP-20210101-008",
+          "HEMP-20210101-010",
+          "HEMP-20210101-011",
+          "HEMP-20210101-012"
+        ],
+        "computation_id": "a6d1214b-bd89-5e4a-a910-b7a0a8c9cb79",
+        "effective_end": "2021-06-30",
+        "effective_start": "2021-01-01",
+        "finalized_audit_event_id": "545a3814-cc29-5c5c-8979-bda43adac4e8",
+        "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+        "resident_status": "resident",
+        "source_anchor_ids": [
+          "ITA-2021-01-01-A",
+          "AMEND-2020-TLA2",
+          "KRA-CHANGE-OF-TAX-RATES-2021"
+        ],
+        "taxpayer_kind": "individual"
+      },
+      "binding_status": "bound",
+      "form_type": "income_tax_return",
+      "form_version_id": "ITX-FORM-20210101-RES-EMP-V1",
+      "historical_version_id": "KIT-VER-20210101-A",
+      "supported_lane_id": "resident_employment_income_2021_01_01",
+      "tax_year": 2021,
+      "template_id": "income_tax_return_resident_employment_2021_01_01_v1"
+    }
+  },
+  "fixture_id": "income_tax_form_resident_employment_2021_01_01_case_001",
+  "fixture_version": 1,
+  "request": {
+    "finalized_at": "2026-03-19T18:00:00+03:00",
+    "tax_core_fixture_file": "income_tax_resident_employment_2021_01_01_case_001.json"
+  }
+}

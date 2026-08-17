@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IncomeTaxV1ResultPayload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "binding_id",
+    "rule_version",
+    "resident_status",
+    "income_source",
+    "annual_taxable_income_kes",
+    "gross_income_tax_kes",
+    "personal_relief_kes",
+    "net_income_tax_due_kes",
+    "band_breakdown"
+  ],
+  "properties": {
+    "binding_id": {
+      "const": "income_tax_default_v1_2025"
+    },
+    "rule_version": {
+      "const": "v1"
+    },
+    "resident_status": {
+      "const": "resident"
+    },
+    "income_source": {
+      "const": "employment_only"
+    },
+    "annual_taxable_income_kes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "gross_income_tax_kes": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d{2}$"
+    },
+    "personal_relief_kes": {
+      "const": "28800.00"
+    },
+    "net_income_tax_due_kes": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d{2}$"
+    },
+    "band_breakdown": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "band_index",
+          "rate_percent",
+          "taxable_amount_kes",
+          "tax_for_band_kes"
+        ],
+        "properties": {
+          "band_index": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "rate_percent": {
+            "type": "number",
+            "enum": [
+              10,
+              25,
+              30,
+              32.5,
+              35
+            ]
+          },
+          "taxable_amount_kes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tax_for_band_kes": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d{2}$"
+          }
+        }
+      }
+    }
+  }
+}

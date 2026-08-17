@@ -1,0 +1,109 @@
+{
+  "fixture_version": 1,
+  "fixture_id": "health_contribution_historical_rejection_2003_case_001",
+  "request": {
+    "tax_type": "health_contribution",
+    "regime_type": "health_contribution",
+    "regime_identifier": "nhif_legacy",
+    "tax_year": 2009,
+    "rule_version": "v1",
+    "input_payload": {
+      "version_context": {
+        "primary_effective_date": "2009-12-31",
+        "version_selection_basis": "payroll_period_end",
+        "historical_version_id": "HCH-VER-20031205-A",
+        "governing_change_ids": [
+          "HC-CHG-2003-12-05-A"
+        ],
+        "source_anchor_ids": [
+          "HC-NHIF-CONTRIB-LN-2003-12-05"
+        ]
+      },
+      "contributor_context": {
+        "contributor_kind": "employee",
+        "asserted_domain_path": "nhif_legacy",
+        "contribution_subject_reference_id": "SUBJECT-2003-001",
+        "employer_reference_id": "EMPLOYER-2003-001",
+        "payroll_reference_id": "PAYROLL-2003-001"
+      },
+      "nhif_legacy_inputs": {
+        "earning_items": [
+          {
+            "income_basis_type": "salary_band_basis",
+            "amount_kes": "45000.00",
+            "event_date": "2009-12-31",
+            "reference_id": "PAY-NHIF-2003-001"
+          }
+        ],
+        "member_class_assertions": [
+          {
+            "assertion_type": "standard_member",
+            "assertion_status": "confirmed_by_evidence",
+            "source_reference_id": "EVI-NHIF-2003-001"
+          }
+        ],
+        "deduction_reference_ids": [
+          "DED-NHIF-2003-001"
+        ]
+      },
+      "sha_shif_salaried_inputs": {
+        "payroll_items": [],
+        "employer_assertions": [],
+        "remittance_reference_ids": []
+      },
+      "sha_shif_non_salaried_inputs": {
+        "household_income_items": [],
+        "means_testing_assertions": [],
+        "household_member_reference_ids": []
+      },
+      "special_case_assertions": {
+        "assertion_items": []
+      },
+      "mixed_context_inputs": {
+        "context_items": []
+      },
+      "operational_context": {
+        "workflow_flags": [
+          "employer_remittance_workflow_present"
+        ],
+        "registration_status": "active",
+        "remittance_channel": "employer_payroll_remittance",
+        "reference_ids": [
+          "OPS-NHIF-2003-001"
+        ]
+      },
+      "traceability_context": {
+        "source_record_ids": [
+          "SRC-NHIF-2003-001"
+        ],
+        "preparation_profile": "historical_reconstruction_normalized",
+        "completeness_assertion": "partial_but_governed",
+        "evidence_reference_ids": []
+      }
+    }
+  },
+  "expected_output": {
+    "status_code": 400,
+    "response_json": {
+      "detail": {
+        "error_code": "invalid_rule_binding",
+        "message": "Invalid rule binding for computation request.",
+        "correlation_id": "corr-tax-core-contract",
+        "details": {
+          "reason": "unsupported_partially_specified_window",
+          "selection_key": {
+            "tax_type": "health_contribution",
+            "regime_type": "health_contribution",
+            "regime_identifier": "nhif_legacy",
+            "tax_year": 2009,
+            "rule_version": "v1",
+            "primary_effective_date": "2009-12-31",
+            "historical_version_id": "HCH-VER-20031205-A",
+            "resident_status_assertion": null,
+            "income_category_signature": null
+          }
+        }
+      }
+    }
+  }
+}

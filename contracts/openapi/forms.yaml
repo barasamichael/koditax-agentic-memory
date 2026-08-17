@@ -1,0 +1,1484 @@
+openapi: 3.1.0
+info:
+  title: forms
+  version: "1.0.0"
+  description: >
+    Canonical forms-service OpenAPI boundary.
+    This boundary is tax-domain-aware and preserves governed fail-closed semantics across
+    recognized tax domains. Governed form mapping is implemented for income-tax and
+    health_contribution outputs, while deeper downstream form-generation workflow remains
+    income-tax only. Other recognized domains such as vat, withholding_tax, and
+    corporate_tax are classified canonically and rejected without being mislabeled as
+    generic non-income-tax scope.
+tags:
+  - name: forms-income-tax
+    description: Implemented income-tax forms workflows preserved within a tax-domain-aware boundary.
+  - name: forms-health-contribution
+    description: Governed health-contribution mapping workflow preserved within a tax-domain-aware boundary.
+paths:
+  /v1/forms/income-tax/mappings:
+    post:
+      tags:
+        - forms-income-tax
+      summary: Map finalized deterministic income-tax output into form-ready structure.
+      operationId: mapIncomeTaxFormOutput
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormMappingRequest"
+      responses:
+        "200":
+          description: Form mapping completed for supported income-tax scope.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormMappingResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: >
+            Mapping blocked by governed validation or rejected by canonical conflict envelope.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FormGenerationBlockedResponse"
+                  - $ref: "#/components/schemas/ErrorEnvelope"
+  /v1/forms/health-contribution/mappings:
+    post:
+      tags:
+        - forms-health-contribution
+      summary: Map finalized deterministic health-contribution output into form-ready structure.
+      operationId: mapHealthContributionFormOutput
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormMappingRequest"
+      responses:
+        "200":
+          description: Form mapping completed for supported health-contribution scope.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormMappingResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: Mapping blocked by governed validation or rejected canonically.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FormGenerationBlockedResponse"
+                  - $ref: "#/components/schemas/ErrorEnvelope"
+  /v1/forms/income-tax/version-bindings:
+    post:
+      tags:
+        - forms-income-tax
+      summary: Bind mapped income-tax output to governed form version/template.
+      operationId: bindIncomeTaxFormVersion
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormVersionBindingRequest"
+      responses:
+        "200":
+          description: Form version binding completed for supported lane context.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormVersionBindingResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: Form version binding conflict returned canonically.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /v1/forms/income-tax/validations:
+    post:
+      tags:
+        - forms-income-tax
+      summary: Validate pre-generation income-tax form context deterministically.
+      operationId: validateIncomeTaxFormGeneration
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormValidationRequest"
+      responses:
+        "200":
+          description: Pre-generation validation findings returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormValidationResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/forms/income-tax/artifacts:
+    post:
+      tags:
+        - forms-income-tax
+      summary: Generate immutable income-tax form artifact from finalized upstream context.
+      operationId: generateIncomeTaxFormArtifact
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormArtifactGenerationRequest"
+      responses:
+        "201":
+          description: Form artifact generated for supported income-tax lane.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormArtifactGenerationResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: Artifact generation blocked by governed validation or validation conflict.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FormGenerationBlockedResponse"
+                  - $ref: "#/components/schemas/ErrorEnvelope"
+  /v1/forms/income-tax/artifacts/batch:
+    post:
+      tags:
+        - forms-income-tax
+      summary: Batch-generate immutable income-tax form artifacts in deterministic item order.
+      operationId: batchGenerateIncomeTaxFormArtifacts
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormBatchGenerationRequest"
+      responses:
+        "200":
+          description: Batch generation completed with per-item deterministic outcomes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormBatchGenerationResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/forms/income-tax/pre-populations:
+    post:
+      tags:
+        - forms-income-tax
+      summary: Resolve deterministic prior-year pre-population suggestions for supported forms.
+      operationId: resolveIncomeTaxFormPrePopulation
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormPrePopulationRequest"
+      responses:
+        "200":
+          description: Deterministic pre-population response with field-level provenance.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormPrePopulationResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/forms/income-tax/versions:
+    get:
+      tags:
+        - forms-income-tax
+      summary: List deterministic form history versions by user, tax year, and form type.
+      operationId: listIncomeTaxFormVersions
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/HistoryUserIdQuery"
+        - $ref: "#/components/parameters/HistoryTaxYearQuery"
+        - $ref: "#/components/parameters/HistoryFormTypeQuery"
+      responses:
+        "200":
+          description: Deterministic forms history version list for requested filter.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormVersionListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/forms/income-tax/artifacts/{artifact_id}/versions/{form_version_id}/metadata:
+    get:
+      tags:
+        - forms-income-tax
+      summary: Retrieve deterministic artifact metadata by artifact and version identity.
+      operationId: getIncomeTaxFormArtifactMetadata
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/ArtifactIdPath"
+        - $ref: "#/components/parameters/FormVersionIdPath"
+      responses:
+        "200":
+          description: Form artifact metadata found for supplied artifact/version context.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormArtifactMetadataResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/forms/income-tax/artifacts/{artifact_id}/versions/{form_version_id}/submission-checklist:
+    get:
+      tags:
+        - forms-income-tax
+      summary: Generate deterministic submission-readiness checklist for one artifact version.
+      operationId: getIncomeTaxFormSubmissionChecklist
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/ArtifactIdPath"
+        - $ref: "#/components/parameters/FormVersionIdPath"
+      responses:
+        "200":
+          description: Deterministic submission checklist generated for requested artifact/version.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormSubmissionChecklistResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/forms/income-tax/artifacts/{artifact_id}/versions/{form_version_id}/download-links:
+    post:
+      tags:
+        - forms-income-tax
+      summary: Issue deterministic time-bounded download token for one artifact version.
+      operationId: issueIncomeTaxFormDownloadLink
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/ArtifactIdPath"
+        - $ref: "#/components/parameters/FormVersionIdPath"
+      responses:
+        "200":
+          description: Download token issued for authorized artifact/version context.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormDownloadLinkIssuanceResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+components:
+  parameters:
+    AuthorizationHeader:
+      in: header
+      name: Authorization
+      required: true
+      schema:
+        type: string
+      description: Bearer credential in trusted gateway-authenticated format.
+    IdempotencyKeyHeader:
+      in: header
+      name: Idempotency-Key
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+      description: >
+        Stable key for deterministic replay/conflict behavior on side-effect,
+        replay-sensitive endpoints.
+    CorrelationIdHeader:
+      in: header
+      name: X-Correlation-ID
+      required: false
+      schema:
+        type: string
+      description: Optional caller-provided correlation identifier.
+    HistoryUserIdQuery:
+      in: query
+      name: user_id
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: Deterministic user ownership filter for forms history listing.
+    HistoryTaxYearQuery:
+      in: query
+      name: tax_year
+      required: true
+      schema:
+        type: integer
+        minimum: 2000
+        maximum: 2100
+      description: Tax year filter for forms history listing.
+    HistoryFormTypeQuery:
+      in: query
+      name: form_type
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: Supported form type filter for forms history listing.
+    ArtifactIdPath:
+      in: path
+      name: artifact_id
+      required: true
+      schema:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      description: Immutable artifact identity hash.
+    FormVersionIdPath:
+      in: path
+      name: form_version_id
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: Governed form-version identifier.
+  responses:
+    ErrorResponse:
+      description: Deterministic structured error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+  schemas:
+    FormsErrorReasonCode:
+      type: string
+      enum:
+        - forms_operation_not_implemented
+        - forms_scope_not_supported
+        - invalid_tax_domain
+        - unsupported_tax_domain_path
+        - unimplemented_tax_domain_mapping
+        - forms_request_invalid
+        - forms_contract_violation
+        - forms_mapping_input_not_finalized
+        - forms_version_not_supported
+        - forms_version_binding_ambiguous
+        - forms_generation_precondition_missing
+        - forms_artifact_generation_failed
+        - forms_audit_evidence_missing
+        - forms_validation_contract_violation
+        - forms_generation_blocked_by_validation
+        - forms_history_persistence_failed
+        - forms_history_not_found
+        - forms_unauthorized_access
+        - forms_storage_write_failed
+        - forms_storage_reference_missing
+        - forms_download_not_authorized
+        - forms_download_artifact_not_found
+        - forms_download_link_issuance_failed
+        - forms_download_link_expired
+        - forms_artifact_retention_expired
+        - forms_artifact_access_restricted
+        - forms_pre_population_source_not_found
+        - forms_pre_population_scope_not_supported
+        - forms_pre_population_not_authorized
+        - forms_submission_checklist_not_authorized
+        - forms_submission_checklist_scope_not_supported
+        - forms_submission_checklist_source_missing
+        - forms_template_capability_disabled
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+        - trace_id
+        - correlation_id
+      properties:
+        error_code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        reason:
+          $ref: "#/components/schemas/FormsErrorReasonCode"
+        trace_id:
+          type: string
+          minLength: 1
+        correlation_id:
+          type: string
+          minLength: 1
+        details:
+          type: object
+          additionalProperties: true
+    Traceability:
+      type: object
+      additionalProperties: false
+      required:
+        - trace_id
+      properties:
+        trace_id:
+          type: string
+          minLength: 1
+        correlation_id:
+          type: string
+          minLength: 1
+    DeterministicObject:
+      type: object
+      additionalProperties: true
+    GovernedValidationIssue:
+      type: object
+      additionalProperties: false
+      required:
+        - severity
+        - code
+        - message
+        - field
+      properties:
+        severity:
+          type: string
+          enum: [ERROR, WARNING, INFO]
+        code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        field:
+          oneOf:
+            - type: string
+            - type: "null"
+    GovernedValidationRuleResult:
+      type: object
+      additionalProperties: false
+      required:
+        - rule_code
+        - outcome
+        - severity
+        - message
+        - field
+        - linked_issue_codes
+      properties:
+        rule_code:
+          type: string
+          minLength: 1
+        outcome:
+          type: string
+          enum: [passed, failed, not_applicable]
+        severity:
+          type: string
+          enum: [ERROR, WARNING, INFO]
+        message:
+          type: string
+          minLength: 1
+        field:
+          oneOf:
+            - type: string
+            - type: "null"
+        linked_issue_codes:
+          type: array
+          items:
+            type: string
+    GovernedValidationSummary:
+      type: object
+      additionalProperties: false
+      required:
+        - error_count
+        - warning_count
+        - info_count
+        - total_issues
+      properties:
+        error_count:
+          type: integer
+        warning_count:
+          type: integer
+        info_count:
+          type: integer
+        total_issues:
+          type: integer
+    GovernedValidationEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - workflow
+        - tax_domain
+        - validation_status
+        - summary
+        - issues
+        - rule_results
+      properties:
+        workflow:
+          type: string
+          minLength: 1
+        tax_domain:
+          type: string
+          enum: [income_tax, health_contribution]
+        validation_status:
+          type: string
+          enum: [accepted, rejected]
+        summary:
+          $ref: "#/components/schemas/GovernedValidationSummary"
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/GovernedValidationIssue"
+        rule_results:
+          type: array
+          items:
+            $ref: "#/components/schemas/GovernedValidationRuleResult"
+    FormMappingRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - finalized_output
+      properties:
+        finalized_output:
+          $ref: "#/components/schemas/DeterministicObject"
+    FormMappingResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - mapping_status
+        - form_type
+        - form_version
+        - mapping_output
+        - audit_evidence
+        - governed_validation
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        mapping_status:
+          type: string
+          enum:
+            - ok
+        form_type:
+          type: string
+          enum:
+            - income_tax_return
+            - health_contribution_summary
+        form_version:
+          type: string
+          minLength: 1
+        mapping_output:
+          $ref: "#/components/schemas/DeterministicObject"
+        audit_evidence:
+          $ref: "#/components/schemas/FormsAuditEvidenceEnvelope"
+        governed_validation:
+          $ref: "#/components/schemas/GovernedValidationEnvelope"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    FormVersionBindingRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - mapped_output
+      properties:
+        mapped_output:
+          $ref: "#/components/schemas/DeterministicObject"
+    FormVersionBindingResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - binding_status
+        - form_type
+        - form_version
+        - form_version_id
+        - form_template_id
+        - historical_version_id
+        - effective_start
+        - effective_end
+        - binding_output
+        - audit_evidence
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        binding_status:
+          type: string
+          enum:
+            - bound
+        form_type:
+          type: string
+          enum:
+            - income_tax_return
+        form_version:
+          type: string
+          minLength: 1
+        form_version_id:
+          type: string
+          minLength: 1
+        form_template_id:
+          type: string
+          minLength: 1
+        historical_version_id:
+          type: string
+          minLength: 1
+        effective_start:
+          type: string
+          minLength: 1
+        effective_end:
+          type:
+            - string
+            - "null"
+        binding_output:
+          $ref: "#/components/schemas/DeterministicObject"
+        audit_evidence:
+          $ref: "#/components/schemas/FormsAuditEvidenceEnvelope"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    ValidationFinding:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - severity
+        - message
+        - field
+      properties:
+        code:
+          type: string
+          minLength: 1
+        severity:
+          type: string
+          enum:
+            - info
+            - warning
+            - error
+        message:
+          type: string
+          minLength: 1
+        field:
+          type: string
+          minLength: 1
+        details:
+          type: object
+          additionalProperties: true
+    FormValidationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - form_ready_output
+        - form_version_binding
+      properties:
+        form_ready_output:
+          $ref: "#/components/schemas/DeterministicObject"
+        form_version_binding:
+          $ref: "#/components/schemas/DeterministicObject"
+    FormValidationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - validation_status
+        - is_valid
+        - findings
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        validation_status:
+          type: string
+          enum:
+            - valid
+            - invalid
+        is_valid:
+          type: boolean
+        findings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationFinding"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    FormArtifactGenerationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - finalized_output
+        - form_ready_output
+        - form_version_binding
+      properties:
+        finalized_output:
+          $ref: "#/components/schemas/DeterministicObject"
+        form_ready_output:
+          $ref: "#/components/schemas/DeterministicObject"
+        form_version_binding:
+          $ref: "#/components/schemas/DeterministicObject"
+    FormBatchGenerationItemRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - scope
+        - payload
+      properties:
+        scope:
+          type: string
+          minLength: 1
+        payload:
+          $ref: "#/components/schemas/FormArtifactGenerationRequest"
+    FormBatchGenerationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/FormBatchGenerationItemRequest"
+    FormBatchGenerationItemError:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+      properties:
+        error_code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        reason:
+          $ref: "#/components/schemas/FormsErrorReasonCode"
+    FormBatchGenerationSuccessItem:
+      type: object
+      additionalProperties: false
+      required:
+        - index
+        - status
+        - artifact
+      properties:
+        index:
+          type: integer
+          minimum: 0
+        status:
+          type: string
+          enum:
+            - succeeded
+        artifact:
+          $ref: "#/components/schemas/FormArtifactGenerationResponse"
+    FormBatchGenerationFailureItem:
+      type: object
+      additionalProperties: false
+      required:
+        - index
+        - status
+        - error
+      properties:
+        index:
+          type: integer
+          minimum: 0
+        status:
+          type: string
+          enum:
+            - failed
+        error:
+          $ref: "#/components/schemas/FormBatchGenerationItemError"
+    FormBatchGenerationSummary:
+      type: object
+      additionalProperties: false
+      required:
+        - total
+        - succeeded
+        - failed
+      properties:
+        total:
+          type: integer
+          minimum: 0
+        succeeded:
+          type: integer
+          minimum: 0
+        failed:
+          type: integer
+          minimum: 0
+    FormBatchGenerationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - batch_id
+        - summary
+        - results
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        batch_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        summary:
+          $ref: "#/components/schemas/FormBatchGenerationSummary"
+        results:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/FormBatchGenerationSuccessItem"
+              - $ref: "#/components/schemas/FormBatchGenerationFailureItem"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    FormPrePopulationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - form_type
+        - target_tax_year
+      properties:
+        form_type:
+          type: string
+          minLength: 1
+        target_tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        source_tax_year:
+          type:
+            - integer
+            - "null"
+          minimum: 2000
+          maximum: 2100
+        source_user_id:
+          type:
+            - string
+            - "null"
+          minLength: 1
+    FormPrePopulationSourceContext:
+      type: object
+      additionalProperties: false
+      required:
+        - selection_mode
+        - source_tax_year
+        - source_artifact_id
+      properties:
+        selection_mode:
+          type: string
+          enum:
+            - auto_previous_year
+            - explicit_source_tax_year
+        source_tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        source_artifact_id:
+          type:
+            - string
+            - "null"
+          pattern: "^[a-f0-9]{64}$"
+    FormPrePopulationField:
+      type: object
+      additionalProperties: false
+      required:
+        - field
+        - value
+        - source_artifact_id
+        - source_tax_year
+        - policy_tag
+      properties:
+        field:
+          type: string
+          minLength: 1
+        value:
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+        source_artifact_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        source_tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        policy_tag:
+          type: string
+          minLength: 1
+    FormPrePopulationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - pre_population_status
+        - target_form_type
+        - target_tax_year
+        - source_context
+        - populated_fields
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        pre_population_status:
+          type: string
+          enum:
+            - applied
+            - source_not_found
+        reason:
+          type: string
+          enum:
+            - forms_pre_population_source_not_found
+        target_form_type:
+          type: string
+          enum:
+            - income_tax_return
+        target_tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        source_context:
+          $ref: "#/components/schemas/FormPrePopulationSourceContext"
+        populated_fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/FormPrePopulationField"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    FormArtifactGenerationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - generation_status
+        - artifact_id
+        - artifact_hash
+        - artifact_type
+        - form_type
+        - form_version_id
+        - lineage_reference
+        - created_at
+        - immutability_status
+        - immutable
+        - storage_metadata
+        - retention_metadata
+        - audit_evidence
+        - governed_validation
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        generation_status:
+          type: string
+          enum:
+            - generated
+        artifact_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        artifact_hash:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        artifact_type:
+          type: string
+          enum:
+            - income_tax_form_artifact
+        form_type:
+          type: string
+          enum:
+            - income_tax_return
+        form_version_id:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        historical_version_id:
+          type: string
+          minLength: 1
+        lineage_reference:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+        generated_at:
+          type: string
+          format: date-time
+        immutability_status:
+          type: string
+          enum:
+            - immutable
+        immutable:
+          type: boolean
+          enum:
+            - true
+        storage_metadata:
+          $ref: "#/components/schemas/FormStorageMetadata"
+        retention_metadata:
+          $ref: "#/components/schemas/FormRetentionMetadata"
+        artifact_output:
+          $ref: "#/components/schemas/DeterministicObject"
+        audit_evidence:
+          $ref: "#/components/schemas/FormsAuditEvidenceEnvelope"
+        governed_validation:
+          $ref: "#/components/schemas/GovernedValidationEnvelope"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    FormGenerationBlockedValidation:
+      type: object
+      additionalProperties: false
+      required:
+        - is_valid
+        - findings
+      properties:
+        is_valid:
+          type: boolean
+          enum:
+            - false
+        findings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationFinding"
+    FormGenerationBlockedResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - reason
+        - validation
+        - governed_validation
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - blocked
+        reason:
+          type: string
+          enum:
+            - forms_generation_blocked_by_validation
+        validation:
+          $ref: "#/components/schemas/FormGenerationBlockedValidation"
+        governed_validation:
+          $ref: "#/components/schemas/GovernedValidationEnvelope"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    FormVersionListItem:
+      type: object
+      additionalProperties: false
+      required:
+        - artifact_id
+        - form_type
+        - form_version_id
+        - tax_year
+        - historical_version_id
+        - status
+        - created_at
+        - lineage_reference
+      properties:
+        artifact_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        form_type:
+          type: string
+          enum:
+            - income_tax_return
+        form_version_id:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        historical_version_id:
+          type:
+            - string
+            - "null"
+        status:
+          type: string
+          enum:
+            - current
+            - superseded
+        created_at:
+          type: string
+          format: date-time
+        lineage_reference:
+          type: object
+          additionalProperties: true
+    FormVersionListResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - user_id
+        - tax_year
+        - form_type
+        - versions
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        user_id:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        form_type:
+          type: string
+          enum:
+            - income_tax_return
+        versions:
+          type: array
+          items:
+            $ref: "#/components/schemas/FormVersionListItem"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    FormsAuditEvidenceEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - audit_event_id
+        - event_type
+        - event_timestamp
+        - trace_id
+        - correlation_id
+        - lineage_reference
+        - actor_context
+      properties:
+        audit_event_id:
+          type: string
+          minLength: 1
+        event_type:
+          type: string
+          minLength: 1
+        event_timestamp:
+          type: string
+          format: date-time
+        trace_id:
+          type: string
+          minLength: 1
+        correlation_id:
+          type: string
+          minLength: 1
+        lineage_reference:
+          type: object
+          additionalProperties: true
+        actor_context:
+          type: object
+          additionalProperties: true
+    FormStorageMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        - storage_object_id
+        - storage_backend
+        - content_type
+        - size_bytes
+        - artifact_hash
+      properties:
+        storage_object_id:
+          type: string
+          minLength: 1
+        storage_backend:
+          type: string
+          minLength: 1
+        content_type:
+          type: string
+          minLength: 1
+        size_bytes:
+          type: integer
+          minimum: 0
+        artifact_hash:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+    FormRetentionMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        - retention_policy_id
+        - retention_expires_at
+        - download_expires_at
+        - retention_status
+      properties:
+        retention_policy_id:
+          type: string
+          minLength: 1
+        retention_expires_at:
+          type: string
+          format: date-time
+        download_expires_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+        retention_status:
+          type: string
+          enum:
+            - active
+            - expired
+            - restricted
+    FormArtifactMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        - artifact_id
+        - form_type
+        - form_version_id
+        - tax_year
+        - historical_version_id
+        - status
+        - created_at
+        - lineage_reference
+        - download_metadata
+      properties:
+        artifact_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        form_type:
+          type: string
+          enum:
+            - income_tax_return
+        form_version_id:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        historical_version_id:
+          type:
+            - string
+            - "null"
+        status:
+          type: string
+          enum:
+            - current
+            - superseded
+        created_at:
+          type: string
+          format: date-time
+        lineage_reference:
+          type: object
+          additionalProperties: true
+        download_metadata:
+          type: object
+          additionalProperties: false
+          required:
+            - available
+            - expires_at
+          properties:
+            available:
+              type: boolean
+            expires_at:
+              type:
+                - string
+                - "null"
+              format: date-time
+    FormArtifactMetadataResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - artifact_metadata
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        artifact_metadata:
+          $ref: "#/components/schemas/FormArtifactMetadata"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    FormSubmissionChecklistItem:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - description
+        - status
+        - blocking
+        - evidence_ref
+      properties:
+        code:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          minLength: 1
+        status:
+          type: string
+          enum:
+            - pass
+            - fail
+            - warn
+        blocking:
+          type: boolean
+        evidence_ref:
+          type: string
+          minLength: 1
+    FormSubmissionChecklistResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - artifact_id
+        - form_version_id
+        - checklist_id
+        - form_type
+        - tax_year
+        - overall_status
+        - items
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        artifact_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        form_version_id:
+          type: string
+          minLength: 1
+        checklist_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        form_type:
+          type: string
+          enum:
+            - income_tax_return
+        tax_year:
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        overall_status:
+          type: string
+          enum:
+            - ready
+            - not_ready
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/FormSubmissionChecklistItem"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    FormDownloadLinkIssuanceResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - artifact_id
+        - download_token
+        - issued_at
+        - expires_at
+        - ttl_seconds
+        - audit_evidence
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - issued
+        artifact_id:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        download_token:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        issued_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        ttl_seconds:
+          type: integer
+          minimum: 1
+        audit_evidence:
+          $ref: "#/components/schemas/FormsAuditEvidenceEnvelope"
+        traceability:
+          $ref: "#/components/schemas/Traceability"

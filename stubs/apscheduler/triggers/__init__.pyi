@@ -1,0 +1,1 @@
+"""Typed scheduler trigger namespace."""

@@ -1,0 +1,23 @@
+{
+  "case_id": "golden_forms_execution",
+  "flow": "execute_single_turn",
+  "prompt_text": "generate form for income tax return preparation.",
+  "response_generator_mode": "plain",
+  "expected": {
+    "http_status": 500,
+    "top_level_status": null,
+    "decision_status": null,
+    "gate_status": null,
+    "plan_mode": null,
+    "route_id": null,
+    "target_service": null,
+    "execution_status": null,
+    "response_status": null,
+    "answer_mode": null,
+    "has_citations": false,
+    "clarification_reason_code": null,
+    "error_code": "turn_resolution_validation_failed",
+    "reason_code": "turn_resolution_unexpected_assumptions",
+    "step_services": []
+  }
+}

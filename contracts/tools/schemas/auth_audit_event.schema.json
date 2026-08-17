@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AuthAuditEventEnvelope",
+  "description": "Canonical immutable auth audit event envelope for security-sensitive auth and identity flows.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_type",
+    "event_time",
+    "user_id",
+    "tenant_id",
+    "session_id",
+    "correlation_id",
+    "trace_id",
+    "action_status",
+    "reason_code",
+    "evidence_hash",
+    "details"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "auth_registration_requested",
+        "auth_registration_verified",
+        "auth_login_succeeded",
+        "auth_login_failed",
+        "auth_lockout_applied",
+        "auth_session_refreshed",
+        "auth_session_revoked",
+        "auth_password_reset_requested",
+        "auth_password_reset_completed",
+        "auth_phone_change_requested",
+        "auth_phone_change_confirmed",
+        "auth_account_deletion_requested",
+        "auth_account_deletion_confirmed",
+        "auth_account_deletion_executed",
+        "auth_otp_challenge_issued",
+        "auth_otp_challenge_verified"
+      ]
+    },
+    "event_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "user_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "session_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "correlation_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+    },
+    "trace_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+    },
+    "action_status": {
+      "type": "string",
+      "enum": [
+        "requested",
+        "verified",
+        "succeeded",
+        "failed",
+        "rejected",
+        "applied",
+        "confirmed",
+        "completed",
+        "executed"
+      ]
+    },
+    "reason_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "evidence_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "details": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

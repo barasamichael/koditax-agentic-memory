@@ -1,0 +1,2630 @@
+openapi: 3.1.0
+info:
+  title: knowledge
+  version: "0.1.0"
+  description: >
+    Deterministic knowledge service contract for governed search and retrieval over tax references.
+    Knowledge retrieval, ingestion, management, and lifecycle mutation routes are internal
+    Administrator-only surfaces carried through
+    `X-Auth-Context`.
+paths:
+  /healthz:
+    get:
+      summary: Knowledge service health check.
+      operationId: knowledgeHealthz
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+      responses:
+        "200":
+          description: Service is healthy.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceStatusResponse"
+  /readyz:
+    get:
+      summary: Knowledge service readiness check.
+      operationId: knowledgeReadyz
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+      responses:
+        "200":
+          description: Service is ready.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceStatusResponse"
+  /knowledge/search:
+    post:
+      summary: Deterministic knowledge search endpoint.
+      operationId: knowledgeSearch
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeSearchRequest"
+      responses:
+        "200":
+          description: Search completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeSearchResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/retrieve:
+    post:
+      summary: Deterministic knowledge retrieval by source or anchor IDs.
+      operationId: knowledgeRetrieve
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeRetrieveRequest"
+      responses:
+        "200":
+          description: Retrieval completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeSearchResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/timeline/search:
+    post:
+      summary: Deterministic timeline retrieval across governed effective windows.
+      operationId: knowledgeTimelineSearch
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeTimelineSearchRequest"
+      responses:
+        "200":
+          description: Timeline retrieval completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeTimelineResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/files:
+    post:
+      summary: Persist one governed legacy direct-import official-source file ingestion job.
+      operationId: knowledgeIngestFile
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeFileIngestionRequest"
+      responses:
+        "200":
+          description: File ingestion persisted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeIngestionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/documents:
+    post:
+      summary: Persist one governed document-backed official-source ingestion job.
+      operationId: knowledgeIngestDocument
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeDocumentIngestionRequest"
+      responses:
+        "200":
+          description: Document-backed ingestion persisted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeIngestionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/files/bulk:
+    post:
+      summary: Persist multiple governed legacy direct-import official-source file ingestion jobs deterministically.
+      operationId: knowledgeBulkIngestFiles
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeBulkIngestionFileRequest"
+      responses:
+        "200":
+          description: Bulk file ingestion completed deterministically.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeBulkIngestionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/documents/bulk:
+    post:
+      summary: Persist multiple governed document-backed official-source ingestion jobs deterministically.
+      operationId: knowledgeBulkIngestDocuments
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeBulkIngestionDocumentRequest"
+      responses:
+        "200":
+          description: Bulk document-backed ingestion completed deterministically.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeBulkIngestionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/urls:
+    post:
+      summary: Persist one governed official-source URL ingestion job.
+      operationId: knowledgeIngestUrl
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeUrlIngestionRequest"
+      responses:
+        "200":
+          description: URL ingestion persisted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeIngestionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/urls/bulk:
+    post:
+      summary: Persist multiple governed official-source URL ingestion jobs deterministically.
+      operationId: knowledgeBulkIngestUrls
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeBulkIngestionUrlRequest"
+      responses:
+        "200":
+          description: Bulk URL ingestion completed deterministically.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeBulkIngestionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/{ingestion_job_id}:
+    get:
+      summary: Fetch one governed ingestion job for review.
+      operationId: knowledgeGetIngestionJob
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: ingestion_job_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ingestion job fetched successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeIngestionDetailResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion:
+    get:
+      summary: List governed ingestion jobs for deterministic management visibility.
+      operationId: knowledgeListIngestionJobs
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: query
+          name: ingestion_state
+          required: false
+          schema:
+            type: string
+            enum:
+              - uploaded
+              - review_pending
+              - approved
+              - published
+              - rejected
+        - in: query
+          name: source_input_origin
+          required: false
+          schema:
+            type: string
+            enum:
+              - official_source_upload
+              - official_source_url
+        - in: query
+          name: source_class
+          required: false
+          schema:
+            type: string
+            enum:
+              - tax_law
+              - regulation
+              - guidance
+              - commentary
+        - in: query
+          name: requested_by
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: sort_by
+          required: false
+          schema:
+            type: string
+            enum:
+              - created_at
+        - in: query
+          name: sort_order
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        "200":
+          description: Ingestion jobs listed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeIngestionManagementListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/bulk/reject:
+    post:
+      summary: Reject multiple reviewable ingestion jobs deterministically.
+      operationId: knowledgeBulkRejectIngestionJobs
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeIngestionBulkRejectRequest"
+      responses:
+        "200":
+          description: Bulk rejection completed deterministically.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeBulkActionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/bulk/publish:
+    post:
+      summary: Publish multiple approved ingestion jobs deterministically.
+      operationId: knowledgeBulkPublishIngestionJobs
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeIngestionBulkPublishRequest"
+      responses:
+        "200":
+          description: Bulk publication completed deterministically.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeBulkActionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/{ingestion_job_id}/review:
+    post:
+      summary: Persist review notes and metadata refinement for one ingestion job.
+      operationId: knowledgeReviewIngestionJob
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: ingestion_job_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeIngestionReviewRequest"
+      responses:
+        "200":
+          description: Review state persisted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeIngestionDetailResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/{ingestion_job_id}/approve:
+    post:
+      summary: Approve one ingestion job for governed publication.
+      operationId: knowledgeApproveIngestionJob
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: ingestion_job_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeIngestionApproveRequest"
+      responses:
+        "200":
+          description: Approval persisted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeIngestionDetailResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/{ingestion_job_id}/reject:
+    post:
+      summary: Reject one ingestion job and keep it non-searchable.
+      operationId: knowledgeRejectIngestionJob
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: ingestion_job_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeIngestionRejectRequest"
+      responses:
+        "200":
+          description: Rejection persisted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeIngestionDetailResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/{ingestion_job_id}/publish:
+    post:
+      summary: Publish one approved ingestion job into searchable governed records.
+      operationId: knowledgePublishIngestionJob
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: ingestion_job_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeIngestionPublishRequest"
+      responses:
+        "200":
+          description: Publication completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeIngestionDetailResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/ingestion/{ingestion_job_id}/metadata-correction:
+    post:
+      summary: Apply one narrow pre-publication metadata correction for unpublished review-stage material.
+      operationId: knowledgeCorrectIngestionMetadata
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: ingestion_job_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeMetadataCorrectionRequest"
+      responses:
+        "200":
+          description: Metadata correction persisted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeIngestionDetailResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/source-versions/{source_version_id}/supersede:
+    post:
+      summary: Supersede one published source version with a governed successor.
+      operationId: knowledgeSupersedeSourceVersion
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: source_version_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeSourceVersionSupersedeRequest"
+      responses:
+        "200":
+          description: Supersession completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeSourceVersionLifecycleResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/source-versions:
+    get:
+      summary: List governed source versions for deterministic management visibility.
+      operationId: knowledgeListSourceVersions
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: query
+          name: publication_state
+          required: false
+          schema:
+            type: string
+            enum:
+              - draft
+              - review_pending
+              - approved
+              - published
+              - superseded
+              - archived
+              - rejected
+        - in: query
+          name: source_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: source_family_id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: tax_domain
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: source_class
+          required: false
+          schema:
+            type: string
+            enum:
+              - tax_law
+              - regulation
+              - guidance
+              - commentary
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: sort_by
+          required: false
+          schema:
+            type: string
+            enum:
+              - source_family_id
+              - effective_from
+        - in: query
+          name: sort_order
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        "200":
+          description: Source versions listed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeSourceVersionManagementListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/sources:
+    get:
+      summary: List governed sources for deterministic management visibility.
+      operationId: knowledgeListSources
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: query
+          name: source_class
+          required: false
+          schema:
+            type: string
+            enum:
+              - tax_law
+              - regulation
+              - guidance
+              - commentary
+        - in: query
+          name: tax_domain
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: sort_by
+          required: false
+          schema:
+            type: string
+            enum:
+              - source_family_id
+              - tax_domain
+        - in: query
+          name: sort_order
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        "200":
+          description: Sources listed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeSourceManagementListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/sources/{source_id}:
+    get:
+      summary: Fetch one governed source detail record.
+      operationId: knowledgeGetSource
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: source_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Source detail fetched successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeSourceDetailResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/anchors/{anchor_id}:
+    get:
+      summary: Fetch one governed anchor detail record.
+      operationId: knowledgeGetAnchor
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: anchor_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Anchor detail fetched successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeAnchorDetailResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/source-versions/bulk/archive:
+    post:
+      summary: Archive multiple eligible source versions deterministically.
+      operationId: knowledgeBulkArchiveSourceVersions
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeSourceVersionBulkArchiveRequest"
+      responses:
+        "200":
+          description: Bulk archive completed deterministically.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeBulkActionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/source-versions/{source_version_id}:
+    get:
+      summary: Fetch one governed source-version lifecycle record.
+      operationId: knowledgeGetSourceVersionLifecycle
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: source_version_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Source version lifecycle fetched successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeSourceVersionLifecycleResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /knowledge/source-versions/{source_version_id}/archive:
+    post:
+      summary: Archive one governed published or superseded source version.
+      operationId: knowledgeArchiveSourceVersion
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: source_version_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeSourceVersionArchiveRequest"
+      responses:
+        "200":
+          description: Archive transition completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeSourceVersionLifecycleResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+components:
+  parameters:
+    CorrelationIdHeader:
+      in: header
+      name: X-Correlation-ID
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    TraceIdHeader:
+      in: header
+      name: X-Trace-ID
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    AuthContextHeader:
+      in: header
+      name: X-Auth-Context
+      required: true
+      description: Internal shared auth-context envelope required on Administrator-only routes.
+      schema:
+        type: string
+        minLength: 1
+  responses:
+    ErrorResponse:
+      description: Canonical deterministic error envelope.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [detail]
+            properties:
+              detail:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  schemas:
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+        - reason_code
+        - correlation_id
+        - trace_id
+      properties:
+        error_code:
+          type: string
+        message:
+          type: string
+        reason:
+          type: string
+        reason_code:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        context:
+          type: object
+          additionalProperties: true
+    ServiceStatusResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, version, correlation_id, trace_id]
+      properties:
+        status:
+          type: string
+          enum: [ok, ready]
+        service:
+          type: string
+        version:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+    KnowledgeSearchRequest:
+      type: object
+      additionalProperties: false
+      required: [query]
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 512
+        source_type:
+          type: string
+          minLength: 1
+        tax_domain:
+          type: string
+          minLength: 1
+        effective_date:
+          type: string
+          format: date
+    KnowledgeRetrieveRequest:
+      type: object
+      additionalProperties: false
+      required: [source_ids, anchor_ids]
+      properties:
+        source_ids:
+          type: array
+          maxItems: 50
+          items:
+            type: string
+            minLength: 1
+            maxLength: 255
+        anchor_ids:
+          type: array
+          maxItems: 50
+          items:
+            type: string
+            minLength: 1
+            maxLength: 255
+    KnowledgeTimelineSearchRequest:
+      type: object
+      additionalProperties: false
+      required: [query, tax_domain, start_date, end_date]
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 512
+        tax_domain:
+          type: string
+          minLength: 1
+        source_type:
+          type: string
+          minLength: 1
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+    KnowledgeFileIngestionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - requested_by
+        - idempotency_key
+        - filename
+        - mime_type
+        - file_content_base64
+        - legacy_import_acknowledged
+      properties:
+        requested_by:
+          type: string
+          format: uuid
+        idempotency_key:
+          type: string
+          minLength: 1
+        filename:
+          type: string
+          minLength: 1
+        mime_type:
+          type: string
+          enum:
+            - application/pdf
+            - text/html
+            - text/plain
+            - text/markdown
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - application/xml
+        file_content_base64:
+          type: string
+          minLength: 1
+        legacy_import_acknowledged:
+          type: boolean
+          enum: [true]
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_upload
+        source_class:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+    KnowledgeDocumentIngestionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - requested_by
+        - idempotency_key
+        - document_id
+        - storage_key
+        - mime_type
+        - payload_checksum_sha256
+        - source_document_system
+      properties:
+        requested_by:
+          type: string
+          format: uuid
+        idempotency_key:
+          type: string
+          minLength: 1
+        document_id:
+          type: string
+          format: uuid
+        storage_key:
+          type: string
+          minLength: 1
+          description: Local upstream storage key for the registered document; URL-style values are invalid.
+        mime_type:
+          type: string
+          enum:
+            - application/pdf
+            - text/html
+            - text/plain
+            - text/markdown
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - application/xml
+        payload_checksum_sha256:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        source_document_system:
+          type: string
+          enum:
+            - storage_registered
+          description: >
+            Governed upstream document-registration boundary for shared-corpus official-source
+            handoff. General user `document_ai` uploads are not valid new shared-corpus inputs.
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_upload
+        source_class:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+    KnowledgeUrlIngestionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - requested_by
+        - idempotency_key
+        - url
+      properties:
+        requested_by:
+          type: string
+          format: uuid
+        idempotency_key:
+          type: string
+          minLength: 1
+        url:
+          type: string
+          minLength: 1
+          format: uri
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_url
+        source_class:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+    KnowledgeBulkIngestionFileItem:
+      type: object
+      additionalProperties: false
+      required:
+        - idempotency_key
+        - filename
+        - mime_type
+        - file_content_base64
+        - legacy_import_acknowledged
+      properties:
+        idempotency_key:
+          type: string
+          minLength: 1
+        filename:
+          type: string
+          minLength: 1
+        mime_type:
+          type: string
+          enum:
+            - application/pdf
+            - text/html
+            - text/plain
+            - text/markdown
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - application/xml
+        file_content_base64:
+          type: string
+          minLength: 1
+        legacy_import_acknowledged:
+          type: boolean
+          enum: [true]
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_upload
+        source_class:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+    KnowledgeBulkIngestionDocumentItem:
+      type: object
+      additionalProperties: false
+      required:
+        - idempotency_key
+        - document_id
+        - storage_key
+        - mime_type
+        - payload_checksum_sha256
+        - source_document_system
+      properties:
+        idempotency_key:
+          type: string
+          minLength: 1
+        document_id:
+          type: string
+          format: uuid
+        storage_key:
+          type: string
+          minLength: 1
+          description: Local upstream storage key for the registered document; URL-style values are invalid.
+        mime_type:
+          type: string
+          enum:
+            - application/pdf
+            - text/html
+            - text/plain
+            - text/markdown
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - application/xml
+        payload_checksum_sha256:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+        source_document_system:
+          type: string
+          enum:
+            - storage_registered
+          description: >
+            Governed upstream document-registration boundary for shared-corpus official-source
+            handoff. General user `document_ai` uploads are not valid new shared-corpus inputs.
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_upload
+        source_class:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+    KnowledgeBulkIngestionUrlItem:
+      type: object
+      additionalProperties: false
+      required:
+        - idempotency_key
+        - url
+      properties:
+        idempotency_key:
+          type: string
+          minLength: 1
+        url:
+          type: string
+          minLength: 1
+          format: uri
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_url
+        source_class:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+    KnowledgeBulkIngestionFileRequest:
+      type: object
+      additionalProperties: false
+      required: [acting_user, items]
+      properties:
+        acting_user:
+          type: string
+          format: uuid
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/KnowledgeBulkIngestionFileItem"
+    KnowledgeBulkIngestionDocumentRequest:
+      type: object
+      additionalProperties: false
+      required: [acting_user, items]
+      properties:
+        acting_user:
+          type: string
+          format: uuid
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/KnowledgeBulkIngestionDocumentItem"
+    KnowledgeBulkIngestionUrlRequest:
+      type: object
+      additionalProperties: false
+      required: [acting_user, items]
+      properties:
+        acting_user:
+          type: string
+          format: uuid
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/KnowledgeBulkIngestionUrlItem"
+    KnowledgeReviewNote:
+      type: object
+      additionalProperties: true
+    KnowledgeChunkPayload:
+      type: object
+      additionalProperties: false
+      required: [chunk_text]
+      properties:
+        chunk_text:
+          type: string
+          minLength: 1
+    KnowledgeAnchorPayload:
+      type: object
+      additionalProperties: false
+      required:
+        - anchor_id
+        - anchor_title
+        - anchor_path
+        - anchor_text
+        - temporal_scope_from
+        - chunks
+      properties:
+        anchor_id:
+          type: string
+        anchor_title:
+          type: string
+        anchor_path:
+          type: string
+        anchor_text:
+          type: string
+        temporal_scope_from:
+          type: string
+          format: date
+        temporal_scope_to:
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+        chunks:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/KnowledgeChunkPayload"
+    KnowledgePublicationPayload:
+      type: object
+      additionalProperties: false
+      required:
+        - source_id
+        - source_family_id
+        - title
+        - source_class
+        - authority_level
+        - tax_domain
+        - issuing_authority
+        - point_in_time_url
+        - source_version_form
+        - effective_from
+        - anchors
+      properties:
+        source_id:
+          type: string
+        source_family_id:
+          type: string
+        title:
+          type: string
+        source_class:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+        authority_level:
+          type: string
+          enum:
+            - statute
+            - regulation
+            - guidance
+            - commentary
+        tax_domain:
+          type: string
+        issuing_authority:
+          type: string
+        point_in_time_url:
+          type: string
+          format: uri
+        source_version_form:
+          type: string
+          enum:
+            - as_issued
+            - point_in_time_consolidation
+          description: When the same governed family and effective window exist in both forms, `point_in_time_consolidation` is the preferred evidence form.
+        effective_from:
+          type: string
+          format: date
+        effective_to:
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+        tax_year:
+          oneOf:
+            - type: integer
+            - type: "null"
+        anchors:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/KnowledgeAnchorPayload"
+    KnowledgeIngestionReviewRequest:
+      type: object
+      additionalProperties: false
+      required: [reviewed_by, review_notes]
+      properties:
+        reviewed_by:
+          type: string
+          format: uuid
+        review_notes:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/KnowledgeReviewNote"
+        proposed_source_updates:
+          type: object
+          additionalProperties: true
+    KnowledgeIngestionApproveRequest:
+      type: object
+      additionalProperties: false
+      required: [reviewed_by, review_notes, publication_payload]
+      properties:
+        reviewed_by:
+          type: string
+          format: uuid
+        review_notes:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/KnowledgeReviewNote"
+        publication_payload:
+          $ref: "#/components/schemas/KnowledgePublicationPayload"
+    KnowledgeIngestionRejectRequest:
+      type: object
+      additionalProperties: false
+      required: [reviewed_by, review_notes]
+      properties:
+        reviewed_by:
+          type: string
+          format: uuid
+        review_notes:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/KnowledgeReviewNote"
+    KnowledgeIngestionPublishRequest:
+      type: object
+      additionalProperties: false
+      required: [published_by]
+      properties:
+        published_by:
+          type: string
+          format: uuid
+    KnowledgeBulkIdList:
+      type: array
+      minItems: 1
+      items:
+        type: string
+        minLength: 1
+    KnowledgeIngestionBulkRejectRequest:
+      type: object
+      additionalProperties: false
+      required: [acting_user, ids, review_notes]
+      properties:
+        acting_user:
+          type: string
+          format: uuid
+        ids:
+          $ref: "#/components/schemas/KnowledgeBulkIdList"
+        review_notes:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/KnowledgeReviewNote"
+    KnowledgeIngestionBulkPublishRequest:
+      type: object
+      additionalProperties: false
+      required: [acting_user, ids]
+      properties:
+        acting_user:
+          type: string
+          format: uuid
+        ids:
+          $ref: "#/components/schemas/KnowledgeBulkIdList"
+    KnowledgeMetadataCorrectionRequest:
+      type: object
+      additionalProperties: false
+      required: [corrected_by, review_notes, publication_payload_updates]
+      properties:
+        corrected_by:
+          type: string
+          format: uuid
+        review_notes:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/KnowledgeReviewNote"
+        publication_payload_updates:
+          type: object
+          additionalProperties: true
+    KnowledgeSourceVersionSupersedeRequest:
+      type: object
+      additionalProperties: false
+      required: [successor_source_version_id, superseded_by]
+      properties:
+        successor_source_version_id:
+          type: string
+          format: uuid
+        superseded_by:
+          type: string
+          format: uuid
+    KnowledgeSourceVersionArchiveRequest:
+      type: object
+      additionalProperties: false
+      required: [archived_by]
+      properties:
+        archived_by:
+          type: string
+          format: uuid
+    KnowledgeSourceVersionBulkArchiveRequest:
+      type: object
+      additionalProperties: false
+      required: [acting_user, ids]
+      properties:
+        acting_user:
+          type: string
+          format: uuid
+        ids:
+          $ref: "#/components/schemas/KnowledgeBulkIdList"
+    KnowledgeBulkActionItem:
+      type: object
+      additionalProperties: false
+      required: [id, status, outcome, error_code, reason]
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+            - ok
+            - error
+        outcome:
+          type: string
+        error_code:
+          oneOf:
+            - type: string
+            - type: "null"
+        reason:
+          oneOf:
+            - type: string
+            - type: "null"
+    KnowledgeBulkActionResult:
+      type: object
+      additionalProperties: false
+      required: [bulk_status, total, items]
+      properties:
+        bulk_status:
+          type: string
+          enum:
+            - full_success
+            - partial_failure
+            - full_rejection
+        total:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeBulkActionItem"
+    KnowledgeBulkActionResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeBulkActionResult"
+    KnowledgeBulkIngestionItem:
+      type: object
+      additionalProperties: false
+      required:
+        - index
+        - idempotency_key
+        - status
+        - outcome
+        - ingestion_job_id
+        - error_code
+        - reason
+      properties:
+        index:
+          type: integer
+          minimum: 0
+        idempotency_key:
+          type: string
+        status:
+          type: string
+          enum:
+            - ok
+            - error
+        outcome:
+          type: string
+        ingestion_job_id:
+          oneOf:
+            - type: string
+            - type: "null"
+        error_code:
+          oneOf:
+            - type: string
+            - type: "null"
+        reason:
+          oneOf:
+            - type: string
+            - type: "null"
+    KnowledgeBulkIngestionResult:
+      type: object
+      additionalProperties: false
+      required: [bulk_status, total, items]
+      properties:
+        bulk_status:
+          type: string
+          enum:
+            - full_success
+            - partial_failure
+            - full_rejection
+        total:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeBulkIngestionItem"
+    KnowledgeBulkIngestionResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeBulkIngestionResult"
+    KnowledgeItem:
+      type: object
+      additionalProperties: false
+      required:
+        - source_id
+        - title
+        - url
+        - source_type
+        - tax_domain
+        - authority_level
+        - effective_from
+        - effective_to
+        - tax_year
+        - anchor_id
+      properties:
+        source_id:
+          type: string
+        title:
+          type: string
+        url:
+          type: string
+        source_type:
+          type: string
+        tax_domain:
+          type: string
+        authority_level:
+          type: string
+        effective_from:
+          type: string
+        effective_to:
+          oneOf:
+            - type: string
+            - type: "null"
+        tax_year:
+          oneOf:
+            - type: integer
+            - type: "null"
+        anchor_id:
+          type: string
+    KnowledgeTimelineItem:
+      type: object
+      additionalProperties: false
+      required:
+        - source_id
+        - source_version_id
+        - anchor_id
+        - title
+        - source_type
+        - authority_level
+        - tax_domain
+        - effective_from
+        - effective_to
+        - publication_state
+        - timeline_position
+      properties:
+        source_id:
+          type: string
+        source_version_id:
+          type: string
+          format: uuid
+        anchor_id:
+          type: string
+        title:
+          type: string
+        source_type:
+          type: string
+        authority_level:
+          type: string
+          enum:
+            - statute
+            - regulation
+            - guidance
+            - commentary
+        tax_domain:
+          type: string
+        effective_from:
+          type: string
+          format: date
+        effective_to:
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+        publication_state:
+          type: string
+          enum:
+            - published
+            - superseded
+        timeline_position:
+          type: integer
+          minimum: 1
+    KnowledgeIngestionResult:
+      type: object
+      additionalProperties: false
+      required:
+        - ingestion_job_id
+        - document_id
+        - requested_by
+        - ingestion_state
+        - source_input_origin
+        - source_input_ref
+        - payload_checksum_sha256
+        - source_class
+      properties:
+        ingestion_job_id:
+          type: string
+        document_id:
+          type: string
+        requested_by:
+          type: string
+          format: uuid
+        ingestion_state:
+          type: string
+          enum: [uploaded]
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_upload
+            - official_source_url
+        source_input_ref:
+          type: string
+        payload_checksum_sha256:
+          type: string
+        source_class:
+          oneOf:
+            - type: string
+              enum:
+                - tax_law
+                - regulation
+                - guidance
+                - commentary
+            - type: "null"
+    KnowledgeResult:
+      type: object
+      additionalProperties: false
+      required: [total, items]
+      properties:
+        total:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeItem"
+    KnowledgeTimelineResult:
+      type: object
+      additionalProperties: false
+      required: [total, items]
+      properties:
+        total:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeTimelineItem"
+    KnowledgeSearchResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeResult"
+    KnowledgeTimelineResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeTimelineResult"
+    KnowledgeIngestionResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeIngestionResult"
+    KnowledgeIngestionDetailResult:
+      type: object
+      additionalProperties: false
+      required:
+        - ingestion_job_id
+        - document_id
+        - requested_by
+        - ingestion_state
+        - source_input_origin
+        - source_input_ref
+        - payload_checksum_sha256
+        - source_class
+        - extracted_metadata
+        - proposed_source_record
+        - review_notes
+        - completed_at
+      properties:
+        ingestion_job_id:
+          type: string
+        document_id:
+          type: string
+        requested_by:
+          type: string
+          format: uuid
+        ingestion_state:
+          type: string
+          enum:
+            - uploaded
+            - review_pending
+            - approved
+            - published
+            - rejected
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_upload
+            - official_source_url
+        source_input_ref:
+          type: string
+        payload_checksum_sha256:
+          type: string
+        source_class:
+          oneOf:
+            - type: string
+              enum:
+                - tax_law
+                - regulation
+                - guidance
+                - commentary
+            - type: "null"
+        extracted_metadata:
+          type: object
+          additionalProperties: true
+        proposed_source_record:
+          type: object
+          additionalProperties: true
+        review_notes:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeReviewNote"
+        completed_at:
+          oneOf:
+            - type: string
+            - type: "null"
+    KnowledgeIngestionDetailResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeIngestionDetailResult"
+    KnowledgeIngestionSummaryItem:
+      type: object
+      additionalProperties: false
+      required:
+        - ingestion_job_id
+        - document_id
+        - requested_by
+        - ingestion_state
+        - source_input_origin
+        - source_input_ref
+        - payload_checksum_sha256
+        - source_class
+        - created_at
+        - completed_at
+      properties:
+        ingestion_job_id:
+          type: string
+        document_id:
+          type: string
+        requested_by:
+          type: string
+          format: uuid
+        ingestion_state:
+          type: string
+          enum:
+            - uploaded
+            - review_pending
+            - approved
+            - published
+            - rejected
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_upload
+            - official_source_url
+        source_input_ref:
+          type: string
+        payload_checksum_sha256:
+          type: string
+        source_class:
+          oneOf:
+            - type: string
+              enum:
+                - tax_law
+                - regulation
+                - guidance
+                - commentary
+            - type: "null"
+        created_at:
+          type: string
+        completed_at:
+          oneOf:
+            - type: string
+            - type: "null"
+    KnowledgeIngestionManagementListResult:
+      type: object
+      additionalProperties: false
+      required: [total, items, page]
+      properties:
+        total:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeIngestionSummaryItem"
+        page:
+          $ref: "#/components/schemas/KnowledgeManagementPage"
+    KnowledgeIngestionManagementListResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeIngestionManagementListResult"
+    KnowledgeSourceVersionLifecycleResult:
+      type: object
+      additionalProperties: false
+      required:
+        - source_version_id
+        - source_id
+        - source_family_id
+        - publication_state
+        - source_input_origin
+        - source_version_form
+        - effective_from
+        - effective_to
+        - tax_year
+        - supersedes_source_version_id
+        - superseded_by_source_version_id
+      properties:
+        source_version_id:
+          type: string
+          format: uuid
+        source_id:
+          type: string
+        source_family_id:
+          type: string
+        publication_state:
+          type: string
+          enum:
+            - published
+            - superseded
+            - archived
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_upload
+            - official_source_url
+        source_version_form:
+          type: string
+          enum:
+            - as_issued
+            - point_in_time_consolidation
+          description: When the same governed family and effective window exist in both forms, `point_in_time_consolidation` is the preferred evidence form.
+        effective_from:
+          type: string
+          format: date
+        effective_to:
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+        tax_year:
+          oneOf:
+            - type: integer
+            - type: "null"
+        supersedes_source_version_id:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        superseded_by_source_version_id:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+    KnowledgeSourceVersionLifecycleResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeSourceVersionLifecycleResult"
+    KnowledgeSourceVersionSummaryItem:
+      type: object
+      additionalProperties: false
+      required:
+        - source_version_id
+        - source_id
+        - source_family_id
+        - title
+        - source_class
+        - tax_domain
+        - authority_level
+        - publication_state
+        - source_input_origin
+        - source_version_form
+        - effective_from
+        - effective_to
+        - tax_year
+        - supersedes_source_version_id
+        - superseded_by_source_version_id
+      properties:
+        source_version_id:
+          type: string
+          format: uuid
+        source_id:
+          type: string
+        source_family_id:
+          type: string
+        title:
+          type: string
+        source_class:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+        tax_domain:
+          type: string
+        authority_level:
+          type: string
+          enum:
+            - statute
+            - regulation
+            - guidance
+            - commentary
+        publication_state:
+          type: string
+          enum:
+            - draft
+            - review_pending
+            - approved
+            - published
+            - superseded
+            - archived
+            - rejected
+        source_input_origin:
+          type: string
+          enum:
+            - official_source_upload
+            - official_source_url
+        source_version_form:
+          type: string
+          enum:
+            - as_issued
+            - point_in_time_consolidation
+          description: When the same governed family and effective window exist in both forms, `point_in_time_consolidation` is the preferred evidence form.
+        effective_from:
+          type: string
+          format: date
+        effective_to:
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+        tax_year:
+          oneOf:
+            - type: integer
+            - type: "null"
+        supersedes_source_version_id:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        superseded_by_source_version_id:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+    KnowledgeSourceVersionManagementListResult:
+      type: object
+      additionalProperties: false
+      required: [total, items, page]
+      properties:
+        total:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeSourceVersionSummaryItem"
+        page:
+          $ref: "#/components/schemas/KnowledgeManagementPage"
+    KnowledgeSourceVersionManagementListResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeSourceVersionManagementListResult"
+    KnowledgeSourceSummaryItem:
+      type: object
+      additionalProperties: false
+      required:
+        - source_id
+        - source_family_id
+        - title
+        - canonical_url
+        - source_class
+        - tax_domain
+        - authority_level
+        - issuing_authority
+        - version_count
+        - anchor_count
+        - created_at
+        - retired_at
+      properties:
+        source_id:
+          type: string
+        source_family_id:
+          type: string
+        title:
+          type: string
+        canonical_url:
+          type: string
+        source_class:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+        tax_domain:
+          type: string
+        authority_level:
+          type: string
+          enum:
+            - statute
+            - regulation
+            - guidance
+            - commentary
+        issuing_authority:
+          type: string
+        version_count:
+          type: integer
+          minimum: 0
+        anchor_count:
+          type: integer
+          minimum: 0
+        created_at:
+          type: string
+        retired_at:
+          oneOf:
+            - type: string
+            - type: "null"
+    KnowledgeSourceManagementListResult:
+      type: object
+      additionalProperties: false
+      required: [total, items, page]
+      properties:
+        total:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeSourceSummaryItem"
+        page:
+          $ref: "#/components/schemas/KnowledgeManagementPage"
+    KnowledgeSourceManagementListResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeSourceManagementListResult"
+    KnowledgeRetentionSummary:
+      type: object
+      additionalProperties: false
+      required:
+        - lineage_preserved
+        - has_document_lineage
+        - has_purged_document_lineage
+        - has_historical_compatibility_lineage
+        - has_legacy_import_lineage
+        - has_url_lineage
+        - retention_policy_code
+        - purge_supported
+      properties:
+        lineage_preserved:
+          type: boolean
+        has_document_lineage:
+          type: boolean
+        has_purged_document_lineage:
+          type: boolean
+        has_historical_compatibility_lineage:
+          type: boolean
+        has_legacy_import_lineage:
+          type: boolean
+        has_url_lineage:
+          type: boolean
+        retention_policy_code:
+          type: string
+        purge_supported:
+          type: boolean
+          description: Always `false` in the current runtime; archive preserves governance metadata but runtime purge is intentionally unsupported.
+    KnowledgeSourceDetailResult:
+      type: object
+      additionalProperties: false
+      required:
+        - source_id
+        - source_family_id
+        - title
+        - canonical_url
+        - source_class
+        - tax_domain
+        - authority_level
+        - issuing_authority
+        - version_count
+        - anchor_count
+        - chunk_count
+        - created_at
+        - retired_at
+        - versions
+        - retention_summary
+      properties:
+        source_id:
+          type: string
+        source_family_id:
+          type: string
+        title:
+          type: string
+        canonical_url:
+          type: string
+        source_class:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+        tax_domain:
+          type: string
+        authority_level:
+          type: string
+          enum:
+            - statute
+            - regulation
+            - guidance
+            - commentary
+        issuing_authority:
+          type: string
+        version_count:
+          type: integer
+          minimum: 0
+        anchor_count:
+          type: integer
+          minimum: 0
+        chunk_count:
+          type: integer
+          minimum: 0
+        created_at:
+          type: string
+        retired_at:
+          oneOf:
+            - type: string
+            - type: "null"
+        versions:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeSourceVersionSummaryItem"
+        retention_summary:
+          $ref: "#/components/schemas/KnowledgeRetentionSummary"
+    KnowledgeSourceDetailResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeSourceDetailResult"
+    KnowledgeAnchorChunkSummary:
+      type: object
+      additionalProperties: false
+      required: [chunk_id, chunk_index, has_embedding]
+      properties:
+        chunk_id:
+          type: string
+        chunk_index:
+          type: integer
+          minimum: 0
+        has_embedding:
+          type: boolean
+    KnowledgeAnchorDetailResult:
+      type: object
+      additionalProperties: false
+      required:
+        - anchor_id
+        - source_id
+        - source_family_id
+        - source_version_id
+        - source_title
+        - source_type
+        - tax_domain
+        - authority_level
+        - publication_state
+        - anchor_title
+        - anchor_path
+        - temporal_scope_from
+        - temporal_scope_to
+        - chunk_count
+        - chunks
+      properties:
+        anchor_id:
+          type: string
+        source_id:
+          type: string
+        source_family_id:
+          type: string
+        source_version_id:
+          type: string
+          format: uuid
+        source_title:
+          type: string
+        source_type:
+          type: string
+          enum:
+            - tax_law
+            - regulation
+            - guidance
+            - commentary
+        tax_domain:
+          type: string
+        authority_level:
+          type: string
+          enum:
+            - statute
+            - regulation
+            - guidance
+            - commentary
+        publication_state:
+          type: string
+          enum:
+            - draft
+            - review_pending
+            - approved
+            - published
+            - superseded
+            - archived
+            - rejected
+        anchor_title:
+          type: string
+        anchor_path:
+          type: string
+        temporal_scope_from:
+          type: string
+          format: date
+        temporal_scope_to:
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+        chunk_count:
+          type: integer
+          minimum: 0
+        chunks:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeAnchorChunkSummary"
+    KnowledgeAnchorDetailResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        result:
+          $ref: "#/components/schemas/KnowledgeAnchorDetailResult"
+    KnowledgeManagementPage:
+      type: object
+      additionalProperties: false
+      required: [limit, offset, sort_by, sort_order]
+      properties:
+        limit:
+          type: integer
+          minimum: 1
+        offset:
+          type: integer
+          minimum: 0
+        sort_by:
+          type: string
+        sort_order:
+          type: string
+          enum:
+            - asc
+            - desc

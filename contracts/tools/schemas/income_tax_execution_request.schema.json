@@ -1,0 +1,684 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IncomeTaxExecutionRequest",
+  "description": "Governed canonical execution request for comprehensive Kenyan income-tax computation in KODI.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tax_type",
+    "regime_type",
+    "regime_identifier",
+    "tax_year",
+    "rule_version",
+    "input_payload"
+  ],
+  "properties": {
+    "tax_type": {
+      "const": "income_tax"
+    },
+    "regime_type": {
+      "const": "income_tax"
+    },
+    "regime_identifier": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "tax_year": {
+      "type": "integer",
+      "minimum": 2004,
+      "maximum": 2100
+    },
+    "rule_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input_payload": {
+      "$ref": "#/$defs/InputPayload"
+    }
+  },
+  "$defs": {
+    "MoneyAmount": {
+      "type": "string",
+      "pattern": "^-?\\d+\\.\\d{2}$"
+    },
+    "IsoDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "ReferenceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "InputPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version_context",
+        "taxpayer_context",
+        "income_sections",
+        "claims",
+        "payment_pathways",
+        "traceability_context"
+      ],
+      "properties": {
+        "version_context": {
+          "$ref": "#/$defs/VersionContext"
+        },
+        "taxpayer_context": {
+          "$ref": "#/$defs/TaxpayerContext"
+        },
+        "income_sections": {
+          "$ref": "#/$defs/IncomeSections"
+        },
+        "claims": {
+          "$ref": "#/$defs/Claims"
+        },
+        "payment_pathways": {
+          "$ref": "#/$defs/PaymentPathways"
+        },
+        "traceability_context": {
+          "$ref": "#/$defs/TraceabilityContext"
+        }
+      }
+    },
+    "VersionContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary_effective_date",
+        "version_selection_basis"
+      ],
+      "properties": {
+        "primary_effective_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "assessment_period_start": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "assessment_period_end": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "version_selection_basis": {
+          "type": "string",
+          "enum": [
+            "tax_year_end",
+            "receipt_date",
+            "payroll_period_end",
+            "filing_period_end",
+            "specific_event_date"
+          ]
+        },
+        "historical_version_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "source_anchor_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "TaxpayerContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "taxpayer_kind",
+        "resident_status_assertion"
+      ],
+      "properties": {
+        "taxpayer_kind": {
+          "type": "string",
+          "enum": [
+            "individual"
+          ]
+        },
+        "resident_status_assertion": {
+          "type": "string",
+          "enum": [
+            "resident",
+            "non_resident",
+            "undetermined"
+          ]
+        },
+        "citizenship_or_registration_context": {
+          "type": "string",
+          "enum": [
+            "not_provided",
+            "kenyan",
+            "foreign_national",
+            "mixed_or_other_status"
+          ]
+        },
+        "residence_reference_period_start": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "residence_reference_period_end": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "taxpayer_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "IncomeSections": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "employment": {
+          "$ref": "#/$defs/EmploymentIncomeSection"
+        },
+        "business": {
+          "$ref": "#/$defs/BusinessIncomeSection"
+        },
+        "investment": {
+          "$ref": "#/$defs/InvestmentIncomeSection"
+        },
+        "rental": {
+          "$ref": "#/$defs/RentalIncomeSection"
+        },
+        "classification_pending_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PendingClassificationItem"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "EmploymentIncomeSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "employment_items"
+      ],
+      "properties": {
+        "employment_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EmploymentIncomeItem"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "EmploymentIncomeItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "income_subtype",
+        "amount_kes",
+        "event_date"
+      ],
+      "properties": {
+        "income_subtype": {
+          "type": "string",
+          "enum": [
+            "cash_emolument",
+            "allowance",
+            "benefit_in_kind",
+            "employer_loan_benefit",
+            "terminal_payment",
+            "other_taxable_employment_item"
+          ]
+        },
+        "amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "employer_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "paye_withheld_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "prescribed_rate_notice_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "BusinessIncomeSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "business_items"
+      ],
+      "properties": {
+        "business_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BusinessIncomeItem"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "BusinessIncomeItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "income_subtype",
+        "gross_amount_kes",
+        "event_date"
+      ],
+      "properties": {
+        "income_subtype": {
+          "type": "string",
+          "enum": [
+            "trade",
+            "profession",
+            "vocation",
+            "farm_or_agricultural",
+            "other_business_income"
+          ]
+        },
+        "gross_amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "source_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "withholding_applied_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        }
+      }
+    },
+    "InvestmentIncomeSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "investment_items"
+      ],
+      "properties": {
+        "investment_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InvestmentIncomeItem"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "InvestmentIncomeItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "income_subtype",
+        "gross_amount_kes",
+        "event_date"
+      ],
+      "properties": {
+        "income_subtype": {
+          "type": "string",
+          "enum": [
+            "interest",
+            "dividend",
+            "royalty",
+            "annuity",
+            "capital_gains_boundary_item",
+            "other_passive_income"
+          ]
+        },
+        "gross_amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "withholding_applied_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "payer_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "RentalIncomeSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rental_items"
+      ],
+      "properties": {
+        "rental_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RentalIncomeItem"
+          },
+          "minItems": 1
+        },
+        "regime_election": {
+          "type": "string",
+          "enum": [
+            "ordinary_assessment",
+            "residential_rental_regime",
+            "undetermined"
+          ]
+        }
+      }
+    },
+    "RentalIncomeItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "income_subtype",
+        "gross_amount_kes",
+        "event_date"
+      ],
+      "properties": {
+        "income_subtype": {
+          "type": "string",
+          "enum": [
+            "residential_rental",
+            "commercial_property",
+            "mixed_use_property",
+            "other_property_income"
+          ]
+        },
+        "gross_amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "property_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "withholding_applied_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        }
+      }
+    },
+    "PendingClassificationItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gross_amount_kes",
+        "event_date",
+        "reason_code"
+      ],
+      "properties": {
+        "gross_amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "reason_code": {
+          "type": "string",
+          "enum": [
+            "requires_domain_classification",
+            "awaiting_section_level_policy",
+            "adjacent_regime_boundary",
+            "insufficient_governed_mapping"
+          ]
+        },
+        "source_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "Claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relief_claims",
+        "deduction_claims",
+        "exemption_claims"
+      ],
+      "properties": {
+        "relief_claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReliefClaim"
+          }
+        },
+        "deduction_claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DeductionClaim"
+          }
+        },
+        "exemption_claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExemptionClaim"
+          }
+        }
+      }
+    },
+    "ReliefClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relief_type",
+        "claim_reference_id"
+      ],
+      "properties": {
+        "relief_type": {
+          "type": "string",
+          "enum": [
+            "personal_relief",
+            "insurance_relief"
+          ]
+        },
+        "claim_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "asserted_amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        }
+      }
+    },
+    "DeductionClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deduction_type",
+        "claim_reference_id"
+      ],
+      "properties": {
+        "deduction_type": {
+          "type": "string",
+          "enum": [
+            "charitable_donation",
+            "home_ownership_savings_plan",
+            "other_governed_deduction_pending_policy"
+          ]
+        },
+        "claim_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "asserted_amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        }
+      }
+    },
+    "ExemptionClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exemption_type",
+        "claim_reference_id"
+      ],
+      "properties": {
+        "exemption_type": {
+          "type": "string",
+          "enum": [
+            "charitable_organization_exemption",
+            "other_governed_exemption_pending_policy"
+          ]
+        },
+        "claim_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "asserted_amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        }
+      }
+    },
+    "PaymentPathways": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "withholding_events",
+        "installment_tax_events",
+        "advance_tax_events"
+      ],
+      "properties": {
+        "withholding_events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WithholdingEvent"
+          }
+        },
+        "installment_tax_events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InstallmentTaxEvent"
+          }
+        },
+        "advance_tax_events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AdvanceTaxEvent"
+          }
+        }
+      }
+    },
+    "WithholdingEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "income_reference_id",
+        "amount_kes",
+        "event_date"
+      ],
+      "properties": {
+        "income_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "treatment_assertion": {
+          "type": "string",
+          "enum": [
+            "final_tax",
+            "creditable_against_annual_liability",
+            "advance_payment",
+            "undetermined"
+          ]
+        }
+      }
+    },
+    "InstallmentTaxEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount_kes",
+        "event_date"
+      ],
+      "properties": {
+        "amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "basis_assertion": {
+          "type": "string",
+          "enum": [
+            "current_year_estimate",
+            "prior_year_basis",
+            "undetermined"
+          ]
+        }
+      }
+    },
+    "AdvanceTaxEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount_kes",
+        "event_date"
+      ],
+      "properties": {
+        "amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "advance_tax_subtype": {
+          "type": "string",
+          "enum": [
+            "motor_vehicle_advance_tax",
+            "other_governed_advance_tax"
+          ]
+        }
+      }
+    },
+    "TraceabilityContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_record_ids",
+        "preparation_profile",
+        "completeness_assertion"
+      ],
+      "properties": {
+        "source_record_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "evidence_reference_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "uniqueItems": true
+        },
+        "preparation_profile": {
+          "type": "string",
+          "enum": [
+            "manual_structured_entry",
+            "payroll_import_normalized",
+            "return_preparation_normalized",
+            "historical_reconstruction_normalized"
+          ]
+        },
+        "completeness_assertion": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial_but_governed",
+            "contains_unresolved_domains"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,187 @@
+openapi: 3.1.0
+info:
+  title: gateway
+  version: "1.0.0"
+  description: >
+    Gateway boundary contract with canonical auth-context integrity enforcement.
+    The active governed health-contribution execution path is orchestration-led.
+    Gateway recognizes tax-domain paths and fails closed canonically for non-implemented
+    direct execution scope, including health-contribution requests.
+paths:
+  /tools/ping:
+    post:
+      summary: Execute dummy tool ping with fail-closed auth-context validation.
+      operationId: toolPing
+      parameters:
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      responses:
+        "200":
+          description: Tool ping succeeded after trusted auth-context validation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToolPingResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/gateway/{scope}/{remaining_path}:
+    get:
+      summary: Fail closed for recognized but non-implemented direct gateway tax-domain paths.
+      operationId: gatewayScopeGuardGet
+      parameters:
+        - $ref: "#/components/parameters/ScopePath"
+        - $ref: "#/components/parameters/RemainingPath"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      responses:
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "501":
+          $ref: "#/components/responses/ErrorResponse"
+    post:
+      summary: Fail closed for recognized but non-implemented direct gateway tax-domain paths.
+      operationId: gatewayScopeGuardPost
+      parameters:
+        - $ref: "#/components/parameters/ScopePath"
+        - $ref: "#/components/parameters/RemainingPath"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      responses:
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "501":
+          $ref: "#/components/responses/ErrorResponse"
+    put:
+      summary: Fail closed for recognized but non-implemented direct gateway tax-domain paths.
+      operationId: gatewayScopeGuardPut
+      parameters:
+        - $ref: "#/components/parameters/ScopePath"
+        - $ref: "#/components/parameters/RemainingPath"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      responses:
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "501":
+          $ref: "#/components/responses/ErrorResponse"
+    patch:
+      summary: Fail closed for recognized but non-implemented direct gateway tax-domain paths.
+      operationId: gatewayScopeGuardPatch
+      parameters:
+        - $ref: "#/components/parameters/ScopePath"
+        - $ref: "#/components/parameters/RemainingPath"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      responses:
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "501":
+          $ref: "#/components/responses/ErrorResponse"
+    delete:
+      summary: Fail closed for recognized but non-implemented direct gateway tax-domain paths.
+      operationId: gatewayScopeGuardDelete
+      parameters:
+        - $ref: "#/components/parameters/ScopePath"
+        - $ref: "#/components/parameters/RemainingPath"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      responses:
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "501":
+          $ref: "#/components/responses/ErrorResponse"
+components:
+  parameters:
+    AuthContextHeader:
+      in: header
+      name: X-Auth-Context
+      required: true
+      schema:
+        type: string
+        minLength: 2
+      description: >
+        Serialized canonical auth context envelope from trusted auth boundary.
+    IdempotencyKeyHeader:
+      in: header
+      name: Idempotency-Key
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+    CorrelationIdHeader:
+      in: header
+      name: X-Correlation-ID
+      required: false
+      schema:
+        type: string
+    ScopePath:
+      in: path
+      name: scope
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: >
+        Requested tax-domain scope at the gateway boundary.
+    RemainingPath:
+      in: path
+      name: remaining_path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: >
+        Requested direct gateway subpath, which remains fail-closed until explicitly implemented.
+  responses:
+    ErrorResponse:
+      description: Deterministic structured error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+  schemas:
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+        - trace_id
+        - correlation_id
+      properties:
+        error_code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+        trace_id:
+          type: string
+          minLength: 1
+        correlation_id:
+          type: string
+          minLength: 1
+        details:
+          type: object
+          additionalProperties: true
+    ToolPingResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - ok
+        - event_id
+        - correlation_id
+      properties:
+        ok:
+          type: boolean
+        event_id:
+          type: string
+          format: uuid
+        correlation_id:
+          type: string
+          minLength: 1

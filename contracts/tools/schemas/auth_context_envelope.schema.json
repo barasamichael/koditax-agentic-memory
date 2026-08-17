@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AuthContextEnvelope",
+  "description": "Canonical trusted auth context envelope for deterministic service-to-service identity propagation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "user_id",
+    "tenant_id",
+    "role",
+    "session_id",
+    "delegation_context"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "user_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Single-tenant baseline must be explicit (for example default_tenant)."
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "IndividualTaxpayer",
+        "TaxAgent",
+        "Accountant",
+        "Administrator"
+      ]
+    },
+    "session_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "delegation_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "is_delegated",
+        "principal_user_id",
+        "delegate_user_id",
+        "delegation_id",
+        "granted_at",
+        "revoked_at"
+      ],
+      "properties": {
+        "is_delegated": {
+          "type": "boolean"
+        },
+        "principal_user_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "delegate_user_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "delegation_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "granted_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "revoked_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      }
+    },
+    "correlation_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

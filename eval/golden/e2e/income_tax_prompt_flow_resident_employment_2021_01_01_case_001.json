@@ -1,0 +1,61 @@
+{
+  "expected_output": {
+    "status": "draft_ready",
+    "message": "Draft income-tax outcome is ready for review. Confirm to continue, reject to stop, or revise input.",
+    "prompt_id": "8e3e91f01e7ccc159f89274c7aafb939c4c5b1ffb699b42706416a1c6cf17956",
+    "prompt_text": "Compute income tax for resident employment lane in tax year 2021 under KIT-VER-20210101-A.",
+    "draft_context": {
+      "tax_type": "income_tax",
+      "supported_lane_id": "resident_employment_income_2021_01_01",
+      "historical_version_id": "KIT-VER-20210101-A",
+      "tax_year": 2021
+    },
+    "review_summary": {
+      "chargeable_income_kes": "10000000.00",
+      "gross_tax_kes": "2937400.00",
+      "total_reliefs_kes": "28800.00",
+      "net_income_tax_due_kes": "2908600.00",
+      "refund_due_kes": "0.00"
+    },
+    "artifacts": {
+      "form_artifact_id": "6564b56add9b6e39263097e580983ee049883d4c0159103664374a8f31a442de",
+      "form_version_id": "ITX-FORM-20210101-RES-EMP-V1",
+      "report_id": "0ab77219437b34bf5d5c18db239b0c8bafe23c17defaab9535ba17e2155796c5",
+      "report_version_id": "ITX-RPT-20210101-RES-EMP-V1",
+      "submission_preview_payload_id": "bc62475154e6d7c467a5ccc03ebfd8acc5a4ba49a8c054385610421d5407cad3",
+      "submission_preview_payload_version": "income_tax_submission_payload_v1"
+    },
+    "lineage": {
+      "computation_id": "453ea17e-7c29-5ee5-82aa-16486fa0f9b6",
+      "input_hash": "55915a2189d04641c7a90570ad1c61bf212b43ecb23fad0df5a4337189c06f6b",
+      "rule_version": "v1",
+      "finalized_audit_event_id": "95f2d78e-2de2-5441-af59-024c5e1d0518",
+      "form_audit_evidence_id": "153f8ec3fd00b4b6e1e05943d71a454fbf420ecf30523078c60db20e4ef68730",
+      "report_audit_evidence_id": "ca285a07eecf70657742a0edbfef9a598e097f2af742257cb07510e6f825c008",
+      "payload_audit_evidence_id": "09389249af0254e3585e57fd50ef69008de3cbe0d28de473a024bda372086756"
+    },
+    "next_allowed_actions": [
+      "confirm",
+      "reject",
+      "revise_input"
+    ],
+    "correlation_id": "8e3e91f01e7ccc159f89274c7aafb939c4c5b1ffb699b42706416a1c6cf17956",
+    "trace_id": "3e3646d18acc1450bef47f12767bf419e3306fac812553ebb2070fef580e6a3a",
+    "trace_context": {
+      "correlation_id": "8e3e91f01e7ccc159f89274c7aafb939c4c5b1ffb699b42706416a1c6cf17956",
+      "trace_id": "3e3646d18acc1450bef47f12767bf419e3306fac812553ebb2070fef580e6a3a"
+    },
+    "document_evidence_refs": {
+      "document_id": "9211663a-a8ed-5388-8c14-44ce360981bb",
+      "extraction_id": "fc4f6e6b-0a81-51b7-8341-929301fac6be",
+      "projection_ref_id": "0ec7612bc8a64502d946edc1a9845e3574ea522bb5f6f10a433765982c681dd7",
+      "conflict_report_ref_id": null,
+      "conflict_policy_decision_ref_id": null
+    }
+  },
+  "fixture_id": "income_tax_prompt_flow_resident_employment_2021_01_01_case_001",
+  "fixture_version": 1,
+  "request": {
+    "prompt_text": "Compute income tax for resident employment lane in tax year 2021 under KIT-VER-20210101-A."
+  }
+}

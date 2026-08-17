@@ -1,0 +1,721 @@
+openapi: 3.1.0
+info:
+  title: reports
+  version: "1.0.0"
+  description: >
+    Canonical reports-service OpenAPI boundary.
+    This boundary is tax-domain-aware and preserves governed fail-closed semantics across
+    recognized tax domains. Governed downstream report generation and metadata workflow is
+    implemented for income-tax and health_contribution summary outputs, while recognized
+    domains such as vat, withholding_tax, and corporate_tax are classified canonically
+    and rejected without being mislabeled as generic non-income-tax scope.
+tags:
+  - name: reports-income-tax
+    description: Implemented income-tax report and export workflows preserved within a tax-domain-aware boundary.
+  - name: reports-health-contribution
+    description: Governed health-contribution summary report workflows preserved within a tax-domain-aware boundary.
+paths:
+  /v1/reports/income-tax/artifacts:
+    post:
+      tags:
+        - reports-income-tax
+      summary: Request deterministic generation of one supported income-tax report artifact.
+      operationId: createIncomeTaxReportArtifact
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportGenerationRequest"
+      responses:
+        "201":
+          description: Income-tax report artifact generation request accepted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportGenerationResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: >
+            Report generation blocked by governed validation or rejected by the
+            canonical report-generation conflict envelope.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportError"
+  /v1/reports/health-contribution/artifacts:
+    post:
+      tags:
+        - reports-health-contribution
+      summary: Request deterministic generation of one supported health-contribution report artifact.
+      operationId: createHealthContributionReportArtifact
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportGenerationRequest"
+      responses:
+        "201":
+          description: Health-contribution report artifact generation request accepted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportGenerationResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: >
+            Report generation blocked by governed validation or rejected by the
+            canonical report-generation conflict envelope.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportError"
+  /v1/reports/income-tax/artifacts/{report_id}/metadata:
+    get:
+      tags:
+        - reports-income-tax
+      summary: Retrieve deterministic metadata for one report artifact.
+      operationId: getIncomeTaxReportArtifactMetadata
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/ReportIdPath"
+      responses:
+        "200":
+          description: Report artifact metadata found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportArtifactMetadataResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "410":
+          description: Report artifact is expired per retention policy baseline.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportError"
+  /v1/reports/health-contribution/artifacts/{report_id}/metadata:
+    get:
+      tags:
+        - reports-health-contribution
+      summary: Retrieve deterministic metadata for one health-contribution report artifact.
+      operationId: getHealthContributionReportArtifactMetadata
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/ReportIdPath"
+      responses:
+        "200":
+          description: Health-contribution report artifact metadata found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportArtifactMetadataResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "410":
+          description: Report artifact is expired per retention policy baseline.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportError"
+  /v1/reports/income-tax/history:
+    get:
+      tags:
+        - reports-income-tax
+      summary: List deterministic report history for supported income-tax scope.
+      operationId: listIncomeTaxReportHistory
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/HistoryUserIdQuery"
+        - $ref: "#/components/parameters/HistoryTaxYearQuery"
+        - $ref: "#/components/parameters/HistoryReportTypeQuery"
+      responses:
+        "200":
+          description: Deterministic report history list found for requested filter.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportHistoryListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /v1/reports/income-tax/exports/{export_package_id}/metadata:
+    get:
+      tags:
+        - reports-income-tax
+      summary: Retrieve metadata for one deterministic report export package.
+      operationId: getIncomeTaxReportExportPackageMetadata
+      parameters:
+        - $ref: "#/components/parameters/AuthorizationHeader"
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/ExportPackageIdPath"
+      responses:
+        "200":
+          description: Export package metadata found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportExportPackageMetadataResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "410":
+          description: Download capability/link is expired or stale.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportError"
+components:
+  parameters:
+    AuthorizationHeader:
+      in: header
+      name: Authorization
+      required: true
+      schema:
+        type: string
+      description: Bearer credential in trusted gateway-authenticated format.
+    IdempotencyKeyHeader:
+      in: header
+      name: Idempotency-Key
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+      description: >
+        Stable key for deterministic replay/conflict handling on side-effect
+        report generation requests.
+    CorrelationIdHeader:
+      in: header
+      name: X-Correlation-ID
+      required: false
+      schema:
+        type: string
+      description: Optional caller-provided correlation identifier.
+    ReportIdPath:
+      in: path
+      name: report_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Immutable report artifact identity.
+    ExportPackageIdPath:
+      in: path
+      name: export_package_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Deterministic export package identity.
+    HistoryUserIdQuery:
+      in: query
+      name: user_id
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: User ownership filter for report-history listing.
+    HistoryTaxYearQuery:
+      in: query
+      name: tax_year
+      required: true
+      schema:
+        type: integer
+        minimum: 2000
+        maximum: 2100
+      description: Tax-year filter for report-history listing.
+    HistoryReportTypeQuery:
+      in: query
+      name: report_type
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: Supported report-type filter for report-history listing.
+  responses:
+    ErrorResponse:
+      description: Deterministic structured error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ReportError"
+  schemas:
+    ReportErrorReasonCode:
+      type: string
+      enum:
+        - unsupported_report_scope
+        - invalid_tax_domain
+        - unsupported_tax_domain_path
+        - unimplemented_tax_domain_report_generation
+        - report_not_found
+        - report_generation_not_supported
+        - invalid_report_request
+        - invalid_lineage_reference
+        - report_access_forbidden
+        - report_artifact_expired
+        - report_storage_unavailable
+        - download_link_expired
+    ReportsErrorReasonCode:
+      allOf:
+        - $ref: "#/components/schemas/ReportErrorReasonCode"
+    ReportAuditEventType:
+      type: string
+      enum:
+        - report_generated
+        - report_download_link_issued
+        - report_downloaded
+        - report_generation_failed
+    ReportAuditLineage:
+      type: object
+      additionalProperties: false
+      required:
+        - computation_id
+        - form_id
+        - historical_version_id
+        - supported_lane_id
+        - tax_type
+        - tax_year
+      properties:
+        computation_id:
+          type: string
+          minLength: 1
+        form_id:
+          type: string
+          minLength: 1
+        historical_version_id:
+          type:
+            - string
+            - "null"
+          minLength: 1
+        supported_lane_id:
+          type: string
+          minLength: 1
+        tax_type:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+    ReportAuditEvent:
+      type: object
+      additionalProperties: false
+      required:
+        - event_id
+        - event_type
+        - occurred_at
+        - correlation_id
+        - report_id
+        - report_version_id
+        - tenant_id
+        - actor_id
+        - lineage
+      properties:
+        event_id:
+          type: string
+          minLength: 1
+        event_type:
+          $ref: "#/components/schemas/ReportAuditEventType"
+        occurred_at:
+          type: string
+          format: date-time
+        correlation_id:
+          type: string
+          minLength: 1
+        report_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        report_version_id:
+          type:
+            - string
+            - "null"
+          minLength: 1
+        tenant_id:
+          type: string
+          minLength: 1
+        actor_id:
+          type: string
+          minLength: 1
+        lineage:
+          $ref: "#/components/schemas/ReportAuditLineage"
+    ReportAuditFailureEvent:
+      allOf:
+        - $ref: "#/components/schemas/ReportAuditEvent"
+        - type: object
+          additionalProperties: false
+          required:
+            - error_code
+            - reason_code
+            - reason
+          properties:
+            error_code:
+              type: string
+              minLength: 1
+            reason_code:
+              $ref: "#/components/schemas/ReportErrorReasonCode"
+            reason:
+              type: string
+              minLength: 1
+    ReportError:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+        - reason_code
+      properties:
+        error_code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+        reason_code:
+          $ref: "#/components/schemas/ReportErrorReasonCode"
+        context:
+          type: object
+          additionalProperties: true
+          properties:
+            report_id:
+              type:
+                - string
+                - "null"
+              format: uuid
+            tax_type:
+              type:
+                - string
+                - "null"
+              minLength: 1
+            historical_version_id:
+              type:
+                - string
+                - "null"
+              minLength: 1
+        trace_id:
+          type:
+            - string
+            - "null"
+          minLength: 1
+        correlation_id:
+          type:
+            - string
+            - "null"
+          minLength: 1
+    ErrorEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/ReportError"
+    ReportLineage:
+      type: object
+      additionalProperties: false
+      required:
+        - computation_id
+        - form_id
+        - report_id
+        - report_version_id
+        - historical_version_id
+        - supported_lane_id
+        - tax_type
+        - tax_year
+        - policy_anchor_ids
+        - source_anchor_ids
+      properties:
+        computation_id:
+          type: string
+          minLength: 1
+        form_id:
+          type: string
+          minLength: 1
+        report_id:
+          type: string
+          format: uuid
+        report_version_id:
+          type: string
+          minLength: 1
+        historical_version_id:
+          type:
+            - string
+            - "null"
+          minLength: 1
+        supported_lane_id:
+          type: string
+          minLength: 1
+        tax_type:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+        policy_anchor_ids:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        source_anchor_ids:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        input_hash:
+          type:
+            - string
+            - "null"
+          minLength: 1
+        correlation_id:
+          type:
+            - string
+            - "null"
+          minLength: 1
+        generated_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+    ReportLineageReference:
+      allOf:
+        - $ref: "#/components/schemas/ReportLineage"
+    Traceability:
+      type: object
+      additionalProperties: false
+      required:
+        - trace_id
+        - correlation_id
+      properties:
+        trace_id:
+          type: string
+          minLength: 1
+        correlation_id:
+          type: string
+          minLength: 1
+    ReportGenerationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - computation_id
+        - form_id
+        - report_type
+        - tax_year
+      properties:
+        computation_id:
+          type: string
+          minLength: 1
+        form_id:
+          type: string
+          minLength: 1
+        report_type:
+          type: string
+          enum:
+            - income_tax_summary
+            - income_tax_worksheet
+            - income_tax_year_over_year
+            - income_tax_audit_package_manifest
+            - health_contribution_summary
+        tax_year:
+          type: integer
+        historical_version_id:
+          type:
+            - string
+            - "null"
+    ReportGenerationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - report_id
+        - report_type
+        - tax_year
+        - report_version_id
+        - lineage_reference
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - accepted
+        report_id:
+          type: string
+          format: uuid
+        report_type:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+        report_version_id:
+          type: string
+          minLength: 1
+        lineage_reference:
+          $ref: "#/components/schemas/ReportLineage"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    ReportArtifactMetadataResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - report_id
+        - report_type
+        - tax_year
+        - report_version_id
+        - lineage_reference
+        - created_at
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        report_id:
+          type: string
+          format: uuid
+        report_type:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+        report_version_id:
+          type: string
+          minLength: 1
+        lineage_reference:
+          $ref: "#/components/schemas/ReportLineage"
+        created_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    ReportHistoryItem:
+      type: object
+      additionalProperties: false
+      required:
+        - report_id
+        - report_type
+        - tax_year
+        - report_version_id
+        - created_at
+        - lineage_reference
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        report_type:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+        report_version_id:
+          type: string
+          minLength: 1
+        created_at:
+          type: string
+          format: date-time
+        lineage_reference:
+          $ref: "#/components/schemas/ReportLineage"
+    ReportHistoryListResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - user_id
+        - tax_year
+        - report_type
+        - reports
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        user_id:
+          type: string
+          minLength: 1
+        tax_year:
+          type: integer
+        report_type:
+          type: string
+          minLength: 1
+        reports:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportHistoryItem"
+        traceability:
+          $ref: "#/components/schemas/Traceability"
+    ReportExportPackageMetadataResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - export_package_id
+        - export_format
+        - source_report_id
+        - lineage_reference
+        - expires_at
+        - traceability
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+        export_package_id:
+          type: string
+          format: uuid
+        export_format:
+          type: string
+          enum:
+            - pdf
+            - xlsx
+            - csv
+            - zip
+        source_report_id:
+          type: string
+          format: uuid
+        lineage_reference:
+          $ref: "#/components/schemas/ReportLineage"
+        expires_at:
+          type: string
+          format: date-time
+        traceability:
+          $ref: "#/components/schemas/Traceability"

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IncomeTaxV1ExecutionRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tax_type",
+    "regime_type",
+    "regime_identifier",
+    "tax_year",
+    "rule_version",
+    "input_payload"
+  ],
+  "properties": {
+    "tax_type": {
+      "const": "income_tax"
+    },
+    "regime_type": {
+      "const": "income_tax"
+    },
+    "regime_identifier": {
+      "type": "null"
+    },
+    "tax_year": {
+      "const": 2025
+    },
+    "rule_version": {
+      "const": "v1"
+    },
+    "input_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resident_status",
+        "income_source",
+        "annual_taxable_income_kes"
+      ],
+      "properties": {
+        "resident_status": {
+          "const": "resident"
+        },
+        "income_source": {
+          "const": "employment_only"
+        },
+        "annual_taxable_income_kes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

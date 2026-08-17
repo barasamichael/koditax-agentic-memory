@@ -1,0 +1,55 @@
+CONTEXT ALIGNMENT - Document Handling Remediation
+
+Read the documents below before confirming. Do not change code during this
+alignment step.
+
+DOCUMENTS TO READ (in this order):
+1. docs/ai/Prompt-Structure.md
+2. docs/architecture/Technical-Specification.md
+
+This session implements only the document-handling remediation issue stated in
+the task request. These documents govern prompt structure and repository
+implementation standards; they do not define issue-specific Current State,
+Expected State, or Definition of Done. Do not infer those criteria from system
+architecture, requirements, phase, milestone, governance, or remediation
+documents not named above. Read a service README, contract, or test fixture
+only when the selected task requires that exact file for implementation or
+verification.
+
+RULES FOR THIS SESSION:
+- The task request is authoritative for the selected issue's Current State,
+  Expected State, and Definition of Done. Treat behavior not verified in code
+  as unknown. If implementation evidence contradicts the task request, stop
+  and report the contradiction before changing behavior.
+- Implement the selected remediation issue only. Do not expand scope into
+  other issues, document types, extraction methods, ingress changes, or
+  unrelated services unless the task request explicitly requires it.
+- Preserve durable persistence, confidence-gate behavior, tenant and document
+  provenance, audit traceability, and existing fallback or rejection behavior.
+- Treat extraction and classification confidence as governed measurements.
+  They cannot be hardcoded, assumed, or invented to make a gate pass.
+- Use existing service helpers and contracts where the remediation requires
+  them. Do not create parallel implementations of repository, audit, tracing,
+  authorization, or conflict-detection behavior.
+- Add focused positive, negative, regression, and edge-case coverage for the
+  selected remediation issue. Do not rely on test-only invocation to satisfy a
+  Definition of Done item that requires a live runtime path.
+- Update the affected README.md file after code changes when behavior,
+  configuration, interfaces, operations, or verification guidance would
+  otherwise become stale.
+- Use the repository's required commit-message format: a valid subject line,
+  exactly one blank line, and a wrapped explanatory body.
+- Do not include references to an agent, AI assistance, or authorship tooling
+  in commit messages, code comments, or docstrings.
+
+CONFIRM BY RESPONDING WITH:
+1. The specific issue, by number and title, this session addresses and the net
+   effect it must eliminate.
+2. The issue's known Current State gaps, verified against actual code today.
+3. The explicit non-goals that bound this remediation session.
+4. The Definition of Done evidence required before the issue is considered
+   resolved, and how each item will be verified.
+5. One sentence stating that the task request governs the selected remediation
+   issue and the two listed documents govern the implementation process.
+
+Do not proceed until this confirmation is complete and accurate.

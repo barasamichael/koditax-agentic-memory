@@ -1,0 +1,68 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/kodi_test
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: kodi_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d kodi_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+      - name: Pyright strict
+        run: pyright
+
+      - name: Contract and schema validation
+        run: python -m shared.validation.contract_validator
+
+      - name: Architecture guard
+        run: python -m shared.validation.architecture_guard
+
+      - name: Service contract guard
+        run: python -m shared.validation.service_contract_guard
+
+      - name: Run database migrations
+        run: python -m shared.validation.db_migrate
+
+      - name: Pytest (unit)
+        run: pytest tests

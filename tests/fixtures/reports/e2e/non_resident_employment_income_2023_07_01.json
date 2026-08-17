@@ -1,0 +1,13 @@
+{
+  "supported_lane_id": "non_resident_employment_income_2023_07_01",
+  "historical_version_id": "KIT-VER-20230701-A",
+  "tax_year": 2023,
+  "computation_id": "4c7e4912-e4c2-4bc7-b9a9-4cff7af5fb5f",
+  "form_id": "97ca1796-6309-4e0a-b39f-7316f29ad2ca",
+  "policy_anchor_ids": [
+    "POL-RPT-NRES-2023-001"
+  ],
+  "source_anchor_ids": [
+    "SRC-RPT-NRES-2023-001"
+  ]
+}

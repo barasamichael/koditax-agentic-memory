@@ -1,0 +1,85 @@
+{
+  "fixture_id": "knowledge_lookup_historical_explanation_success",
+  "prompt_payload": {
+    "tenant_id": "pilot_tenant_alpha",
+    "conversation_id": "conv-phase13-grounded-explanation-001",
+    "channel": "chat",
+    "prompt": {
+      "text": "lookup statutory authority for allowable deductions in income tax effective 2024-12-27.",
+      "format": "plain_text"
+    }
+  },
+  "execution_context": {
+    "user_id": "user_phase13_grounded_explanation_001",
+    "idempotency_key": "idem-phase13-grounded-explanation-historical"
+  },
+  "expected": {
+    "selected_route": {
+      "route_id": "knowledge_search_route_v1",
+      "target_service": "knowledge",
+      "target_operation": "search_knowledge"
+    },
+    "grounding_status": "grounded",
+    "explanation_status": "grounded",
+    "grounded_evidence": [
+      {
+        "source_id": "KNW-ITA-15-2-HIST",
+        "source_version_id": "123e4567-e89b-12d3-a456-426614174102",
+        "anchor_id": "income-tax-act-15-2-historical",
+        "title": "Income Tax Act (Cap. 470), Section 15(2) (Historical)",
+        "url": "https://new.kenyalaw.org/akn/ke/act/1973/16/eng@2023-12-31",
+        "source_type": "tax_law",
+        "authority_level": "statute",
+        "tax_domain": "income_tax",
+        "effective_from": "1974-01-01",
+        "effective_to": "2023-12-31",
+        "tax_year": null,
+        "publication_state": "superseded",
+        "source_version_form": "point_in_time_consolidation",
+        "grounding_status": "grounded"
+      }
+    ],
+    "explanation_items": [
+      {
+        "explanation_text": "Income Tax Act (Cap. 470), Section 15(2) (Historical) provides statute-level tax_law authority for income_tax. Temporal applicability: historical-effective.",
+        "source_id": "KNW-ITA-15-2-HIST",
+        "source_version_id": "123e4567-e89b-12d3-a456-426614174102",
+        "anchor_id": "income-tax-act-15-2-historical",
+        "authority_level": "statute",
+        "source_type": "tax_law",
+        "temporal_applicability": "historical-effective"
+      }
+    ],
+    "citations": [
+      {
+        "citation_index": 1,
+        "source_id": "KNW-ITA-15-2-HIST",
+        "source_version_id": "123e4567-e89b-12d3-a456-426614174102",
+        "anchor_id": "income-tax-act-15-2-historical",
+        "title": "Income Tax Act (Cap. 470), Section 15(2) (Historical)",
+        "url": "https://new.kenyalaw.org/akn/ke/act/1973/16/eng@2023-12-31",
+        "source_type": "tax_law",
+        "authority_level": "statute",
+        "tax_domain": "income_tax",
+        "temporal_applicability": "historical-effective",
+        "effective_from": "1974-01-01",
+        "effective_to": "2023-12-31",
+        "tax_year": null
+      }
+    ],
+    "authority_summary": {
+      "highest_authority_level": "statute",
+      "source_types": [
+        "tax_law"
+      ],
+      "citation_count": 1
+    },
+    "temporal_applicability": {
+      "scope": "historical-effective",
+      "effective_from": "1974-01-01",
+      "effective_to": "2023-12-31",
+      "tax_year": null,
+      "disclosure_text": "Grounded explanation is historical-effective from 1974-01-01 to 2023-12-31."
+    }
+  }
+}

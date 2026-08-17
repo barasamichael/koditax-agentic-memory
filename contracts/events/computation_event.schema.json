@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ComputationEvent",
+  "type": "object",
+  "required": [
+    "lifecycle_stage",
+    "computation_id",
+    "correlation_id",
+    "idempotency_key",
+    "tax_year",
+    "rule_version",
+    "input_hash",
+    "outcome"
+  ],
+  "properties": {
+    "lifecycle_stage": {
+      "type": "string",
+      "enum": ["execution", "validation", "finalization", "replay"]
+    },
+    "computation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tax_year": {
+      "type": "integer",
+      "minimum": 2000,
+      "maximum": 2100
+    },
+    "rule_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input_hash": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["succeeded", "finalized", "matched", "mismatch"]
+    },
+    "tax_type": {
+      "type": "string"
+    },
+    "regime_type": {
+      "type": "string"
+    },
+    "result_sha256": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "validation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "validation_context": {
+      "type": "string"
+    },
+    "finding_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "finding_severities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["info", "warning", "error"]
+      }
+    },
+    "finalization_status": {
+      "type": "string",
+      "enum": ["finalized"]
+    },
+    "verification_outcome": {
+      "type": "string",
+      "enum": ["matched", "mismatch"]
+    },
+    "mismatch_reason": {
+      "type": "string"
+    },
+    "stored_result_sha256": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64
+    },
+    "replay_result_sha256": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64
+    }
+  },
+  "additionalProperties": false
+}

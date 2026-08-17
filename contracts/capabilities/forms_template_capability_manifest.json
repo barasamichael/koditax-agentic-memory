@@ -1,0 +1,71 @@
+{
+  "manifest_version": "1.0.0",
+  "capability_scope": "forms_extended_template_registry",
+  "generated_at": "2026-04-03T00:00:00+03:00",
+  "supported_runtime_scope": [
+    "income_tax_return_it1"
+  ],
+  "templates": [
+    {
+      "template_code": "IT2",
+      "status": "disabled",
+      "enablement_status": "blocked_by_prerequisites",
+      "domain": "income_tax",
+      "effective_scope": "extension_track_only",
+      "enablement_prerequisites": {
+        "tax_engine_rule_pack_ready": false,
+        "openapi_contract_ready": false,
+        "validation_rules_ready": false,
+        "test_coverage_ready": false,
+        "audit_event_taxonomy_ready": false
+      },
+      "notes": "Disabled by default until extension-track readiness checks are satisfied."
+    },
+    {
+      "template_code": "VAT3",
+      "status": "disabled",
+      "enablement_status": "blocked_by_prerequisites",
+      "domain": "vat",
+      "effective_scope": "extension_track_only",
+      "enablement_prerequisites": {
+        "tax_engine_rule_pack_ready": false,
+        "openapi_contract_ready": false,
+        "validation_rules_ready": false,
+        "test_coverage_ready": false,
+        "audit_event_taxonomy_ready": false
+      },
+      "notes": "Disabled by default until extension-track readiness checks are satisfied."
+    },
+    {
+      "template_code": "P10",
+      "status": "disabled",
+      "enablement_status": "blocked_by_prerequisites",
+      "domain": "paye",
+      "effective_scope": "extension_track_only",
+      "enablement_prerequisites": {
+        "tax_engine_rule_pack_ready": false,
+        "openapi_contract_ready": false,
+        "validation_rules_ready": false,
+        "test_coverage_ready": false,
+        "audit_event_taxonomy_ready": false
+      },
+      "notes": "Disabled by default until extension-track readiness checks are satisfied."
+    },
+    {
+      "template_code": "P9",
+      "status": "disabled",
+      "enablement_status": "blocked_by_prerequisites",
+      "domain": "paye",
+      "effective_scope": "extension_track_only",
+      "enablement_prerequisites": {
+        "tax_engine_rule_pack_ready": false,
+        "openapi_contract_ready": false,
+        "validation_rules_ready": false,
+        "test_coverage_ready": false,
+        "audit_event_taxonomy_ready": false
+      },
+      "notes": "Disabled by default until extension-track readiness checks are satisfied."
+    }
+  ],
+  "notes": "Extension templates are explicitly capability-gated and disabled by default in Phase 10.7.1."
+}

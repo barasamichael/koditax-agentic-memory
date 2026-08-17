@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvidenceRequirement",
+  "description": "Versioned, template-neutral semantic evidence requirement for downstream resolution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["requirement_id", "schema_version", "semantic_meaning", "entity_scope", "time_scope", "unit", "multiplicity", "completeness", "materiality", "permitted_derivations", "uncertainty_tolerance", "confirmation_policy"],
+  "properties": {
+    "requirement_id": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "schema_version": {"const": "1.0.0"},
+    "semantic_meaning": {"type": "string", "minLength": 8, "maxLength": 1000},
+    "entity_scope": {"$ref": "#/$defs/entity_scope"},
+    "time_scope": {"$ref": "#/$defs/time_scope"},
+    "unit": {"$ref": "#/$defs/unit"},
+    "multiplicity": {"$ref": "#/$defs/multiplicity"},
+    "completeness": {"$ref": "#/$defs/completeness"},
+    "materiality": {"$ref": "#/$defs/materiality"},
+    "permitted_derivations": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string"}},
+    "uncertainty_tolerance": {"$ref": "#/$defs/uncertainty_tolerance"},
+    "confirmation_policy": {"$ref": "#/$defs/confirmation_policy"},
+    "label": {"type": ["string", "null"], "maxLength": 120},
+    "caller_correlation_reference": {"type": ["string", "null"], "maxLength": 200}
+  },
+  "$defs": {
+    "entity_scope": {"type": "object", "additionalProperties": false, "required": ["selection"], "properties": {"selection": {"enum": ["specific_entities", "role", "authorized_set", "unresolved"]}, "entities": {"type": "array", "maxItems": 100, "items": {"type": "object", "additionalProperties": false, "required": ["entity_type", "role"], "properties": {"entity_id": {"type": ["string", "null"]}, "entity_type": {"type": "string"}, "role": {"type": "string"}, "relationship": {"type": ["string", "null"]}}}}, "unresolved_identity_requires_confirmation": {"type": "boolean"}}},
+    "time_scope": {"type": "object", "additionalProperties": false, "required": ["kind"], "properties": {"kind": {"enum": ["calendar_year", "fiscal_year", "month", "month_range", "date_range", "as_of", "recurring", "unspecified"]}, "year": {"type": ["integer", "null"]}, "month": {"type": ["integer", "null"]}, "start": {"type": ["string", "null"]}, "end": {"type": ["string", "null"]}, "date": {"type": ["string", "null"]}, "basis": {"type": ["string", "null"]}, "unresolved_requires_confirmation": {"type": "boolean"}}},
+    "unit": {"type": "object", "additionalProperties": false, "required": ["dimension"], "properties": {"dimension": {"type": "string"}, "code": {"type": ["string", "null"]}, "normalization": {"type": "string"}, "source_unit_may_differ": {"type": "boolean"}}},
+    "multiplicity": {"type": "object", "additionalProperties": false, "required": ["kind"], "properties": {"kind": {"type": "string"}, "min_items": {"type": ["integer", "null"]}, "max_items": {"type": ["integer", "null"]}}},
+    "completeness": {"type": "object", "additionalProperties": false, "required": ["coverage", "partial_result"], "properties": {"coverage": {"type": "string"}, "partial_result": {"type": "string"}}},
+    "materiality": {"type": "object", "additionalProperties": false, "required": ["kind"], "properties": {"kind": {"type": "string"}, "threshold": {"type": ["number", "null"]}, "unit": {"type": ["object", "null"]}, "level": {"type": ["string", "null"]}}},
+    "uncertainty_tolerance": {"type": "object", "additionalProperties": false, "properties": {"allowed": {"type": "array", "items": {"type": "string"}}, "estimated_values": {"type": "string"}, "conflicts": {"type": "string"}}},
+    "confirmation_policy": {"type": "object", "additionalProperties": false, "required": ["mode"], "properties": {"mode": {"type": "string"}, "triggers": {"type": "array", "items": {"type": "string"}}}}
+  }
+}

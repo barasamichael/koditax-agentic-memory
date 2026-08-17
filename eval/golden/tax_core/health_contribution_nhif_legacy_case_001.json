@@ -1,0 +1,375 @@
+{
+  "fixture_version": 1,
+  "fixture_id": "health_contribution_nhif_legacy_case_001",
+  "request": {
+    "tax_type": "health_contribution",
+    "regime_type": "health_contribution",
+    "regime_identifier": "nhif_legacy",
+    "tax_year": 2023,
+    "rule_version": "v1",
+    "input_payload": {
+      "version_context": {
+        "primary_effective_date": "2023-05-31",
+        "version_selection_basis": "payroll_period_end",
+        "historical_version_id": "HCH-VER-20221231-REG",
+        "governing_change_ids": [
+          "HC-CHG-2022-12-31-B"
+        ],
+        "source_anchor_ids": [
+          "HC-NHIF-CONTRIB-REG-2022-12-31"
+        ]
+      },
+      "contributor_context": {
+        "contributor_kind": "employee",
+        "asserted_domain_path": "nhif_legacy",
+        "contribution_subject_reference_id": "SUBJECT-001",
+        "employer_reference_id": "EMPLOYER-001",
+        "payroll_reference_id": "PAYROLL-001"
+      },
+      "nhif_legacy_inputs": {
+        "earning_items": [
+          {
+            "income_basis_type": "salary_band_basis",
+            "amount_kes": "45000.00",
+            "event_date": "2023-05-31",
+            "reference_id": "PAY-NHIF-001"
+          }
+        ],
+        "member_class_assertions": [
+          {
+            "assertion_type": "standard_member",
+            "assertion_status": "confirmed_by_evidence",
+            "source_reference_id": "EVI-NHIF-001"
+          }
+        ],
+        "deduction_reference_ids": [
+          "DED-NHIF-001"
+        ]
+      },
+      "sha_shif_salaried_inputs": {
+        "payroll_items": [],
+        "employer_assertions": [],
+        "remittance_reference_ids": []
+      },
+      "sha_shif_non_salaried_inputs": {
+        "household_income_items": [],
+        "means_testing_assertions": [],
+        "household_member_reference_ids": []
+      },
+      "special_case_assertions": {
+        "assertion_items": []
+      },
+      "mixed_context_inputs": {
+        "context_items": []
+      },
+      "operational_context": {
+        "workflow_flags": [
+          "employer_remittance_workflow_present"
+        ],
+        "registration_status": "active",
+        "remittance_channel": "employer_payroll_remittance",
+        "reference_ids": [
+          "OPS-NHIF-001"
+        ]
+      },
+      "traceability_context": {
+        "source_record_ids": [
+          "SRC-NHIF-001"
+        ],
+        "preparation_profile": "manual_structured_entry",
+        "completeness_assertion": "complete",
+        "evidence_reference_ids": []
+      }
+    }
+  },
+  "expected_output": {
+    "status": "ok",
+    "tax_type": "health_contribution",
+    "regime_type": "health_contribution",
+    "tax_year": 2023,
+    "rule_version": "v1",
+    "input_hash": "19b0727adc1a1e29cda0ec804f4258bf0844fc2d2fbd4f370a4924c4c3b6de3e",
+    "result_payload": {
+      "contribution_summary": {
+        "contribution_basis_kes": "45000.00",
+        "coverage_status": "implementation_ready",
+        "currency": "KES",
+        "employee_contribution_kes": "1100.00",
+        "employer_contribution_kes": "0.00",
+        "household_contribution_kes": "0.00",
+        "regime_family": "nhif_legacy",
+        "summary_status": "computed",
+        "total_contribution_kes": "1100.00"
+      },
+      "contributor_outcome": {
+        "classification_outcome": "fully_classified",
+        "contributor_kind": "employee",
+        "regime_family": "nhif_legacy",
+        "resolved_domain_path": "nhif_legacy"
+      },
+      "domain_outcomes": {
+        "consolidated_state_binding": {
+          "applied_policy_ids": [
+            "HCP-POL-004"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HCP-POL-004"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-NHIF-CONTRIB-REG-2022-12-31"
+          ],
+          "status": "not_applicable",
+          "total_contribution_kes": null
+        },
+        "contributor_classification": {
+          "applied_policy_ids": [
+            "HCP-POL-003",
+            "HCP-POL-110"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HC-NHIF-NPOL-0002"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-NHIF-CONTRIB-REG-2022-12-31"
+          ],
+          "status": "computed",
+          "total_contribution_kes": null
+        },
+        "exemptions_and_special_cases": {
+          "applied_policy_ids": [
+            "HCP-POL-U03"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HCP-POL-U03"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-NHIF-CONTRIB-REG-2022-12-31"
+          ],
+          "status": "not_applicable",
+          "total_contribution_kes": null
+        },
+        "mixed_context_paths": {
+          "applied_policy_ids": [
+            "HCP-POL-304"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HCP-POL-304"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-NHIF-CONTRIB-REG-2022-12-31"
+          ],
+          "status": "not_applicable",
+          "total_contribution_kes": null
+        },
+        "nhif_legacy": {
+          "applied_policy_ids": [
+            "HCP-POL-001",
+            "HCP-POL-002",
+            "HCP-POL-003",
+            "HCP-POL-101",
+            "HCP-POL-102",
+            "HCP-POL-103",
+            "HCP-POL-109",
+            "HCP-POL-110"
+          ],
+          "contribution_basis_kes": "45000.00",
+          "decision_refs": [
+            "HC-NHIF-NPOL-2022-001",
+            "HC-NHIF-NPOL-2022-002"
+          ],
+          "employee_contribution_kes": "1100.00",
+          "employer_contribution_kes": "0.00",
+          "household_contribution_kes": "0.00",
+          "source_anchor_ids": [
+            "HC-NHIF-CONTRIB-REG-2022-12-31"
+          ],
+          "status": "computed",
+          "total_contribution_kes": "1100.00"
+        },
+        "operational_interaction": {
+          "applied_policy_ids": [
+            "HCP-POL-105"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HCP-POL-105"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-NHIF-OPS-EMPLOYERS-PAGE"
+          ],
+          "status": "not_applicable",
+          "total_contribution_kes": null
+        },
+        "regime_selection": {
+          "applied_policy_ids": [
+            "HCP-POL-001",
+            "HCP-POL-002",
+            "HCP-POL-101"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HCP-POL-002"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-NHIF-ACT-1999-01-08",
+            "HC-NHIF-REPEAL-2023-SHI-ACT"
+          ],
+          "status": "computed",
+          "total_contribution_kes": null
+        },
+        "sha_shif_non_salaried": {
+          "applied_policy_ids": [
+            "HCP-POL-203"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HCP-POL-203"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-SHI-REG-2024-03-08"
+          ],
+          "status": "not_applicable",
+          "total_contribution_kes": null
+        },
+        "sha_shif_salaried": {
+          "applied_policy_ids": [
+            "HCP-POL-201"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HCP-POL-201"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-SHI-ACT-2023-11-24"
+          ],
+          "status": "not_applicable",
+          "total_contribution_kes": null
+        },
+        "sha_staged_activation": {
+          "applied_policy_ids": [
+            "HCP-POL-202"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HCP-POL-202"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-SHI-REG-2024-03-08"
+          ],
+          "status": "not_applicable",
+          "total_contribution_kes": null
+        },
+        "validation_evidence": {
+          "applied_policy_ids": [
+            "HCP-POL-005"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HCP-POL-005"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-NHIF-CONTRIB-REG-2022-12-31"
+          ],
+          "status": "computed",
+          "total_contribution_kes": null
+        },
+        "version_selection": {
+          "applied_policy_ids": [
+            "HCP-POL-001",
+            "HCP-POL-103",
+            "HCP-POL-109"
+          ],
+          "contribution_basis_kes": null,
+          "decision_refs": [
+            "HC-NHIF-NPOL-0001"
+          ],
+          "employee_contribution_kes": null,
+          "employer_contribution_kes": null,
+          "household_contribution_kes": null,
+          "source_anchor_ids": [
+            "HC-NHIF-CONTRIB-REG-2022-12-31"
+          ],
+          "status": "computed",
+          "total_contribution_kes": null
+        }
+      },
+      "traceability": {
+        "applied_policy_ids": [
+          "HCP-POL-001",
+          "HCP-POL-002",
+          "HCP-POL-003",
+          "HCP-POL-101",
+          "HCP-POL-102",
+          "HCP-POL-103",
+          "HCP-POL-109",
+          "HCP-POL-110"
+        ],
+        "computation_status": "complete",
+        "governing_change_ids": [
+          "HC-CHG-2022-12-31-B"
+        ],
+        "input_hash": "19b0727adc1a1e29cda0ec804f4258bf0844fc2d2fbd4f370a4924c4c3b6de3e",
+        "replay_safe": true,
+        "source_anchor_ids": [
+          "HC-NHIF-CONTRIB-REG-2022-12-31"
+        ],
+        "validation_focus_domains": [
+          "HCD-CORE-CONTRIBUTOR-CLASSIFICATION",
+          "HCD-CORE-NHIF-LEGACY",
+          "HCD-XCUT-VERSION-SELECTION",
+          "HCD-XCUT-VALIDATION-EVIDENCE"
+        ]
+      },
+      "unsupported_or_unresolved": [],
+      "version_identity": {
+        "effective_end": "2023-11-21",
+        "effective_start": "2022-12-31",
+        "governing_change_ids": [
+          "HC-CHG-2022-12-31-B"
+        ],
+        "historical_version_id": "HCH-VER-20221231-REG",
+        "regime_identifier": "nhif_legacy",
+        "rule_version": "v1",
+        "source_anchor_ids": [
+          "HC-NHIF-CONTRIB-REG-2022-12-31"
+        ],
+        "tax_year": 2023,
+        "version_selection_basis": "payroll_period_end"
+      }
+    }
+  }
+}

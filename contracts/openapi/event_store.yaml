@@ -1,0 +1,591 @@
+openapi: 3.1.0
+info:
+  title: event_store
+  version: "1.0.0"
+  description: >
+    Immutable event-store contract for append, retention observability, and
+    archival policy hooks.
+paths:
+  /audit/append:
+    post:
+      summary: Append one immutable audit event.
+      operationId: appendAuditEvent
+      parameters:
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuditEventAppendRequest"
+      responses:
+        "200":
+          description: Audit event persisted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEventAppendResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /audit/retention/eligible:
+    get:
+      summary: List archival-eligible events in principal scope.
+      operationId: listRetentionEligibleAuditEvents
+      parameters:
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - in: query
+          name: as_of
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Deterministic retention-eligible event slice.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditRetentionEligibleResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /audit/archival/mark:
+    post:
+      summary: Mark one event archived when retention eligibility is satisfied.
+      operationId: markAuditEventArchived
+      parameters:
+        - $ref: "#/components/parameters/AuthContextHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuditEventArchiveRequest"
+      responses:
+        "200":
+          description: Archival transition accepted or replayed idempotently.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEventArchiveResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /audit/events:
+    get:
+      summary: Query immutable events with deterministic pagination.
+      operationId: queryAuditEvents
+      parameters:
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: query
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: user_id
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deterministic scoped query result page.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEventQueryResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /audit/replay/{correlation_id}:
+    get:
+      summary: Replay immutable events for one correlation identifier.
+      operationId: replayAuditEvents
+      parameters:
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: path
+          name: correlation_id
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: user_id
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deterministic correlation replay result page.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEventQueryResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /audit/integrity/verify:
+    get:
+      summary: Verify deterministic event checksum and hash-chain integrity.
+      operationId: verifyAuditEventIntegrity
+      parameters:
+        - $ref: "#/components/parameters/AuthContextHeader"
+        - in: query
+          name: tenant_id
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: user_id
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: correlation_id
+          required: false
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deterministic integrity verification page result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditEventIntegrityVerificationResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+components:
+  parameters:
+    AuthContextHeader:
+      in: header
+      name: X-Auth-Context
+      required: true
+      schema:
+        type: string
+      description: Canonical serialized auth-context envelope.
+  responses:
+    ErrorResponse:
+      description: Deterministic structured error envelope.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - detail
+            properties:
+              detail:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  schemas:
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+      properties:
+        error_code:
+          type: string
+        message:
+          type: string
+        reason:
+          type: string
+        reason_code:
+          type: string
+        trace_id:
+          type:
+            - string
+            - "null"
+        correlation_id:
+          type:
+            - string
+            - "null"
+        details:
+          type: object
+          additionalProperties: true
+    AuditEventAppendRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - event_type
+        - user_id
+        - correlation_id
+        - idempotency_key
+      properties:
+        event_type:
+          type: string
+          minLength: 1
+        user_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        trace_id:
+          type:
+            - string
+            - "null"
+        correlation_id:
+          type: string
+          minLength: 1
+        idempotency_key:
+          type: string
+          minLength: 1
+          maxLength: 128
+        resource_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        details:
+          type:
+            - object
+            - "null"
+          additionalProperties: true
+    AuditEventAppendResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - event_id
+        - correlation_id
+      properties:
+        event_id:
+          type: string
+          format: uuid
+        correlation_id:
+          type: string
+    AuditRetentionEligibleEvent:
+      type: object
+      additionalProperties: false
+      required:
+        - event_id
+        - user_id
+        - correlation_id
+        - trace_id
+        - created_at
+        - retention_expires_at
+        - retention_policy_code
+        - retention_days
+      properties:
+        event_id:
+          type: string
+          format: uuid
+        user_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        retention_expires_at:
+          type: string
+          format: date-time
+        retention_policy_code:
+          type: string
+        retention_days:
+          type: integer
+          minimum: 1
+    AuditRetentionEligibleResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - as_of
+        - events
+      properties:
+        as_of:
+          type: string
+          format: date-time
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditRetentionEligibleEvent"
+    AuditEventArchiveRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - event_id
+        - reason_code
+      properties:
+        event_id:
+          type: string
+          format: uuid
+        reason_code:
+          type: string
+          minLength: 1
+        archived_at:
+          type:
+            - string
+            - "null"
+          format: date-time
+    AuditEventArchiveResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - event_id
+        - user_id
+        - correlation_id
+        - archived_at
+        - archival_reason_code
+      properties:
+        status:
+          type: string
+          enum:
+            - archived
+            - already_archived
+        event_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        correlation_id:
+          type: string
+        archived_at:
+          type: string
+          format: date-time
+        archival_reason_code:
+          type: string
+    AuditEventQueryEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - event_id
+        - event_type
+        - action_type
+        - user_id
+        - trace_id
+        - correlation_id
+        - idempotency_key
+        - created_at
+        - previous_event_checksum
+        - event_checksum
+        - is_delegated
+      properties:
+        event_id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+        action_type:
+          type: string
+        user_id:
+          type: string
+          format: uuid
+        trace_id:
+          type: string
+        correlation_id:
+          type: string
+        idempotency_key:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        previous_event_checksum:
+          type:
+            - string
+            - "null"
+        event_checksum:
+          type: string
+        is_delegated:
+          type: boolean
+        principal_user_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        delegate_user_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        delegation_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+    AuditEventQueryResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - tenant_id
+        - limit
+        - events
+      properties:
+        tenant_id:
+          type: string
+        user_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        correlation_id:
+          type:
+            - string
+            - "null"
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 200
+        next_cursor:
+          type:
+            - string
+            - "null"
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditEventQueryEnvelope"
+    AuditEventIntegrityVerificationResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - tenant_id
+        - limit
+        - algorithm
+        - verified_event_count
+      properties:
+        tenant_id:
+          type: string
+        user_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        correlation_id:
+          type:
+            - string
+            - "null"
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 200
+        algorithm:
+          type: string
+        verified_event_count:
+          type: integer
+          minimum: 0
+        verified_through_event_id:
+          type:
+            - string
+            - "null"
+          format: uuid
+        next_cursor:
+          type:
+            - string
+            - "null"

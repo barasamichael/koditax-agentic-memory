@@ -1,0 +1,333 @@
+openapi: 3.1.0
+info:
+  title: validation
+  version: "0.2.0"
+  description: >
+    Deterministic validation runtime contract for the supported 4A/4B backend.
+    This contract defines the standalone validation runtime surface for
+    governed return-validation requests for income_tax and
+    health_contribution only, and the same governed rule catalog also powers
+    downstream forms, reports, and orchestration validation envelopes for the
+    supported scope. The `/validate/return` route is an internal governed
+    service boundary rather than a direct frontend integration surface.
+paths:
+  /healthz:
+    get:
+      summary: Validation service health check.
+      operationId: validationHealthz
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+      responses:
+        "200":
+          description: Service is healthy.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceStatusResponse"
+  /readyz:
+    get:
+      summary: Validation service readiness check.
+      operationId: validationReadyz
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+      responses:
+        "200":
+          description: Service is ready.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceStatusResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+  /validate/return:
+    post:
+      summary: Validate return data with deterministic governed finding semantics.
+      operationId: validateReturn
+      parameters:
+        - $ref: "#/components/parameters/CorrelationIdHeader"
+        - $ref: "#/components/parameters/TraceIdHeader"
+        - $ref: "#/components/parameters/InternalValidationKeyHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidateReturnRequest"
+      responses:
+        "200":
+          description: Validation completed with deterministic findings and rule results.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidateReturnResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+components:
+  parameters:
+    CorrelationIdHeader:
+      in: header
+      name: X-Correlation-ID
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    TraceIdHeader:
+      in: header
+      name: X-Trace-ID
+      required: false
+      schema:
+        type: string
+        minLength: 1
+    InternalValidationKeyHeader:
+      in: header
+      name: X-Validation-Internal-Key
+      required: false
+      schema:
+        type: string
+        minLength: 1
+      description: >
+        Internal-only validation boundary secret. Production deployments use
+        this header to restrict `/validate/return` to governed service callers.
+  responses:
+    ErrorResponse:
+      description: Canonical deterministic error envelope.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [detail]
+            properties:
+              detail:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  schemas:
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - error_code
+        - message
+        - reason
+        - reason_code
+        - correlation_id
+        - trace_id
+      properties:
+        error_code:
+          type: string
+        message:
+          type: string
+        reason:
+          type: string
+        reason_code:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        context:
+          type: object
+          additionalProperties: true
+    ServiceStatusResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+        - service
+        - version
+        - runtime_mode
+        - persistence_mode
+        - correlation_id
+        - trace_id
+      properties:
+        status:
+          type: string
+          enum: [ok, ready]
+        service:
+          type: string
+        version:
+          type: string
+        runtime_mode:
+          type: string
+          enum: [development, production]
+        persistence_mode:
+          type: string
+          enum: [in_memory, persistent, unavailable]
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+    ValidateReturnRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - return_id
+        - tax_domain
+        - mode
+        - fields
+      properties:
+        return_id:
+          type: string
+          minLength: 1
+        tax_domain:
+          type: string
+          enum: [income_tax, health_contribution]
+        mode:
+          type: string
+          enum: [draft, pre_submission, post_submission_integrity]
+          description: >
+            health_contribution currently supports draft and pre_submission only.
+            post_submission_integrity remains supported for income_tax only.
+        fields:
+          type: object
+          additionalProperties: true
+    ValidationIssue:
+      type: object
+      additionalProperties: false
+      required: [severity, code, message, field]
+      properties:
+        severity:
+          type: string
+          enum: [ERROR, WARNING, INFO]
+        code:
+          type: string
+        message:
+          type: string
+        field:
+          oneOf:
+            - type: string
+            - type: "null"
+    ValidationRuleResult:
+      type: object
+      additionalProperties: false
+      required:
+        - rule_code
+        - outcome
+        - severity
+        - message
+        - field
+        - linked_issue_codes
+      properties:
+        rule_code:
+          type: string
+        outcome:
+          type: string
+          enum: [passed, failed, not_applicable]
+        severity:
+          type: string
+          enum: [ERROR, WARNING, INFO]
+        message:
+          type: string
+        field:
+          oneOf:
+            - type: string
+            - type: "null"
+        linked_issue_codes:
+          type: array
+          items:
+            type: string
+    ValidationSummary:
+      type: object
+      additionalProperties: false
+      required: [error_count, warning_count, info_count, total_issues]
+      properties:
+        error_count:
+          type: integer
+          minimum: 0
+        warning_count:
+          type: integer
+          minimum: 0
+        info_count:
+          type: integer
+          minimum: 0
+        total_issues:
+          type: integer
+          minimum: 0
+    ValidationAuditEvidence:
+      type: object
+      additionalProperties: false
+      required:
+        - audit_event_id
+        - event_type
+        - event_time
+        - status
+      properties:
+        audit_event_id:
+          type: string
+          minLength: 64
+          maxLength: 64
+        event_type:
+          type: string
+          enum:
+            - validation_execution_accepted
+            - validation_execution_rejected
+            - validation_request_rejected
+            - validation_execution_failed
+        event_time:
+          type: string
+          format: date-time
+        status:
+          type: string
+          minLength: 1
+    ValidationResult:
+      type: object
+      additionalProperties: false
+      required:
+        - validation_id
+        - return_id
+        - tax_domain
+        - mode
+        - validation_status
+        - summary
+        - issues
+        - rule_results
+      properties:
+        validation_id:
+          type: string
+          format: uuid
+        return_id:
+          type: string
+        tax_domain:
+          type: string
+          enum: [income_tax, health_contribution]
+        mode:
+          type: string
+          enum: [draft, pre_submission, post_submission_integrity]
+        validation_status:
+          type: string
+          enum: [accepted, rejected]
+        summary:
+          $ref: "#/components/schemas/ValidationSummary"
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationIssue"
+        rule_results:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationRuleResult"
+    ValidateReturnResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, correlation_id, trace_id, audit_evidence, result]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        service:
+          type: string
+        correlation_id:
+          type: string
+        trace_id:
+          type: string
+        audit_evidence:
+          $ref: "#/components/schemas/ValidationAuditEvidence"
+        result:
+          $ref: "#/components/schemas/ValidationResult"

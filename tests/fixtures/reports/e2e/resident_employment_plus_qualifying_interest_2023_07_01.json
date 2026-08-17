@@ -1,0 +1,13 @@
+{
+  "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+  "historical_version_id": "KIT-VER-20230701-A",
+  "tax_year": 2023,
+  "computation_id": "3fe0f73c-46cf-43d4-a821-f1fc4a4c604e",
+  "form_id": "8f8a5221-c4be-4f29-8a11-b8d10f9f1a8a",
+  "policy_anchor_ids": [
+    "POL-RPT-MIX-2023-001"
+  ],
+  "source_anchor_ids": [
+    "SRC-RPT-MIX-2023-001"
+  ]
+}

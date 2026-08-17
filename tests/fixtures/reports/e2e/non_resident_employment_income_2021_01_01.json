@@ -1,0 +1,13 @@
+{
+  "supported_lane_id": "non_resident_employment_income_2021_01_01",
+  "historical_version_id": "KIT-VER-20210101-A",
+  "tax_year": 2021,
+  "computation_id": "0e028d31-5e11-48a1-b2c6-83f0cc7c1078",
+  "form_id": "d4373541-0033-4b88-aa19-086d8598f2f6",
+  "policy_anchor_ids": [
+    "POL-RPT-NRES-2021-001"
+  ],
+  "source_anchor_ids": [
+    "SRC-RPT-NRES-2021-001"
+  ]
+}

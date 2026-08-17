@@ -1,0 +1,59 @@
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+extend-exclude = [
+    ".tmp",
+    ".tmp_*",
+    ".tmp_pytest_*",
+    ".tmp_test_*",
+    "pytest_basetemp_*",
+    "pytest_tmp_*",
+    "pytest_temp_*",
+    "pytest_tmp",
+    "__pycache__",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+length-sort = true
+order-by-type = false
+force-sort-within-sections = true
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "strict"
+include = ["database", "eval", "services", "shared", "tests"]
+exclude = ["venv"]
+venvPath = "."
+venv = "venv"
+stubPath = "stubs"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+pythonpath = ["."]
+addopts = "-q -p no:cacheprovider"
+markers = [
+    "integration: live integration coverage against configured external providers",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+exclude = '''
+(
+    \.venv
+  | \.tmp
+  | \.tmp_.*
+  | \.tmp_pytest_.*
+  | \.tmp_test_.*
+  | pytest_basetemp_.*
+  | pytest_tmp_.*
+  | pytest_temp_.*
+  | pytest_tmp
+  | __pycache__
+)
+'''

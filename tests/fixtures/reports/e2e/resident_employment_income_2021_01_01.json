@@ -1,0 +1,13 @@
+{
+  "supported_lane_id": "resident_employment_income_2021_01_01",
+  "historical_version_id": "KIT-VER-20210101-A",
+  "tax_year": 2021,
+  "computation_id": "5d82ba71-9fcc-4cfe-9ef4-f8cf2fdf1458",
+  "form_id": "27f17fef-3be4-4e9d-9aa5-e38f5cff8bda",
+  "policy_anchor_ids": [
+    "POL-RPT-RES-2021-001"
+  ],
+  "source_anchor_ids": [
+    "SRC-RPT-RES-2021-001"
+  ]
+}

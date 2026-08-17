@@ -1,0 +1,2 @@
+"""CockroachDB auth migration lane."""
+

@@ -1,0 +1,23 @@
+{
+  "case_id": "golden_reports_execution",
+  "flow": "execute_single_turn",
+  "prompt_text": "generate report for income tax audit trail.",
+  "response_generator_mode": "plain",
+  "expected": {
+    "http_status": 200,
+    "top_level_status": "executed",
+    "decision_status": null,
+    "gate_status": null,
+    "plan_mode": "single_step",
+    "route_id": "income_tax_report_generation_route_v1",
+    "target_service": "reports",
+    "execution_status": "resolved",
+    "response_status": "generated",
+    "answer_mode": "reports_execution",
+    "has_citations": false,
+    "clarification_reason_code": null,
+    "error_code": null,
+    "reason_code": null,
+    "step_services": []
+  }
+}

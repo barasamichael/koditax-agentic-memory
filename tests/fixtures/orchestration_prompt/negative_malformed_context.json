@@ -1,0 +1,28 @@
+{
+  "fixture_id": "negative_malformed_context",
+  "flow": "execute_with_decision",
+  "request_payload": {
+    "tenant_id": "pilot_tenant_alpha",
+    "conversation_id": "conv-orch-neg-malformed-context-001",
+    "channel": "chat",
+    "prompt": {
+      "text": "Compute income tax for resident employment lane in tax year 2023 under KIT-VER-20230701-A.",
+      "format": "plain_text"
+    },
+    "user_id": "user_orch_e2e_alpha",
+    "idempotency_key": "idem-orch-neg-malformed-context-001",
+    "intent_class": "unsupported_domain_request",
+    "tax_domain_hint": "income_tax",
+    "selected_route": {
+      "route_id": "income_tax_compute_route_v1",
+      "target_service": "tax_core",
+      "target_operation": "execute_computation"
+    }
+  },
+  "expected_error": {
+    "status_code": 400,
+    "error_code": "invalid_orchestration_request",
+    "reason": "prompt_context_mismatch",
+    "reason_code": "prompt_context_mismatch"
+  }
+}

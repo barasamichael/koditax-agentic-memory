@@ -1,0 +1,66 @@
+{
+  "lineage_input": {
+    "computation_id": "c63cd26d-6d34-545a-833f-ca7888856670",
+    "form_id": "f3f640ca-a99f-5126-84e1-c2fd59ea8ce8",
+    "historical_version_id": "KIT-VER-20230701-A",
+    "policy_anchor_ids": [
+      "POL-001"
+    ],
+    "report_id": "c8c4b1e9-2f20-4f32-b887-f2c5717b9c41",
+    "report_version_id": "ITX-RPT-20230701-RES-EMP-V1",
+    "source_anchor_ids": [
+      "SRC-001"
+    ],
+    "supported_lane_id": "resident_employment_income_2023_07_01",
+    "tax_type": "income_tax",
+    "tax_year": 2023
+  },
+  "regression_baseline": {
+    "csv": {
+      "artifact_kind": "tax_summary",
+      "content_sha256": "91ee027af91b3c5001bb660c8c5dd35fc53fddc98e02350744d2be8f1f3c86e6",
+      "format": "csv",
+      "report_id": "c8c4b1e9-2f20-4f32-b887-f2c5717b9c41",
+      "report_version_id": "ITX-RPT-20230701-RES-EMP-V1"
+    },
+    "pdf": {
+      "artifact_kind": "tax_summary",
+      "content_sha256": "13649375536387587e8ef61216ed9873183789a790d9788aef37e2a8930384d2",
+      "format": "pdf",
+      "report_id": "c8c4b1e9-2f20-4f32-b887-f2c5717b9c41",
+      "report_version_id": "ITX-RPT-20230701-RES-EMP-V1"
+    },
+    "xlsx": {
+      "artifact_kind": "worksheet",
+      "content_sha256": "fd094d4e83a8ef4af5e6c98f2d4954cd7e283cab850344e8b53fc3dd25940c03",
+      "format": "xlsx",
+      "report_id": "c8c4b1e9-2f20-4f32-b887-f2c5717b9c41",
+      "report_version_id": "ITX-RPT-20230701-RES-EMP-V1"
+    },
+    "zip": {
+      "artifact_kind": "audit_package",
+      "format": "zip",
+      "report_id": "c8c4b1e9-2f20-4f32-b887-f2c5717b9c41",
+      "report_version_id": "ITX-RPT-20230701-RES-EMP-V1"
+    },
+    "zip_entry_list": [
+      "summary/summary.json",
+      "worksheet/worksheet.json",
+      "exports/exports.json",
+      "lineage/manifest.json"
+    ],
+    "zip_manifest": {
+      "computation_id": "c63cd26d-6d34-545a-833f-ca7888856670",
+      "form_id": "f3f640ca-a99f-5126-84e1-c2fd59ea8ce8",
+      "generated_at": "2026-01-01T00:00:00Z",
+      "included_files": [
+        "summary/summary.json",
+        "worksheet/worksheet.json",
+        "exports/exports.json",
+        "lineage/manifest.json"
+      ],
+      "report_id": "c8c4b1e9-2f20-4f32-b887-f2c5717b9c41",
+      "report_version_id": "ITX-RPT-20230701-RES-EMP-V1"
+    }
+  }
+}

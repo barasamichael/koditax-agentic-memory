@@ -1,0 +1,664 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HealthContributionExecutionRequest",
+  "description": "Governed canonical execution request for deterministic NHIF and SHA/SHIF health-contribution computation in KODI.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tax_type",
+    "regime_type",
+    "regime_identifier",
+    "tax_year",
+    "rule_version",
+    "input_payload"
+  ],
+  "properties": {
+    "tax_type": {
+      "const": "health_contribution"
+    },
+    "regime_type": {
+      "const": "health_contribution"
+    },
+    "regime_identifier": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "nhif_legacy",
+        "sha_shif",
+        "transition_boundary",
+        "mixed_context",
+        "undetermined",
+        null
+      ]
+    },
+    "tax_year": {
+      "type": "integer",
+      "minimum": 1999,
+      "maximum": 2100
+    },
+    "rule_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input_payload": {
+      "$ref": "#/$defs/InputPayload"
+    }
+  },
+  "$defs": {
+    "MoneyAmount": {
+      "type": "string",
+      "pattern": "^-?\\d+\\.\\d{2}$"
+    },
+    "IsoDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "ReferenceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "DomainId": {
+      "type": "string",
+      "enum": [
+        "HCD-CORE-CONTRIBUTOR-CLASSIFICATION",
+        "HCD-CORE-NHIF-LEGACY",
+        "HCD-CORE-SHI-NONSALARIED",
+        "HCD-CORE-SHI-SALARIED",
+        "HCD-TRANS-CONSOLIDATED-STATE-BINDING",
+        "HCD-TRANS-REGIME-SELECTION",
+        "HCD-TRANS-SHA-STAGED-ACTIVATION",
+        "HCD-XCUT-EXEMPTIONS-SPECIAL-CASES",
+        "HCD-XCUT-MIXED-CONTEXT-PATHS",
+        "HCD-XCUT-OPERATIONAL-INTERACTION",
+        "HCD-XCUT-VALIDATION-EVIDENCE",
+        "HCD-XCUT-VERSION-SELECTION"
+      ]
+    },
+    "AssertionStatus": {
+      "type": "string",
+      "enum": [
+        "asserted",
+        "confirmed_by_evidence",
+        "pending_evidence",
+        "unresolved"
+      ]
+    },
+    "InputPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version_context",
+        "contributor_context",
+        "nhif_legacy_inputs",
+        "sha_shif_salaried_inputs",
+        "sha_shif_non_salaried_inputs",
+        "special_case_assertions",
+        "mixed_context_inputs",
+        "operational_context",
+        "traceability_context"
+      ],
+      "properties": {
+        "version_context": {
+          "$ref": "#/$defs/VersionContext"
+        },
+        "contributor_context": {
+          "$ref": "#/$defs/ContributorContext"
+        },
+        "nhif_legacy_inputs": {
+          "$ref": "#/$defs/NhifLegacyInputs"
+        },
+        "sha_shif_salaried_inputs": {
+          "$ref": "#/$defs/ShaShifSalariedInputs"
+        },
+        "sha_shif_non_salaried_inputs": {
+          "$ref": "#/$defs/ShaShifNonSalariedInputs"
+        },
+        "special_case_assertions": {
+          "$ref": "#/$defs/SpecialCaseAssertions"
+        },
+        "mixed_context_inputs": {
+          "$ref": "#/$defs/MixedContextInputs"
+        },
+        "operational_context": {
+          "$ref": "#/$defs/OperationalContext"
+        },
+        "traceability_context": {
+          "$ref": "#/$defs/TraceabilityContext"
+        }
+      }
+    },
+    "VersionContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary_effective_date",
+        "version_selection_basis"
+      ],
+      "properties": {
+        "primary_effective_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "contribution_period_start": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "contribution_period_end": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "version_selection_basis": {
+          "type": "string",
+          "enum": [
+            "payroll_period_end",
+            "registration_effective_date",
+            "payment_due_date",
+            "specific_event_date",
+            "household_income_reference_date"
+          ]
+        },
+        "historical_version_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "governing_change_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "uniqueItems": true
+        },
+        "source_anchor_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "ContributorContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contributor_kind",
+        "asserted_domain_path"
+      ],
+      "properties": {
+        "contributor_kind": {
+          "type": "string",
+          "enum": [
+            "employee",
+            "self_employed",
+            "household",
+            "mixed_context",
+            "undetermined"
+          ]
+        },
+        "asserted_domain_path": {
+          "type": "string",
+          "enum": [
+            "nhif_legacy",
+            "sha_shif_salaried",
+            "sha_shif_non_salaried",
+            "transition_boundary",
+            "mixed_context",
+            "undetermined"
+          ]
+        },
+        "contribution_subject_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "employer_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "household_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "payroll_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "NhifLegacyInputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "earning_items",
+        "member_class_assertions",
+        "deduction_reference_ids"
+      ],
+      "properties": {
+        "earning_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NhifLegacyEarningItem"
+          }
+        },
+        "member_class_assertions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MemberClassAssertion"
+          }
+        },
+        "deduction_reference_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "NhifLegacyEarningItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "income_basis_type",
+        "amount_kes",
+        "event_date"
+      ],
+      "properties": {
+        "income_basis_type": {
+          "type": "string",
+          "enum": [
+            "salary_band_basis",
+            "special_contributor_basis",
+            "employer_deduction_basis",
+            "other_governed_legacy_basis"
+          ]
+        },
+        "amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "MemberClassAssertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assertion_type",
+        "assertion_status"
+      ],
+      "properties": {
+        "assertion_type": {
+          "type": "string",
+          "enum": [
+            "standard_member",
+            "special_member",
+            "employer_deducted_member",
+            "other_governed_legacy_classification"
+          ]
+        },
+        "assertion_status": {
+          "$ref": "#/$defs/AssertionStatus"
+        },
+        "source_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "ShaShifSalariedInputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payroll_items",
+        "employer_assertions",
+        "remittance_reference_ids"
+      ],
+      "properties": {
+        "payroll_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ShaShifSalariedPayrollItem"
+          }
+        },
+        "employer_assertions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EmployerAssertion"
+          }
+        },
+        "remittance_reference_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "ShaShifSalariedPayrollItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "income_basis_type",
+        "amount_kes",
+        "event_date"
+      ],
+      "properties": {
+        "income_basis_type": {
+          "type": "string",
+          "enum": [
+            "gross_salary_basis",
+            "employer_deduction_basis",
+            "payroll_remittance_basis",
+            "other_governed_salaried_basis"
+          ]
+        },
+        "amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "EmployerAssertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assertion_type",
+        "assertion_status"
+      ],
+      "properties": {
+        "assertion_type": {
+          "type": "string",
+          "enum": [
+            "employer_registered",
+            "deduction_path_asserted",
+            "remittance_path_asserted",
+            "other_governed_employer_assertion"
+          ]
+        },
+        "assertion_status": {
+          "$ref": "#/$defs/AssertionStatus"
+        },
+        "source_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "ShaShifNonSalariedInputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "household_income_items",
+        "means_testing_assertions",
+        "household_member_reference_ids"
+      ],
+      "properties": {
+        "household_income_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ShaShifNonSalariedIncomeItem"
+          }
+        },
+        "means_testing_assertions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MeansTestingAssertion"
+          }
+        },
+        "household_member_reference_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "ShaShifNonSalariedIncomeItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "income_basis_type",
+        "amount_kes",
+        "event_date"
+      ],
+      "properties": {
+        "income_basis_type": {
+          "type": "string",
+          "enum": [
+            "annual_household_income",
+            "means_testing_input",
+            "household_contribution_basis",
+            "other_governed_non_salaried_basis"
+          ]
+        },
+        "amount_kes": {
+          "$ref": "#/$defs/MoneyAmount"
+        },
+        "event_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "MeansTestingAssertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assertion_type",
+        "assertion_status"
+      ],
+      "properties": {
+        "assertion_type": {
+          "type": "string",
+          "enum": [
+            "means_testing_required",
+            "means_testing_completed",
+            "household_classification_pending",
+            "other_governed_non_salaried_assertion"
+          ]
+        },
+        "assertion_status": {
+          "$ref": "#/$defs/AssertionStatus"
+        },
+        "source_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "SpecialCaseAssertions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assertion_items"
+      ],
+      "properties": {
+        "assertion_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SpecialCaseAssertion"
+          }
+        }
+      }
+    },
+    "SpecialCaseAssertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assertion_type",
+        "assertion_status",
+        "affected_domain_id"
+      ],
+      "properties": {
+        "assertion_type": {
+          "type": "string",
+          "enum": [
+            "exemption_pending_policy",
+            "remission_pending_policy",
+            "special_case_pending_policy",
+            "evidence_gap",
+            "other_governed_special_case"
+          ]
+        },
+        "assertion_status": {
+          "$ref": "#/$defs/AssertionStatus"
+        },
+        "affected_domain_id": {
+          "$ref": "#/$defs/DomainId"
+        },
+        "source_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "MixedContextInputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "context_items"
+      ],
+      "properties": {
+        "context_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MixedContextItem"
+          }
+        }
+      }
+    },
+    "MixedContextItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mixed_context_type",
+        "affected_domain_ids"
+      ],
+      "properties": {
+        "mixed_context_type": {
+          "type": "string",
+          "enum": [
+            "legacy_and_active_overlap",
+            "salaried_and_non_salaried_overlap",
+            "registration_without_payment_window",
+            "payment_without_classification_confirmation",
+            "other_governed_mixed_context"
+          ]
+        },
+        "affected_domain_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DomainId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "OperationalContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workflow_flags",
+        "registration_status",
+        "remittance_channel",
+        "reference_ids"
+      ],
+      "properties": {
+        "workflow_flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "registration_started",
+              "payment_and_access_live",
+              "employer_remittance_workflow_present",
+              "portal_interaction_required",
+              "public_notice_reference_attached"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "registration_status": {
+          "type": "string",
+          "enum": [
+            "not_started",
+            "started",
+            "active",
+            "unresolved"
+          ]
+        },
+        "remittance_channel": {
+          "type": "string",
+          "enum": [
+            "employer_payroll_remittance",
+            "household_self_service",
+            "sha_portal",
+            "nhif_employer_portal",
+            "not_provided"
+          ]
+        },
+        "reference_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "TraceabilityContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_record_ids",
+        "preparation_profile",
+        "completeness_assertion"
+      ],
+      "properties": {
+        "source_record_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "evidence_reference_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "uniqueItems": true
+        },
+        "preparation_profile": {
+          "type": "string",
+          "enum": [
+            "manual_structured_entry",
+            "payroll_import_normalized",
+            "household_assessment_normalized",
+            "historical_reconstruction_normalized"
+          ]
+        },
+        "completeness_assertion": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial_but_governed",
+            "contains_unresolved_domains"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,544 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IncomeTaxResultPayload",
+  "description": "Governed canonical result payload for comprehensive Kenyan income-tax computation in KODI.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version_identity",
+    "taxpayer_outcome",
+    "domain_outcomes",
+    "liability_summary",
+    "treatment_decisions",
+    "impact_summary",
+    "unsupported_or_unresolved",
+    "traceability"
+  ],
+  "properties": {
+    "version_identity": {
+      "$ref": "#/$defs/VersionIdentity"
+    },
+    "taxpayer_outcome": {
+      "$ref": "#/$defs/TaxpayerOutcome"
+    },
+    "domain_outcomes": {
+      "$ref": "#/$defs/DomainOutcomes"
+    },
+    "liability_summary": {
+      "$ref": "#/$defs/LiabilitySummary"
+    },
+    "treatment_decisions": {
+      "$ref": "#/$defs/TreatmentDecisions"
+    },
+    "impact_summary": {
+      "$ref": "#/$defs/ImpactSummary"
+    },
+    "unsupported_or_unresolved": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/UnsupportedOrUnresolvedItem"
+      }
+    },
+    "traceability": {
+      "$ref": "#/$defs/Traceability"
+    }
+  },
+  "$defs": {
+    "MoneyAmount": {
+      "type": "string",
+      "pattern": "^-?\\d+\\.\\d{2}$"
+    },
+    "IsoDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "ReferenceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "NullableMoneyAmount": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^-?\\d+\\.\\d{2}$"
+    },
+    "VersionIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tax_year",
+        "rule_version",
+        "effective_start",
+        "effective_end",
+        "version_selection_basis"
+      ],
+      "properties": {
+        "historical_version_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "tax_year": {
+          "type": "integer",
+          "minimum": 2004,
+          "maximum": 2100
+        },
+        "rule_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effective_start": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "effective_end": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "version_selection_basis": {
+          "type": "string",
+          "enum": [
+            "tax_year_end",
+            "receipt_date",
+            "payroll_period_end",
+            "filing_period_end",
+            "specific_event_date"
+          ]
+        },
+        "source_anchor_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "TaxpayerOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "taxpayer_kind",
+        "resident_status"
+      ],
+      "properties": {
+        "taxpayer_kind": {
+          "type": "string",
+          "enum": [
+            "individual"
+          ]
+        },
+        "resident_status": {
+          "type": "string",
+          "enum": [
+            "resident",
+            "non_resident",
+            "undetermined"
+          ]
+        },
+        "classification_outcome": {
+          "type": "string",
+          "enum": [
+            "fully_classified",
+            "partially_classified",
+            "unsupported"
+          ]
+        }
+      }
+    },
+    "DomainOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "decision_refs"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "computed",
+            "not_applicable",
+            "unsupported",
+            "unresolved"
+          ]
+        },
+        "taxable_base_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "gross_tax_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "creditable_amount_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "final_tax_amount_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "decision_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "DomainOutcomes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "employment",
+        "business",
+        "investment",
+        "rental",
+        "withholding",
+        "installment_tax",
+        "advance_tax",
+        "reliefs",
+        "deductions_and_exemptions",
+        "prescribed_rate_resolution",
+        "adjacent_regime_interactions"
+      ],
+      "properties": {
+        "employment": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "business": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "investment": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "rental": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "withholding": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "installment_tax": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "advance_tax": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "reliefs": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "deductions_and_exemptions": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "prescribed_rate_resolution": {
+          "$ref": "#/$defs/DomainOutcome"
+        },
+        "adjacent_regime_interactions": {
+          "$ref": "#/$defs/DomainOutcome"
+        }
+      }
+    },
+    "LiabilitySummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assessable_income_kes",
+        "chargeable_income_kes",
+        "gross_tax_kes",
+        "total_reliefs_kes",
+        "creditable_withholding_kes",
+        "installment_tax_credit_kes",
+        "advance_tax_credit_kes",
+        "net_income_tax_due_kes",
+        "refund_due_kes",
+        "final_tax_excluded_income_kes"
+      ],
+      "properties": {
+        "assessable_income_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "chargeable_income_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "gross_tax_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "total_reliefs_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "creditable_withholding_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "installment_tax_credit_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "advance_tax_credit_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "net_income_tax_due_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "refund_due_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        },
+        "final_tax_excluded_income_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        }
+      }
+    },
+    "WithholdingTreatment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "income_reference_id",
+        "treatment",
+        "decision_ref"
+      ],
+      "properties": {
+        "income_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "treatment": {
+          "type": "string",
+          "enum": [
+            "final_tax",
+            "creditable_against_annual_liability",
+            "advance_payment",
+            "excluded_from_annual_liability",
+            "unresolved"
+          ]
+        },
+        "decision_ref": {
+          "$ref": "#/$defs/ReferenceId"
+        }
+      }
+    },
+    "AdjacentRegimeFlag": {
+      "type": "string",
+      "enum": [
+        "affordable_housing_interaction_present",
+        "turnover_tax_boundary_present",
+        "capital_gains_boundary_present",
+        "payroll_operational_interaction_present"
+      ]
+    },
+    "TreatmentDecisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "withholding_treatments",
+        "adjacent_regime_flags"
+      ],
+      "properties": {
+        "withholding_treatments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WithholdingTreatment"
+          }
+        },
+        "adjacent_regime_flags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AdjacentRegimeFlag"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "ImpactEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "impact_type",
+        "claim_reference_id",
+        "status"
+      ],
+      "properties": {
+        "impact_type": {
+          "type": "string",
+          "enum": [
+            "personal_relief",
+            "insurance_relief",
+            "charitable_donation",
+            "home_ownership_savings_plan",
+            "charitable_organization_exemption",
+            "withholding_credit",
+            "installment_tax_credit",
+            "advance_tax_credit",
+            "other_governed_item_pending_policy"
+          ]
+        },
+        "claim_reference_id": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "applied",
+            "disallowed",
+            "not_applicable",
+            "unresolved"
+          ]
+        },
+        "impact_amount_kes": {
+          "$ref": "#/$defs/NullableMoneyAmount"
+        }
+      }
+    },
+    "ImpactSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relief_impacts",
+        "deduction_impacts",
+        "exemption_impacts"
+      ],
+      "properties": {
+        "relief_impacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImpactEntry"
+          }
+        },
+        "deduction_impacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImpactEntry"
+          }
+        },
+        "exemption_impacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImpactEntry"
+          }
+        }
+      }
+    },
+    "UnsupportedOrUnresolvedItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domain_id",
+        "reason_code",
+        "decision_ref"
+      ],
+      "properties": {
+        "domain_id": {
+          "type": "string",
+          "enum": [
+            "ITD-CORE-RESIDENCY",
+            "ITD-CORE-EMPLOYMENT",
+            "ITD-CORE-BUSINESS",
+            "ITD-CORE-INVESTMENT",
+            "ITD-CORE-RENTAL",
+            "ITD-CORE-WHT",
+            "ITD-CORE-INSTALLMENT",
+            "ITD-CORE-ADVANCE",
+            "ITD-CORE-RELIEFS",
+            "ITD-CORE-DEDUCTIONS",
+            "ITD-ADJ-PAYE-OPS",
+            "ITD-ADJ-AHL",
+            "ITD-ADJ-CGT",
+            "ITD-ADJ-TOT",
+            "ITD-XCUT-VERSION",
+            "ITD-XCUT-PRESCRIBED-RATES",
+            "ITD-XCUT-EVIDENCE",
+            "ITD-XCUT-ROUNDING",
+            "ITD-XCUT-INPUT-CLASS",
+            "ITD-XCUT-VALIDATION"
+          ]
+        },
+        "reason_code": {
+          "type": "string",
+          "enum": [
+            "unsupported_domain",
+            "unresolved_policy",
+            "insufficient_evidence",
+            "adjacent_regime_separate",
+            "staged_commencement_requires_split"
+          ]
+        },
+        "decision_ref": {
+          "$ref": "#/$defs/ReferenceId"
+        },
+        "source_anchor_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "Traceability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_hash",
+        "applied_policy_ids",
+        "source_anchor_ids",
+        "computation_status",
+        "replay_safe"
+      ],
+      "properties": {
+        "input_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "applied_policy_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "source_anchor_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReferenceId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "validation_focus_domains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "ITD-CORE-RESIDENCY",
+              "ITD-CORE-EMPLOYMENT",
+              "ITD-CORE-BUSINESS",
+              "ITD-CORE-INVESTMENT",
+              "ITD-CORE-RENTAL",
+              "ITD-CORE-WHT",
+              "ITD-CORE-INSTALLMENT",
+              "ITD-CORE-ADVANCE",
+              "ITD-CORE-RELIEFS",
+              "ITD-CORE-DEDUCTIONS",
+              "ITD-XCUT-EVIDENCE",
+              "ITD-XCUT-VALIDATION"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "computation_status": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial",
+            "unsupported"
+          ]
+        },
+        "replay_safe": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

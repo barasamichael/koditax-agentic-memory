@@ -1,0 +1,55 @@
+{
+  "fixture_version": 1,
+  "fixture_id": "income_tax_v1_case_001",
+  "request": {
+    "tax_type": "income_tax",
+    "regime_type": "income_tax",
+    "regime_identifier": null,
+    "tax_year": 2025,
+    "rule_version": "v1",
+    "input_payload": {
+      "income": 125000,
+      "deductions": {
+        "charity": 2000,
+        "retirement": 5000
+      },
+      "dependents": [
+        "child_1",
+        "child_2"
+      ],
+      "metadata": {
+        "filing_status": "single",
+        "resident": true
+      }
+    }
+  },
+  "expected_output": {
+    "status": "ok",
+    "tax_type": "income_tax",
+    "regime_type": "income_tax",
+    "tax_year": 2025,
+    "rule_version": "v1",
+    "input_hash": "c37c2ca4699b84e03fc99aed8da097d1202941a4f5567d215ce466d63114674f",
+    "result_payload": {
+      "binding_id": "income_tax_default_v1_2025",
+      "execution_mode": "deterministic_stub",
+      "input_hash": "c37c2ca4699b84e03fc99aed8da097d1202941a4f5567d215ce466d63114674f",
+      "normalized_input": {
+        "deductions": {
+          "charity": 2000,
+          "retirement": 5000
+        },
+        "dependents": [
+          "child_1",
+          "child_2"
+        ],
+        "income": 125000,
+        "metadata": {
+          "filing_status": "single",
+          "resident": true
+        }
+      },
+      "rule_version": "v1"
+    }
+  }
+}

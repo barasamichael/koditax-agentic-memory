@@ -1,0 +1,618 @@
+{
+  "expected_output": {
+    "audit_evidence_output": {
+      "artifact_generation": {
+        "action": "artifact_generation",
+        "action_status": "generated",
+        "artifact_id": "08166a8a0a4f5ec17e6103eea076fa1119f3608cff910d604f8f91044927bb25",
+        "audit_evidence_id": "69f821f972c11864d57fa0f1abbca0182569e10fea7fcfc1b49e29daf5e517a7",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "8d1ebe2b-7818-59bf-be2b-01dad54b3fcb",
+        "content_sha256": "889b9c8384df37d05609e1beef57346116f411c797688e1927734851a8113423",
+        "finalized_audit_event_id": "edcdda81-8416-5814-9862-61d00521b304",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20230701-NRES-EMP-V1",
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-101",
+            "ITC-POL-102",
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "NREM-20230701-002",
+            "NREM-20230701-003",
+            "NREM-20230701-004",
+            "NREM-20230701-005",
+            "NREM-20230701-006",
+            "NREM-20230701-010",
+            "NREM-20230701-011"
+          ],
+          "input_hash": "77260a40eeb3ffe44547e71173d75288dca3b0e8a1e5f6aafe514a0168d710a1",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA"
+          ]
+        },
+        "supported_lane_id": "non_resident_employment_income_2023_07_01",
+        "tax_year": 2023,
+        "template_id": "income_tax_return_non_resident_employment_2023_07_01_v1"
+      },
+      "binding": {
+        "action": "binding",
+        "action_status": "bound",
+        "artifact_id": null,
+        "audit_evidence_id": "b3d85f3f740b678255a3c4e96cfceaccd69c4a4ada470948f81b404e87415a59",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "8d1ebe2b-7818-59bf-be2b-01dad54b3fcb",
+        "content_sha256": null,
+        "finalized_audit_event_id": "edcdda81-8416-5814-9862-61d00521b304",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20230701-NRES-EMP-V1",
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-101",
+            "ITC-POL-102",
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "NREM-20230701-002",
+            "NREM-20230701-003",
+            "NREM-20230701-004",
+            "NREM-20230701-005",
+            "NREM-20230701-006",
+            "NREM-20230701-010",
+            "NREM-20230701-011"
+          ],
+          "input_hash": "77260a40eeb3ffe44547e71173d75288dca3b0e8a1e5f6aafe514a0168d710a1",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA"
+          ]
+        },
+        "supported_lane_id": "non_resident_employment_income_2023_07_01",
+        "tax_year": 2023,
+        "template_id": "income_tax_return_non_resident_employment_2023_07_01_v1"
+      },
+      "mapping": {
+        "action": "mapping",
+        "action_status": "mapped",
+        "artifact_id": null,
+        "audit_evidence_id": "733f56d5c15cc905f2bebd89de81b3517cda87bb0bd81d61826cb502d037fa5e",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "8d1ebe2b-7818-59bf-be2b-01dad54b3fcb",
+        "content_sha256": null,
+        "finalized_audit_event_id": "edcdda81-8416-5814-9862-61d00521b304",
+        "form_type": "income_tax_return",
+        "form_version": "income_tax_vertical_slice_v1",
+        "form_version_id": null,
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-101",
+            "ITC-POL-102",
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "NREM-20230701-002",
+            "NREM-20230701-003",
+            "NREM-20230701-004",
+            "NREM-20230701-005",
+            "NREM-20230701-006",
+            "NREM-20230701-010",
+            "NREM-20230701-011"
+          ],
+          "input_hash": "77260a40eeb3ffe44547e71173d75288dca3b0e8a1e5f6aafe514a0168d710a1",
+          "rule_version": "v1",
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA"
+          ]
+        },
+        "supported_lane_id": "non_resident_employment_income_2023_07_01",
+        "tax_year": 2023,
+        "template_id": null
+      }
+    },
+    "form_artifact_output": {
+      "artifact_id": "08166a8a0a4f5ec17e6103eea076fa1119f3608cff910d604f8f91044927bb25",
+      "artifact_type": "income_tax_form_artifact",
+      "audit_evidence": {
+        "action": "artifact_generation",
+        "action_status": "generated",
+        "artifact_id": "08166a8a0a4f5ec17e6103eea076fa1119f3608cff910d604f8f91044927bb25",
+        "audit_evidence_id": "69f821f972c11864d57fa0f1abbca0182569e10fea7fcfc1b49e29daf5e517a7",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "8d1ebe2b-7818-59bf-be2b-01dad54b3fcb",
+        "content_sha256": "889b9c8384df37d05609e1beef57346116f411c797688e1927734851a8113423",
+        "finalized_audit_event_id": "edcdda81-8416-5814-9862-61d00521b304",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20230701-NRES-EMP-V1",
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-101",
+            "ITC-POL-102",
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "NREM-20230701-002",
+            "NREM-20230701-003",
+            "NREM-20230701-004",
+            "NREM-20230701-005",
+            "NREM-20230701-006",
+            "NREM-20230701-010",
+            "NREM-20230701-011"
+          ],
+          "input_hash": "77260a40eeb3ffe44547e71173d75288dca3b0e8a1e5f6aafe514a0168d710a1",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA"
+          ]
+        },
+        "supported_lane_id": "non_resident_employment_income_2023_07_01",
+        "tax_year": 2023,
+        "template_id": "income_tax_return_non_resident_employment_2023_07_01_v1"
+      },
+      "computation_id": "8d1ebe2b-7818-59bf-be2b-01dad54b3fcb",
+      "content_sha256": "889b9c8384df37d05609e1beef57346116f411c797688e1927734851a8113423",
+      "form_type": "income_tax_return",
+      "form_version_id": "ITX-FORM-20230701-NRES-EMP-V1",
+      "generated_content_payload": {
+        "domain_fields": {
+          "deductions_and_exemptions": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "ITC-POL-803",
+              "ITC-POL-804"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "0.00",
+            "status": "computed",
+            "taxable_base_kes": "960000.00"
+          },
+          "employment": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "NREM-20230701-004",
+              "NREM-20230701-010",
+              "NREM-20230701-011"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "225400.00",
+            "status": "computed",
+            "taxable_base_kes": "960000.00"
+          },
+          "investment": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "ITC-POL-401"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "0.00",
+            "status": "not_applicable",
+            "taxable_base_kes": "0.00"
+          },
+          "reliefs": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "NREM-20230701-005",
+              "NREM-20230701-006"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "0.00",
+            "status": "computed",
+            "taxable_base_kes": "0.00"
+          },
+          "withholding": {
+            "creditable_amount_kes": "0.00",
+            "decision_refs": [
+              "ITC-POL-601"
+            ],
+            "final_tax_amount_kes": "0.00",
+            "gross_tax_kes": "0.00",
+            "status": "not_applicable",
+            "taxable_base_kes": "0.00"
+          }
+        },
+        "form_fields": {
+          "chargeable_income_kes": "960000.00",
+          "employment_final_tax_amount_kes": "0.00",
+          "employment_gross_tax_kes": "225400.00",
+          "employment_income_kes": "960000.00",
+          "final_tax_excluded_income_kes": "0.00",
+          "investment_final_tax_amount_kes": "0.00",
+          "investment_gross_tax_kes": "0.00",
+          "investment_income_kes": "0.00",
+          "net_income_tax_due_kes": "225400.00",
+          "refund_due_kes": "0.00",
+          "total_reliefs_kes": "0.00"
+        },
+        "header": {
+          "form_type": "income_tax_return",
+          "form_version_id": "ITX-FORM-20230701-NRES-EMP-V1",
+          "historical_version_id": "KIT-VER-20230701-A",
+          "supported_lane_id": "non_resident_employment_income_2023_07_01",
+          "tax_year": 2023,
+          "template_id": "income_tax_return_non_resident_employment_2023_07_01_v1"
+        },
+        "impact_fields": {
+          "deduction_impacts": [],
+          "exemption_impacts": [],
+          "relief_impacts": []
+        },
+        "liability_fields": {
+          "advance_tax_credit_kes": "0.00",
+          "assessable_income_kes": "960000.00",
+          "chargeable_income_kes": "960000.00",
+          "creditable_withholding_kes": "0.00",
+          "final_tax_excluded_income_kes": "0.00",
+          "gross_tax_kes": "225400.00",
+          "installment_tax_credit_kes": "0.00",
+          "net_income_tax_due_kes": "225400.00",
+          "refund_due_kes": "0.00",
+          "total_reliefs_kes": "0.00"
+        },
+        "taxpayer": {
+          "classification_outcome": "fully_classified",
+          "resident_status": "non_resident",
+          "taxpayer_kind": "individual"
+        },
+        "treatment_fields": {
+          "adjacent_regime_flags": [],
+          "withholding_treatments": []
+        }
+      },
+      "generation_status": "generated",
+      "historical_version_id": "KIT-VER-20230701-A",
+      "lineage": {
+        "applied_policy_ids": [
+          "ITC-POL-101",
+          "ITC-POL-102",
+          "ITC-POL-201",
+          "ITC-POL-204",
+          "ITC-POL-803",
+          "ITC-POL-804",
+          "NREM-20230701-002",
+          "NREM-20230701-003",
+          "NREM-20230701-004",
+          "NREM-20230701-005",
+          "NREM-20230701-006",
+          "NREM-20230701-010",
+          "NREM-20230701-011"
+        ],
+        "binding_lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-101",
+            "ITC-POL-102",
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "NREM-20230701-002",
+            "NREM-20230701-003",
+            "NREM-20230701-004",
+            "NREM-20230701-005",
+            "NREM-20230701-006",
+            "NREM-20230701-010",
+            "NREM-20230701-011"
+          ],
+          "computation_id": "8d1ebe2b-7818-59bf-be2b-01dad54b3fcb",
+          "effective_end": "2023-08-31",
+          "effective_start": "2023-07-01",
+          "finalized_audit_event_id": "edcdda81-8416-5814-9862-61d00521b304",
+          "input_hash": "77260a40eeb3ffe44547e71173d75288dca3b0e8a1e5f6aafe514a0168d710a1",
+          "resident_status": "non_resident",
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA"
+          ],
+          "taxpayer_kind": "individual"
+        },
+        "finalization_status": "finalized",
+        "finalized_at": "2026-03-19T18:00:00+03:00",
+        "finalized_audit_event_id": "edcdda81-8416-5814-9862-61d00521b304",
+        "input_hash": "77260a40eeb3ffe44547e71173d75288dca3b0e8a1e5f6aafe514a0168d710a1",
+        "source_anchor_ids": [
+          "ITA-2023-07-01-A",
+          "AMEND-2023-FA"
+        ],
+        "validation_focus_domains": [
+          "ITD-CORE-RESIDENCY",
+          "ITD-CORE-EMPLOYMENT",
+          "ITD-CORE-DEDUCTIONS",
+          "ITD-CORE-RELIEFS"
+        ]
+      },
+      "supported_lane_id": "non_resident_employment_income_2023_07_01",
+      "tax_year": 2023,
+      "template_id": "income_tax_return_non_resident_employment_2023_07_01_v1"
+    },
+    "form_mapping_output": {
+      "audit_evidence": {
+        "action": "mapping",
+        "action_status": "mapped",
+        "artifact_id": null,
+        "audit_evidence_id": "733f56d5c15cc905f2bebd89de81b3517cda87bb0bd81d61826cb502d037fa5e",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "8d1ebe2b-7818-59bf-be2b-01dad54b3fcb",
+        "content_sha256": null,
+        "finalized_audit_event_id": "edcdda81-8416-5814-9862-61d00521b304",
+        "form_type": "income_tax_return",
+        "form_version": "income_tax_vertical_slice_v1",
+        "form_version_id": null,
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-101",
+            "ITC-POL-102",
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "NREM-20230701-002",
+            "NREM-20230701-003",
+            "NREM-20230701-004",
+            "NREM-20230701-005",
+            "NREM-20230701-006",
+            "NREM-20230701-010",
+            "NREM-20230701-011"
+          ],
+          "input_hash": "77260a40eeb3ffe44547e71173d75288dca3b0e8a1e5f6aafe514a0168d710a1",
+          "rule_version": "v1",
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA"
+          ]
+        },
+        "supported_lane_id": "non_resident_employment_income_2023_07_01",
+        "tax_year": 2023,
+        "template_id": null
+      },
+      "computation_identity": {
+        "computation_id": "8d1ebe2b-7818-59bf-be2b-01dad54b3fcb",
+        "finalization_status": "finalized",
+        "finalized_at": "2026-03-19T18:00:00+03:00",
+        "finalized_audit_event_id": "edcdda81-8416-5814-9862-61d00521b304",
+        "input_hash": "77260a40eeb3ffe44547e71173d75288dca3b0e8a1e5f6aafe514a0168d710a1",
+        "regime_type": "income_tax",
+        "rule_version": "v1",
+        "tax_type": "income_tax",
+        "tax_year": 2023
+      },
+      "domain_fields": {
+        "deductions_and_exemptions": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "ITC-POL-803",
+            "ITC-POL-804"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "0.00",
+          "status": "computed",
+          "taxable_base_kes": "960000.00"
+        },
+        "employment": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "NREM-20230701-004",
+            "NREM-20230701-010",
+            "NREM-20230701-011"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "225400.00",
+          "status": "computed",
+          "taxable_base_kes": "960000.00"
+        },
+        "investment": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "ITC-POL-401"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "0.00",
+          "status": "not_applicable",
+          "taxable_base_kes": "0.00"
+        },
+        "reliefs": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "NREM-20230701-005",
+            "NREM-20230701-006"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "0.00",
+          "status": "computed",
+          "taxable_base_kes": "0.00"
+        },
+        "withholding": {
+          "creditable_amount_kes": "0.00",
+          "decision_refs": [
+            "ITC-POL-601"
+          ],
+          "final_tax_amount_kes": "0.00",
+          "gross_tax_kes": "0.00",
+          "status": "not_applicable",
+          "taxable_base_kes": "0.00"
+        }
+      },
+      "form_fields": {
+        "chargeable_income_kes": "960000.00",
+        "employment_final_tax_amount_kes": "0.00",
+        "employment_gross_tax_kes": "225400.00",
+        "employment_income_kes": "960000.00",
+        "final_tax_excluded_income_kes": "0.00",
+        "investment_final_tax_amount_kes": "0.00",
+        "investment_gross_tax_kes": "0.00",
+        "investment_income_kes": "0.00",
+        "net_income_tax_due_kes": "225400.00",
+        "refund_due_kes": "0.00",
+        "total_reliefs_kes": "0.00"
+      },
+      "form_type": "income_tax_return",
+      "form_version": "income_tax_vertical_slice_v1",
+      "impact_fields": {
+        "deduction_impacts": [],
+        "exemption_impacts": [],
+        "relief_impacts": []
+      },
+      "liability_fields": {
+        "advance_tax_credit_kes": "0.00",
+        "assessable_income_kes": "960000.00",
+        "chargeable_income_kes": "960000.00",
+        "creditable_withholding_kes": "0.00",
+        "final_tax_excluded_income_kes": "0.00",
+        "gross_tax_kes": "225400.00",
+        "installment_tax_credit_kes": "0.00",
+        "net_income_tax_due_kes": "225400.00",
+        "refund_due_kes": "0.00",
+        "total_reliefs_kes": "0.00"
+      },
+      "lineage": {
+        "applied_policy_ids": [
+          "ITC-POL-101",
+          "ITC-POL-102",
+          "ITC-POL-201",
+          "ITC-POL-204",
+          "ITC-POL-803",
+          "ITC-POL-804",
+          "NREM-20230701-002",
+          "NREM-20230701-003",
+          "NREM-20230701-004",
+          "NREM-20230701-005",
+          "NREM-20230701-006",
+          "NREM-20230701-010",
+          "NREM-20230701-011"
+        ],
+        "computation_status": "complete",
+        "replay_safe": true,
+        "source_anchor_ids": [
+          "ITA-2023-07-01-A",
+          "AMEND-2023-FA"
+        ],
+        "validation_focus_domains": [
+          "ITD-CORE-RESIDENCY",
+          "ITD-CORE-EMPLOYMENT",
+          "ITD-CORE-DEDUCTIONS",
+          "ITD-CORE-RELIEFS"
+        ]
+      },
+      "mapping_status": "ok",
+      "supported_lane_id": "non_resident_employment_income_2023_07_01",
+      "taxpayer": {
+        "classification_outcome": "fully_classified",
+        "resident_status": "non_resident",
+        "taxpayer_kind": "individual"
+      },
+      "treatment_fields": {
+        "adjacent_regime_flags": [],
+        "withholding_treatments": []
+      },
+      "unsupported_fields": [],
+      "version_identity": {
+        "effective_end": "2023-08-31",
+        "effective_start": "2023-07-01",
+        "historical_version_id": "KIT-VER-20230701-A",
+        "source_anchor_ids": [
+          "ITA-2023-07-01-A",
+          "AMEND-2023-FA"
+        ],
+        "version_selection_basis": "specific_event_date"
+      }
+    },
+    "form_version_binding_output": {
+      "audit_evidence": {
+        "action": "binding",
+        "action_status": "bound",
+        "artifact_id": null,
+        "audit_evidence_id": "b3d85f3f740b678255a3c4e96cfceaccd69c4a4ada470948f81b404e87415a59",
+        "audit_kind": "income_tax_form_generation",
+        "computation_id": "8d1ebe2b-7818-59bf-be2b-01dad54b3fcb",
+        "content_sha256": null,
+        "finalized_audit_event_id": "edcdda81-8416-5814-9862-61d00521b304",
+        "form_type": "income_tax_return",
+        "form_version": null,
+        "form_version_id": "ITX-FORM-20230701-NRES-EMP-V1",
+        "historical_version_id": "KIT-VER-20230701-A",
+        "lineage": {
+          "applied_policy_ids": [
+            "ITC-POL-101",
+            "ITC-POL-102",
+            "ITC-POL-201",
+            "ITC-POL-204",
+            "ITC-POL-803",
+            "ITC-POL-804",
+            "NREM-20230701-002",
+            "NREM-20230701-003",
+            "NREM-20230701-004",
+            "NREM-20230701-005",
+            "NREM-20230701-006",
+            "NREM-20230701-010",
+            "NREM-20230701-011"
+          ],
+          "input_hash": "77260a40eeb3ffe44547e71173d75288dca3b0e8a1e5f6aafe514a0168d710a1",
+          "rule_version": null,
+          "source_anchor_ids": [
+            "ITA-2023-07-01-A",
+            "AMEND-2023-FA"
+          ]
+        },
+        "supported_lane_id": "non_resident_employment_income_2023_07_01",
+        "tax_year": 2023,
+        "template_id": "income_tax_return_non_resident_employment_2023_07_01_v1"
+      },
+      "binding_lineage": {
+        "applied_policy_ids": [
+          "ITC-POL-101",
+          "ITC-POL-102",
+          "ITC-POL-201",
+          "ITC-POL-204",
+          "ITC-POL-803",
+          "ITC-POL-804",
+          "NREM-20230701-002",
+          "NREM-20230701-003",
+          "NREM-20230701-004",
+          "NREM-20230701-005",
+          "NREM-20230701-006",
+          "NREM-20230701-010",
+          "NREM-20230701-011"
+        ],
+        "computation_id": "8d1ebe2b-7818-59bf-be2b-01dad54b3fcb",
+        "effective_end": "2023-08-31",
+        "effective_start": "2023-07-01",
+        "finalized_audit_event_id": "edcdda81-8416-5814-9862-61d00521b304",
+        "input_hash": "77260a40eeb3ffe44547e71173d75288dca3b0e8a1e5f6aafe514a0168d710a1",
+        "resident_status": "non_resident",
+        "source_anchor_ids": [
+          "ITA-2023-07-01-A",
+          "AMEND-2023-FA"
+        ],
+        "taxpayer_kind": "individual"
+      },
+      "binding_status": "bound",
+      "form_type": "income_tax_return",
+      "form_version_id": "ITX-FORM-20230701-NRES-EMP-V1",
+      "historical_version_id": "KIT-VER-20230701-A",
+      "supported_lane_id": "non_resident_employment_income_2023_07_01",
+      "tax_year": 2023,
+      "template_id": "income_tax_return_non_resident_employment_2023_07_01_v1"
+    }
+  },
+  "fixture_id": "income_tax_form_non_resident_employment_2023_07_01_case_001",
+  "fixture_version": 1,
+  "request": {
+    "finalized_at": "2026-03-19T18:00:00+03:00",
+    "tax_core_fixture_file": "income_tax_non_resident_employment_2023_07_01_case_001.json"
+  }
+}

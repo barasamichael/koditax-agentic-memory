@@ -1,0 +1,26 @@
+{
+  "expected_error": {
+    "reason": "invalid_prompt_input",
+    "message": "Prompt text must be non-empty for intent envelope parsing.",
+    "details": {
+      "reason": "empty_prompt_text",
+      "error_code": "invalid_prompt_input",
+      "message": "Prompt text must be non-empty for intent envelope parsing.",
+      "rejected_context": {
+        "tax_domain_hint": null,
+        "requested_lane_hint": null,
+        "historical_version_hint": null,
+        "tax_year_hint": null,
+        "intent_class": "unknown",
+        "prompt_class": "income_tax_prompt_flow"
+      },
+      "correlation_id": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trace_id": "6e8525444a44471a85181c0210aed12d33a53c66fe1bfb000f970606f09d0648"
+    }
+  },
+  "fixture_id": "income_tax_prompt_flow_invalid_prompt_input_case_001",
+  "fixture_version": 1,
+  "request": {
+    "prompt_text": "   "
+  }
+}

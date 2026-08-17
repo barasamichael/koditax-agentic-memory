@@ -1,0 +1,96 @@
+{
+  "services": {
+    "auth": {
+      "outbound_calls": []
+    },
+    "document_ai": {
+      "outbound_calls": [
+        {
+          "target_service": "storage",
+          "contract": "contracts/openapi/storage.yaml",
+          "call_sites": [
+            "services/document_ai/app/config.py:get_storage_endpoint_url"
+          ]
+        }
+      ]
+    },
+    "event_store": {
+      "outbound_calls": []
+    },
+    "forms": {
+      "outbound_calls": []
+    },
+    "gateway": {
+      "outbound_calls": [
+        {
+          "target_service": "event_store",
+          "contract": "contracts/openapi/event_store.yaml",
+          "call_sites": [
+            "services/gateway/app/main.py:HttpEventStoreAuditClient.append_audit_event"
+          ]
+        }
+      ]
+    },
+    "knowledge": {
+      "outbound_calls": []
+    },
+    "orchestration": {
+      "outbound_calls": [
+        {
+          "target_service": "knowledge",
+          "contract": "contracts/openapi/knowledge.yaml",
+          "call_sites": [
+            "services/orchestration/app/action_adapter_registry.py:DeterministicKnowledgeActionAdapter.dispatch"
+          ],
+          "operations": ["search_knowledge", "retrieve_knowledge", "timeline_search_knowledge"],
+          "integration_model": "deterministic_adapter"
+        },
+        {
+          "target_service": "tax_core",
+          "contract": "contracts/openapi/tax_core.yaml",
+          "call_sites": [
+            "services/orchestration/app/action_adapter_registry.py:DeterministicTaxCoreActionAdapter.dispatch"
+          ],
+          "operations": ["execute_computation"],
+          "integration_model": "deterministic_adapter"
+        },
+        {
+          "target_service": "forms",
+          "contract": "contracts/openapi/forms.yaml",
+          "call_sites": [
+            "services/orchestration/app/action_adapter_registry.py:DeterministicFormsActionAdapter.dispatch"
+          ],
+          "operations": [
+            "generate_income_tax_form_artifact",
+            "map_health_contribution_output_to_form_ready"
+          ],
+          "integration_model": "deterministic_adapter"
+        },
+        {
+          "target_service": "reports",
+          "contract": "contracts/openapi/reports.yaml",
+          "call_sites": [
+            "services/orchestration/app/action_adapter_registry.py:DeterministicReportsActionAdapter.dispatch"
+          ],
+          "operations": [
+            "create_income_tax_report_artifact",
+            "create_health_contribution_report_artifact"
+          ],
+          "integration_model": "deterministic_adapter"
+        }
+      ]
+    },
+    "reports": {
+      "outbound_calls": []
+    },
+    "storage": {
+      "outbound_calls": []
+    },
+    "tax_core": {
+      "outbound_calls": []
+    },
+    "validation": {
+      "outbound_calls": []
+    }
+  }
+}

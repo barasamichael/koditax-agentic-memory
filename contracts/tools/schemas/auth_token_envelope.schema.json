@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AuthTokenEnvelope",
+  "description": "Canonical auth token envelope for login and refresh responses with deterministic lifecycle semantics.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "token_type",
+    "access_token",
+    "expires_in_seconds",
+    "refresh_token",
+    "session_id",
+    "user_id",
+    "tenant_id",
+    "role",
+    "delegation_context",
+    "scope",
+    "issued_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "token_type": {
+      "type": "string",
+      "enum": [
+        "Bearer"
+      ]
+    },
+    "access_token": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Opaque token value. Must not be interpreted by clients/services outside auth trust boundaries."
+    },
+    "expires_in_seconds": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "refresh_token": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "description": "Opaque refresh token value; nullable for flows that do not issue refresh tokens."
+    },
+    "session_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "user_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Single-tenant baseline may use deterministic value (for example default_tenant)."
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "IndividualTaxpayer",
+        "TaxAgent",
+        "Accountant",
+        "Administrator"
+      ]
+    },
+    "delegation_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "is_delegated",
+        "principal_user_id",
+        "delegate_user_id",
+        "delegation_id",
+        "granted_at",
+        "revoked_at"
+      ],
+      "properties": {
+        "is_delegated": {
+          "type": "boolean"
+        },
+        "principal_user_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "delegate_user_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "delegation_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "granted_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "revoked_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      }
+    },
+    "scope": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      ]
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "correlation_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "refresh_rotation_status": {
+      "type": "string",
+      "enum": [
+        "rotated",
+        "not_rotated"
+      ]
+    }
+  }
+}

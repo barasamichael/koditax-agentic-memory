@@ -1,0 +1,27 @@
+{
+  "fixture_id": "knowledge_lookup_conflicting_grounding_rejected",
+  "prompt_payload": {
+    "tenant_id": "pilot_tenant_alpha",
+    "conversation_id": "conv-phase13-grounded-explanation-001",
+    "channel": "chat",
+    "prompt": {
+      "text": "lookup statutory authority for allowable deductions in income tax effective 2024-12-27.",
+      "format": "plain_text"
+    }
+  },
+  "execution_context": {
+    "user_id": "user_phase13_grounded_explanation_001",
+    "idempotency_key": "idem-phase13-grounded-explanation-conflict"
+  },
+  "expected_error": {
+    "status_code": 409,
+    "error_code": "unsupported_prompt_scope",
+    "reason": "conflicting_grounded_evidence",
+    "reason_code": "conflicting_grounded_evidence",
+    "context": {
+      "route_id": "knowledge_search_route_v1",
+      "target_service": "knowledge",
+      "target_operation": "search_knowledge"
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "expected_output": {
+    "status": "draft_ready",
+    "message": "Draft income-tax outcome is ready for review. Confirm to continue, reject to stop, or revise input.",
+    "prompt_id": "d034fc7a64717b28d1bf8a1d9742459be0256d718cbde965f84a12938c8ff26c",
+    "prompt_text": "Compute income tax for resident employment plus qualifying interest lane in tax year 2023 under KIT-VER-20230701-A.",
+    "draft_context": {
+      "tax_type": "income_tax",
+      "supported_lane_id": "resident_employment_plus_qualifying_interest_2023_07_01",
+      "historical_version_id": "KIT-VER-20230701-A",
+      "tax_year": 2023
+    },
+    "review_summary": {
+      "chargeable_income_kes": "960000.00",
+      "gross_tax_kes": "243400.00",
+      "total_reliefs_kes": "28800.00",
+      "net_income_tax_due_kes": "214600.00",
+      "refund_due_kes": "0.00"
+    },
+    "artifacts": {
+      "form_artifact_id": "31c1e2bb2d9d3e03aacb57863d8cec084e8334b3fb9cd3fa924ec850ec686524",
+      "form_version_id": "ITX-FORM-20230701-RES-EMP-QINT-V1",
+      "report_id": "89ac2112b4dc6efcd97a0ee41a41fed3784d1abf8a1d3fdd7fb7fed55533b634",
+      "report_version_id": "ITX-RPT-20230701-RES-EMP-QINT-V1",
+      "submission_preview_payload_id": "d378171a3009848f1abd255c92243a4e5835c938c48aca49a0c2ee1981482097",
+      "submission_preview_payload_version": "income_tax_submission_payload_v1"
+    },
+    "lineage": {
+      "computation_id": "8e9ab8fc-3217-55c8-86f8-783c7bc57810",
+      "input_hash": "f326486fe8b7b09df93f82d1448f4980a81955fd56d19ea673c001557f57f08d",
+      "rule_version": "v1",
+      "finalized_audit_event_id": "91cab5df-2445-5783-b06c-e9b681d5b2ee",
+      "form_audit_evidence_id": "a2bb43d25ee99a83953753a1aa32feafcc445d5b1e77884ca94efe5fb95261fc",
+      "report_audit_evidence_id": "75b5cd96f518f4bbb190fbe31540e4c96572d996484c6031c33e5a0e6bc3b4be",
+      "payload_audit_evidence_id": "41f94a59eac46284c7a8e8b09d186c45802b615a0ae81b8b57d1bc29ac37c097"
+    },
+    "next_allowed_actions": [
+      "confirm",
+      "reject",
+      "revise_input"
+    ],
+    "correlation_id": "d034fc7a64717b28d1bf8a1d9742459be0256d718cbde965f84a12938c8ff26c",
+    "trace_id": "95fef72d502256b2e25b8d374b65532b3dcef91c1f45a45e72d6f409211d7c16",
+    "trace_context": {
+      "correlation_id": "d034fc7a64717b28d1bf8a1d9742459be0256d718cbde965f84a12938c8ff26c",
+      "trace_id": "95fef72d502256b2e25b8d374b65532b3dcef91c1f45a45e72d6f409211d7c16"
+    },
+    "document_evidence_refs": {
+      "document_id": "dd3a0506-b5c5-5d02-ba9d-398bdf759aed",
+      "extraction_id": "74d5b050-e474-50fe-aec0-e6c093efa022",
+      "projection_ref_id": "b224906a65f3a9747e6806aa6757d93cd1af0075991e4cc3ad21c56afde3ef21",
+      "conflict_report_ref_id": null,
+      "conflict_policy_decision_ref_id": null
+    }
+  },
+  "fixture_id": "income_tax_prompt_flow_mixed_resident_employment_plus_qualifying_interest_2023_07_01_case_001",
+  "fixture_version": 1,
+  "request": {
+    "prompt_text": "Compute income tax for resident employment plus qualifying interest lane in tax year 2023 under KIT-VER-20230701-A."
+  }
+}

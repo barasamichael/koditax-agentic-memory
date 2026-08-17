@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WorkflowEvidenceProjection",
+  "description": "Versioned resolved evidence supplied to a workflow; it never contains raw documents or provider extraction payloads.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["projection_version", "workflow", "workflow_version", "evidence_items", "missing_requirement_ids", "conflicts", "uncertainty", "correction_ids", "validity_state"],
+  "properties": {
+    "projection_version": {"const": "1.0.0"},
+    "workflow": {"enum": ["tax", "filing", "forms", "reports", "compliance"]},
+    "workflow_version": {"type": "string", "minLength": 1},
+    "evidence_items": {"type": "array", "items": {"$ref": "#/$defs/evidence_item"}},
+    "missing_requirement_ids": {"type": "array", "items": {"type": "string"}},
+    "conflicts": {"type": "array", "items": {"type": "object"}},
+    "uncertainty": {"type": "array", "items": {"type": "string"}},
+    "correction_ids": {"type": "array", "items": {"type": "string"}},
+    "validity_state": {"enum": ["valid", "stale", "invalid"]}
+  },
+  "$defs": {
+    "evidence_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "requirement_id", "effective_value", "source_references", "uncertainty", "correction_ids"],
+      "properties": {
+        "evidence_id": {"type": "string", "minLength": 1},
+        "requirement_id": {"type": "string", "minLength": 1},
+        "effective_value": {},
+        "source_references": {"type": "array", "items": {"$ref": "#/$defs/source_reference"}},
+        "uncertainty": {"type": "array", "items": {"type": "string"}},
+        "correction_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "source_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_id"],
+      "properties": {"document_id": {"type": "string", "minLength": 1}, "document_version_id": {"type": ["string", "null"]}, "source_location": {"type": ["string", "null"]}}
+    }
+  }
+}

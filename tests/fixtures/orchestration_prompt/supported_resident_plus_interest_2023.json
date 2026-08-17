@@ -1,0 +1,26 @@
+{
+  "fixture_id": "supported_resident_plus_interest_2023",
+  "prompt_payload": {
+    "tenant_id": "pilot_tenant_alpha",
+    "conversation_id": "conv-orch-e2e-2023-resident-interest",
+    "channel": "chat",
+    "prompt": {
+      "text": "Compute income tax for resident employment plus qualifying interest lane in tax year 2023 under KIT-VER-20230701-A.",
+      "format": "plain_text"
+    }
+  },
+  "execution_context": {
+    "user_id": "user_orch_e2e_alpha",
+    "idempotency_key": "idem-orch-e2e-2023-resident-interest"
+  },
+  "expected": {
+    "selected_route": {
+      "route_id": "income_tax_compute_route_v1",
+      "target_service": "tax_core",
+      "target_operation": "execute_computation"
+    },
+    "mapped_action_status": "pending",
+    "mapped_reason_code": "tax_core_action_mock_pending",
+    "final_outcome_status": "pending"
+  }
+}

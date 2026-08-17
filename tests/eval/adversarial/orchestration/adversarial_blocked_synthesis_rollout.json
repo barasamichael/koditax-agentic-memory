@@ -1,0 +1,27 @@
+{
+  "case_id": "adversarial_blocked_synthesis_rollout",
+  "flow": "execute_single_turn",
+  "prompt_text": "lookup statutory authority for allowable deductions in income tax effective 2024-12-27.",
+  "response_generator_mode": "grounded",
+  "runtime_rollout": {
+    "response_synthesis_enabled": false,
+    "conversation_continuity_enabled": true
+  },
+  "expected": {
+    "http_status": 200,
+    "top_level_status": "executed",
+    "decision_status": null,
+    "gate_status": null,
+    "plan_mode": "single_step",
+    "route_id": "knowledge_search_route_v1",
+    "target_service": "knowledge",
+    "execution_status": "resolved",
+    "response_status": "failed",
+    "answer_mode": "grounded_knowledge",
+    "has_citations": true,
+    "clarification_reason_code": null,
+    "error_code": "response_synthesis_unavailable",
+    "reason_code": "response_synthesis_disabled",
+    "step_services": []
+  }
+}

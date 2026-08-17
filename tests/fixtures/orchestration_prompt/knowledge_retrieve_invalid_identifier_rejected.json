@@ -1,0 +1,27 @@
+{
+  "fixture_id": "knowledge_retrieve_invalid_identifier_rejected",
+  "prompt_payload": {
+    "tenant_id": "pilot_tenant_alpha",
+    "conversation_id": "conv-knw-orch-001",
+    "channel": "chat",
+    "prompt": {
+      "text": "retrieve grounded knowledge for income tax source KNW-MISSING anchor missing-anchor.",
+      "format": "plain_text"
+    }
+  },
+  "execution_context": {
+    "user_id": "user_knw_orch_001",
+    "idempotency_key": "idem-knw-orch-003"
+  },
+  "expected_error": {
+    "status_code": 400,
+    "error_code": "unsupported_domain",
+    "reason": "unsupported_domain",
+    "reason_code": "unsupported_domain",
+    "context": {
+      "route_id": "knowledge_search_route_v1",
+      "target_service": "knowledge",
+      "target_operation": "search_knowledge"
+    }
+  }
+}

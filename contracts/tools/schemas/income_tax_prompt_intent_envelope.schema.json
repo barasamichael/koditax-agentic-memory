@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IncomeTaxPromptIntentEnvelope",
+  "description": "Deterministic normalized prompt intent envelope for the governed orchestration boundary.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "normalized_prompt_text",
+    "tax_domain_hint",
+    "requested_lane_hint",
+    "historical_version_hint",
+    "tax_year_hint",
+    "intent_class",
+    "parsing_status",
+    "prompt_class",
+    "correlation_id",
+    "trace_id"
+  ],
+  "properties": {
+    "normalized_prompt_text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tax_domain_hint": {
+      "type": "string",
+      "enum": [
+        "income_tax",
+        "vat",
+        "withholding_tax_generalized",
+        "paye_generalized",
+        "health_contribution",
+        "business_income_generalized",
+        "rental_income_generalized",
+        "unknown"
+      ]
+    },
+    "requested_lane_hint": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "historical_version_hint": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^(KIT-VER-\\d{8}-A|HCH-VER-[0-9A-Z-]+)$"
+    },
+    "tax_year_hint": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1999,
+      "maximum": 2100
+    },
+    "intent_class": {
+      "type": "string",
+      "enum": [
+        "compute_income_tax",
+        "compute_health_contribution",
+        "lookup_grounded_knowledge",
+        "retrieve_grounded_knowledge",
+        "unsupported_domain_request",
+        "unknown"
+      ]
+    },
+    "parsing_status": {
+      "type": "string",
+      "enum": [
+        "parsed",
+        "parsed_with_unsupported_scope_hint"
+      ]
+    },
+    "prompt_class": {
+      "const": "income_tax_prompt_flow"
+    },
+    "correlation_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "trace_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "regime_identifier_hint": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "nhif_legacy",
+        "sha_shif",
+        "transition_boundary",
+        null
+      ]
+    }
+  }
+}
